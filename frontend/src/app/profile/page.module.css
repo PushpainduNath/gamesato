@@ -1,0 +1,800 @@
+.backdrop {
+  width: 100%;
+  min-height: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #000000 0%, #000D38 50%, #000000 100%);
+  box-sizing: border-box;
+}
+
+.drawerPanel {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem 3rem 1rem;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.drawerContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.drawerDivider,
+.languageWrapper,
+.drawerFooter {
+  display: none;
+}
+
+.mobileOnlyOption {
+  display: flex;
+}
+
+.arrowIcon {
+  color: #4b5563;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  width: 100%;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.iconBtn:active {
+  transform: scale(0.9);
+}
+
+/* Avatar Section */
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.avatarOuterWrapper {
+  position: relative;
+  width: 112px;
+  height: 112px;
+}
+
+.avatarGlowBorder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #0086EC 0%, #2C00FC 100%);
+  box-shadow: 0 0 20px rgba(0, 134, 236, 0.4);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #000;
+  box-sizing: border-box;
+}
+
+.editBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.editBtn:hover {
+  background-color: #334155;
+  transform: scale(1.08);
+}
+
+.editBtn:active {
+  transform: scale(0.9);
+}
+
+.profileName {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: white;
+  margin: 1.15rem 0 0 0;
+  font-family: var(--font-sans);
+  text-align: center;
+}
+
+.providerBadgeOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.providerBadgeOverlay:hover {
+  transform: scale(1.08);
+  background-color: #334155;
+}
+
+/* Favorites Card */
+.favoritesCard {
+  background: rgba(15, 18, 36, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.favoritesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.favoritesTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.carouselNavBtns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.navBtn:hover {
+  background: rgba(0, 134, 236, 0.3);
+  border-color: #0086ec;
+  color: #ffffff;
+}
+
+.favoritesCarousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+
+.favoritesCarousel::-webkit-scrollbar {
+  display: none; /* Hide scrollbar WebKit */
+}
+
+.favoriteCard {
+  min-width: 140px;
+  width: 140px;
+  height: 157px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background: #1B243C;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.favoriteCard:hover {
+  transform: translateY(-2px);
+}
+
+.favoriteThumbnailWrapper {
+  width: 100%;
+  height: 97px;
+  overflow: hidden;
+  position: relative;
+}
+
+.favoriteThumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favoriteCardInfo {
+  height: 60px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  background: #1B243C;
+  box-sizing: border-box;
+}
+
+.favoriteGameTitle {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-sans);
+}
+
+.lastPlayed {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  font-family: var(--font-sans);
+}
+
+.paginationDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff !important;
+  opacity: 0.35;
+  transition: all 0.2s ease;
+}
+
+.dotActive {
+  width: 24px;
+  height: 6px;
+  border-radius: 4px;
+  background: #0086EC !important;
+  opacity: 1;
+}
+
+.emptyFavorites {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-family: var(--font-sans);
+}
+
+/* Options List */
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  width: 100%;
+}
+
+.optionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+}
+
+.optionItem:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.optionLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.optionIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.optionText {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  font-family: var(--font-sans);
+}
+
+.optionIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.optionRight {
+  display: flex;
+  align-items: center;
+}
+
+.optionLanguageText {
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+
+/* Loading state */
+.loadingContainer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: #0086EC;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (min-width: 769px) {
+  .backdrop {
+    position: fixed;
+    top: 70px; /* Aligned below the top header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(11, 15, 25, 0.4) !important; /* Low opacity dark background for glass feel */
+    backdrop-filter: blur(10px) !important; /* Adjusted blur for frosted glass effect */
+    -webkit-backdrop-filter: blur(10px) !important;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 9999;
+    min-height: auto;
+  }
+
+  .drawerPanel {
+    width: 360px; /* Reduced width */
+    max-width: 100%;
+    height: 100%;
+    background: #0b0f19;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 18px; /* Reduced padding */
+    box-sizing: border-box;
+    margin: 0;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .header {
+    padding: 0 0 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 1.25rem;
+  }
+
+  .title {
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+
+  .drawerContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+  }
+
+  .drawerContent::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
+  }
+
+  .avatarSection {
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .avatarOuterWrapper {
+    width: 96px;
+    height: 96px;
+  }
+
+  .avatarGlowBorder {
+    padding: 2.5px;
+    background: linear-gradient(135deg, #0086EC 0%, #a855f7 100%);
+    box-shadow: 0 0 15px rgba(0, 134, 236, 0.35);
+  }
+
+  .avatarImg {
+    border-width: 1.5px;
+  }
+
+  .editBtn {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    width: 28px;
+    height: 28px;
+  }
+
+  .editBtn svg {
+    color: #475569 !important;
+  }
+
+  .profileName {
+    font-size: 1.25rem;
+    margin-top: 1rem;
+    color: #ffffff;
+  }
+
+  /* Favorites Card */
+  .favoritesCard {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .favoritesTitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 0.75rem;
+  }
+
+  .favoriteCard {
+    min-width: calc(50% - 4px);
+    max-width: calc(50% - 4px);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
+
+  .favoriteCardInfo {
+    padding: 0.5rem;
+  }
+
+  .favoriteGameTitle {
+    font-size: 0.8rem;
+  }
+
+  .lastPlayed {
+    font-size: 0.65rem;
+    color: #64748b;
+  }
+
+  .paginationDots {
+    margin-top: 0.75rem;
+  }
+
+  .dotActive {
+    background: #0086EC !important;
+  }
+
+  /* Options list */
+  .optionsList {
+    gap: 0.25rem;
+  }
+
+  .optionItem {
+    padding: 0.6rem 0.5rem;
+  }
+
+  .optionItem:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .optionText {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .arrowIcon {
+    color: rgba(255, 255, 255, 0.35) !important;
+  }
+
+  .mobileOnlyOption {
+    display: none !important;
+  }
+
+  .drawerDivider {
+    display: block;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  .languageWrapper {
+    display: flex;
+    margin-bottom: 1.25rem;
+  }
+
+  .languagePill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid rgba(255, 255, 255, 0.06);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .languagePill:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .languagePillIcon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+  }
+
+  .drawerFooter {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .drawerFooter a {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .drawerFooter a:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+:global(.light-theme) .navBtn {
+  background: rgba(15, 23, 42, 0.06) !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .navBtn:hover {
+  background: #0086ec !important;
+  border-color: #0086ec !important;
+  color: #ffffff !important;
+}
+
+/* Light Theme Overrides for Profile Page */
+:global(.light-theme) .backdrop {
+  background: rgba(15, 23, 42, 0.35) !important;
+}
+
+:global(.light-theme) .drawerPanel {
+  background: #ffffff !important;
+  border-left: 1px solid #e2e8f0 !important;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+:global(.light-theme) .header {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+:global(.light-theme) .title {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .iconBtn {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .userName {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .favoritesCard {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+:global(.light-theme) .favoritesTitle {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .favoriteCard {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .favoriteCardInfo {
+  background: #ffffff !important;
+}
+
+:global(.light-theme) .favoriteGameTitle {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .lastPlayed {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .optionItem:hover {
+  background-color: #f8fafc !important;
+}
+
+:global(.light-theme) .optionText {
+  color: #1e293b !important;
+}
+
+:global(.light-theme) .optionTitleText {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .optionSubtext {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .arrowIcon {
+  color: #94a3b8 !important;
+}
+
+:global(.light-theme) .panelFooter {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+:global(.light-theme) .drawerFooter a {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .drawerFooter a:hover {
+  color: #0086ec !important;
+}
+
+:global(.light-theme) .optionIcon {
+  filter: brightness(0) saturate(100%) invert(18%) sepia(29%) saturate(1487%) hue-rotate(182deg) brightness(93%) contrast(92%) !important;
+}
+
+:global(.light-theme) .optionSvgIcon {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .inputGroup label {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .inputGroup input,
+:global(.light-theme) .inputField {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .inputGroup input::placeholder,
+:global(.light-theme) .inputField::placeholder {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .inputGroup input:focus,
+:global(.light-theme) .inputField:focus {
+  border-color: #0086ec !important;
+  background: #ffffff !important;
+}
+
+:global(.light-theme) .readonlyInput {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+:global(.light-theme) .eyeToggleBtn {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .editBtn {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+:global(.light-theme) .editBtn:hover {
+  background: #f8fafc !important;
+  border-color: #0086ec !important;
+  color: #0086ec !important;
+}

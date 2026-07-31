@@ -1,0 +1,235 @@
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 1000;
+  background: #010104 !important;
+  border-bottom: 1px solid #1E283D !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.iconBtn:active {
+  transform: scale(0.9);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 80px 1rem 170px 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.card {
+  background: rgba(7, 22, 45, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.card:hover {
+  background-color: rgba(7, 22, 45, 0.7);
+}
+
+.cardSelected {
+  border-color: #0086ec !important;
+  background-color: rgba(7, 22, 45, 0.8) !important;
+}
+
+.cardLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.flagWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.flagImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.langName {
+  font-size: 16px;
+  line-height: 24px;
+  color: #e3e4e9;
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+
+.radioWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.radioSelected {
+  border-color: #0086ec !important;
+  background: #0086ec !important;
+}
+
+.radioDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+.footerContainer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  min-height: 130px;
+  background-color: #010104 !important;
+  padding: 32px 20px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 1000;
+  border-top: 1px solid #1E283D !important;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.9);
+}
+
+.continueBtn {
+  background: linear-gradient(90deg, #0086ec 0%, #2c00fc 100%) !important;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  height: 52px;
+  padding: 0 2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  outline: none;
+  box-shadow: 0 4px 15px rgba(0, 134, 236, 0.35);
+}
+
+/* Light Theme Overrides */
+:global(.light-theme) .container {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+:global(.light-theme) .title {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .iconBtn {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+:global(.light-theme) .card:hover {
+  background: #f1f5f9 !important;
+}
+
+:global(.light-theme) .cardSelected {
+  border-color: #0086ec !important;
+  background: #eff6ff !important;
+}
+
+:global(.light-theme) .langName {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .radio {
+  border-color: #cbd5e1 !important;
+}
+
+:global(.light-theme) .footerContainer {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+.continueBtn:hover {
+  transform: scale(1.02);
+  opacity: 0.95;
+}
+
+.continueBtn:active {
+  transform: scale(0.98);
+}

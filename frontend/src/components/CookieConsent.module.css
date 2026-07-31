@@ -1,0 +1,236 @@
+.cookieBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 2.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.cookieCard {
+  background: #0d1222;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  width: 75vw;
+  max-width: 1100px;
+  padding: 14px 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cookieIconContainer {
+  flex-shrink: 0;
+}
+
+.cookieIcon {
+  width: 60px;
+  height: 60px;
+  display: block;
+}
+
+.cookieContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.cookieTitle {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  font-family: var(--font-sans);
+}
+
+.cookieText {
+  color: #94a3b8;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.cookieLink {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  margin-left: 4px;
+}
+
+.cookieLink:hover {
+  color: #60a5fa;
+}
+
+.cookieButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.acceptBtn, .rejectBtn {
+  width: 144px;
+  height: 44px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.acceptBtn {
+  background: linear-gradient(90deg, #0086EC 0%, #2C00FC 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.3) !important;
+  color: #ffffff;
+}
+
+.rejectBtn {
+  background: linear-gradient(180deg, #FEFEFF 0%, #E9E9E9 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.3) !important;
+  color: #1f2937;
+}
+
+.acceptBtn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.rejectBtn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.acceptBtn:active, .rejectBtn:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .cookieBackdrop {
+    align-items: center;
+    padding: 1.5rem;
+  }
+
+  .cookieCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 358px;
+    padding: 2.25rem 1.75rem;
+    gap: 16px;
+  }
+
+  .cookieIconContainer {
+    margin-bottom: 0.5rem;
+  }
+
+  .cookieIcon {
+    width: 110px;
+    height: auto;
+  }
+
+  .cookieContent {
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookieTitle {
+    font-size: 1.6rem;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .cookieText {
+    color: #ffffff;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin: 0 0 1.75rem 0;
+    max-width: 290px;
+  }
+
+  .cookieButtons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.85rem;
+  }
+
+  .acceptBtn, .rejectBtn {
+    width: 100%;
+    max-width: 290px;
+    margin: 0 auto;
+  }
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES (White Theme)
+   ========================================= */
+:global(.light-theme) .cookieCard {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+:global(.light-theme) .cookieTitle {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .cookieText {
+  color: #475569 !important;
+}
+
+:global(.light-theme) .cookieLink {
+  color: #0086ec !important;
+}
+
+:global(.light-theme) .acceptBtn {
+  background: linear-gradient(90deg, #0086ec 0%, #2c00fc 100%) !important;
+  color: #ffffff !important;
+}
+
+:global(.light-theme) .rejectBtn {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+:global(.light-theme) .rejectBtn:hover {
+  background: #e2e8f0 !important;
+}

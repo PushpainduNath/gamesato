@@ -1,0 +1,49 @@
+.playerContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100%;
+  height: 100dvh;
+  background: black;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.backBtn {
+  position: absolute;
+  top: calc(16px + env(safe-area-inset-top));
+  left: calc(16px + env(safe-area-inset-left));
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(13, 18, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  outline: none;
+  z-index: 10000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.backBtn:hover {
+  background: rgba(13, 18, 34, 0.98);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.35);
+}

@@ -1,0 +1,873 @@
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+  flex: 1;
+  background: radial-gradient(circle at top, #0d122e 0%, #050716 100%);
+}
+
+.mainLayout {
+  display: flex;
+  flex: 1;
+  width: 97% !important;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.contentArea {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+  font-family: var(--font-sans);
+}
+
+.breadcrumbLink {
+  color: #0086EC;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.breadcrumbLink:hover {
+  opacity: 0.8;
+}
+
+.breadcrumbDivider {
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1px;
+}
+
+.breadcrumbCurrent {
+  color: #0086EC;
+  font-weight: 500;
+}
+
+/* Title Row */
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.categoryIconWrapper {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.categoryIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.categoryTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+}
+
+.categoryHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filterRow {
+  display: flex;
+  width: 100%;
+}
+
+.sortWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f1224;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  position: relative;
+}
+
+.sortIcon {
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+}
+
+.sortLabel {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.sortSelect {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  padding-right: 1.25rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 12px;
+  font-family: var(--font-sans);
+}
+
+/* Games Grid */
+.gamesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns on mobile matching screenshot */
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.gameCard {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  transition: none;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.gameCard:hover {
+  transform: none !important;
+}
+
+.thumbnailWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1; /* Square thumbnails matching grid aspect ratio */
+  overflow: hidden;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.thumbnailImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gameCard:hover .thumbnailWrapper {
+  transform: translateY(-4px);
+  border-color: rgba(0, 134, 236, 0.4) !important;
+  box-shadow: 0 6px 16px rgba(0, 134, 236, 0.25);
+}
+
+.gameCard:hover .thumbnailImg {
+  transform: scale(1.06);
+}
+
+.cardOverlay {
+  display: none !important;
+}
+
+.overlayTitle {
+  display: none !important;
+}
+
+.cardContent {
+  padding: 0.6rem 0.2rem 0 0.2rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+.cardCatLabel {
+  display: none !important;
+}
+
+.cardTitle {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: white !important;
+  margin: 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-sans);
+  text-align: center !important;
+  width: 100% !important;
+}
+
+.cardStats {
+  display: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.statItem {
+  font-size: 0.7rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-sans);
+}
+
+/* Pagination */
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: rgba(0, 134, 236, 0.1);
+  color: #0086EC;
+}
+
+.pageActive {
+  background: #0086EC !important;
+  border-color: #0086EC !important;
+  color: white !important;
+}
+
+.navArrowBtn {
+  background: rgba(0, 134, 236, 0.15) !important;
+  border-color: transparent !important;
+}
+
+.navArrowBtn:hover:not(:disabled) {
+  background: rgba(0, 134, 236, 0.3) !important;
+}
+
+.navArrowBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.dots {
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0 0.25rem;
+  user-select: none;
+}
+
+/* Empty/Loading States */
+.loadingWrapper,
+.emptyState {
+  padding: 4rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.emptyState h3 {
+  font-size: 1.25rem;
+  color: white;
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-sans);
+}
+
+.emptyState p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3.5px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  border-top-color: #0086EC;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Bottom SEO Section */
+.bottomSectionWrapper {
+  margin-top: 1.25rem;
+  border-top: none;
+  padding-top: 0;
+  width: 100%;
+}
+
+.bottomSectionContainer {
+  width: 100%;
+}
+
+.seoSection {
+  background: rgba(15, 18, 36, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-sizing: border-box;
+}
+
+.seoTitle {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 1rem 0;
+  font-family: var(--font-sans);
+}
+
+.seoText {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin: 0 0 1.25rem 0;
+  font-family: var(--font-sans);
+}
+
+.seoSubTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white;
+  margin: 1.5rem 0 0.75rem 0;
+  font-family: var(--font-sans);
+}
+
+.seoList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.seoList li {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-family: var(--font-sans);
+}
+
+/* FAQ Section */
+.faqSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.faqItem {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faqItem[open] {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.faqQuestion {
+  padding: 1.2rem 1.5rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  font-family: var(--font-sans);
+}
+
+.faqQuestion::after {
+  content: '+';
+  font-size: 1.3rem;
+  color: #0086EC;
+  transition: transform 0.25s ease;
+}
+
+.faqItem[open] .faqQuestion::after {
+  transform: rotate(45deg);
+  content: '+';
+}
+
+.faqAnswer {
+  padding: 0 1.5rem 1.2rem 1.5rem;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-family: var(--font-sans);
+}
+
+.chevronIcon {
+  display: none !important;
+}
+
+/* Media Queries (Responsive columns matching screen widths) */
+@media (min-width: 600px) {
+  .gamesGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 769px) {
+  .contentArea {
+    max-width: 1400px;
+    width: 97% !important;
+    margin: 0 auto;
+    padding: 2.5rem 0 0 0 !important;
+    box-sizing: border-box;
+  }
+
+  .categoryHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.25rem;
+  }
+
+  .titleRow {
+    margin-bottom: 0 !important;
+  }
+
+  .filterRow {
+    width: auto;
+    margin-bottom: 0 !important;
+  }
+
+  .cardContent {
+    display: flex !important;
+    padding: 0.6rem 0.2rem 0 0.2rem !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+  }
+  
+  .gameCard {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+
+  .thumbnailWrapper {
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .gameCard:hover .thumbnailWrapper {
+    transform: translateY(-4px);
+    border-color: rgba(0, 134, 236, 0.4) !important;
+    box-shadow: 0 6px 16px rgba(0, 134, 236, 0.25);
+  }
+
+  .gameCard:hover {
+    transform: none !important;
+  }
+
+  .gamesGrid {
+    margin-bottom: 0 !important;
+  }
+
+  .paginationWrapper {
+    margin-bottom: 0 !important;
+  }
+
+  .bottomSectionWrapper {
+    margin-top: 1.25rem !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+  }
+
+  .bottomSectionContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .seoSection {
+    padding: 16px !important;
+    border-radius: 12px !important;
+    background: rgba(7, 22, 45, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .seoTitle {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    line-height: 28px !important;
+    color: #FFFFFF !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 4px !important;
+    font-family: var(--font-sans);
+  }
+
+  .seoSubTitle {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    margin-top: 8px !important;
+    margin-bottom: 2px !important;
+    font-family: var(--font-sans);
+  }
+
+  .seoText {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 22.75px !important;
+    color: #E9E9E9 !important;
+    margin-bottom: 0 !important;
+    font-family: var(--font-sans);
+  }
+
+  .seoList {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin: 4px 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  .seoList li {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 22.75px !important;
+    color: #E9E9E9 !important;
+    font-family: var(--font-sans);
+  }
+
+  .faqSection {
+    display: flex;
+    flex-direction: column;
+    background: rgba(7, 22, 45, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+    margin-top: 0 !important;
+    gap: 0 !important;
+  }
+
+  .sectionTitle {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    line-height: 28px !important;
+    color: #FFFFFF !important;
+    padding: 20px 20px 10px 20px !important;
+    margin: 0 !important;
+    font-family: var(--font-sans);
+  }
+
+  .faqList {
+    display: flex;
+    flex-direction: column;
+    gap: 0 !important;
+  }
+
+  .faqItem {
+    border: none !important;
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 0 !important;
+    transition: all 0.3s ease;
+  }
+
+  .faqItem:last-child {
+    border-bottom: none !important;
+  }
+
+  .faqItem[open] {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  .faqQuestion {
+    padding: 14px 20px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    cursor: pointer;
+    outline: none;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    font-family: var(--font-sans);
+  }
+
+  .faqQuestion::after {
+    content: '' !important;
+    display: none !important;
+  }
+
+  .chevronIcon {
+    display: block !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: transform 0.25s ease !important;
+  }
+
+  .faqItem[open] .chevronIcon {
+    transform: rotate(180deg) !important;
+    color: #FFFFFF !important;
+  }
+
+  .faqAnswer {
+    padding: 0 20px 14px 20px !important;
+    color: #E9E9E9 !important;
+    font-size: 14px !important;
+    line-height: 22px !important;
+    font-family: var(--font-sans);
+  }
+}
+
+@media (min-width: 900px) {
+  .gamesGrid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .gamesGrid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentArea {
+    padding: 1rem 0.75rem 0 0.75rem !important;
+  }
+
+  .gamesGrid {
+    margin-bottom: 0 !important;
+  }
+
+  .paginationWrapper {
+    margin-bottom: 0 !important;
+  }
+
+  .bottomSectionWrapper {
+    margin-top: 1.25rem !important;
+    padding-top: 0 !important;
+  }
+
+  .seoSection {
+    margin-bottom: 0 !important;
+    padding: 1rem !important;
+    border-radius: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .contentArea {
+    padding: 0.75rem 0.5rem 0 0.5rem !important;
+  }
+  .gamesGrid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  .cardTitle {
+    font-size: 0.78rem !important;
+  }
+  .thumbnailWrapper {
+    border-radius: 12px !important;
+  }
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES (White Theme)
+   ========================================= */
+:global(.light-theme) .appLayout,
+:global(.light-theme) .mainLayout,
+:global(.light-theme) .contentArea {
+  background: #ffffff !important;
+}
+
+:global(.light-theme) .breadcrumbs {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .breadcrumbLink {
+  color: #0086ec !important;
+}
+
+:global(.light-theme) .breadcrumbDivider,
+:global(.light-theme) .breadcrumbDivider svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+:global(.light-theme) .breadcrumbCurrent {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .categoryTitle {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .cardTitle {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .gameCard {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+:global(.light-theme) .gameCard .thumbnailWrapper {
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+:global(.light-theme) .gameCard:hover .thumbnailWrapper {
+  border-color: rgba(0, 134, 236, 0.4) !important;
+  box-shadow: 0 6px 18px rgba(0, 134, 236, 0.2) !important;
+}
+
+:global(.light-theme) .seoSection {
+  background: #F8FAFC !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+:global(.light-theme) .seoTitle,
+:global(.light-theme) .seoSubTitle,
+:global(.light-theme) .sectionTitle {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .seoText,
+:global(.light-theme) .seoList li {
+  color: #334155 !important;
+}
+
+:global(.light-theme) .faqItem {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #D1D5DB !important;
+}
+
+:global(.light-theme) .faqItem:last-child {
+  border-bottom: none !important;
+}
+
+:global(.light-theme) .faqItem[open] {
+  background: transparent !important;
+}
+
+:global(.light-theme) .faqQuestion {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+:global(.light-theme) .faqChevron,
+:global(.light-theme) .faqQuestion svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+:global(.light-theme) .faqAnswer {
+  color: #334155 !important;
+}
+
+:global(.light-theme) .faqChevron {
+  color: #64748b !important;
+}

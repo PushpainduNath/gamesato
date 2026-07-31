@@ -1,0 +1,181 @@
+.dropdownContainer {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+}
+
+/* Figma 1:1 Trigger Button Specs: Hug (248.2px), Fixed (50px), Radius (8px), Border 1px 5% opacity, Padding 20px, Gap 7.1px */
+.dropdownBtn {
+  display: flex;
+  align-items: center;
+  gap: 7.1px;
+  height: 50px;
+  padding: 0 20px;
+  background: rgba(7, 22, 45, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.dropdownBtn:hover, .dropdownBtnOpen {
+  background: rgba(7, 22, 45, 0.95);
+  border-color: rgba(0, 134, 236, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 134, 236, 0.15);
+}
+
+.sortIcon {
+  color: rgba(255, 255, 255, 0.85);
+  flex-shrink: 0;
+}
+
+.sortLabel {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.sortValue {
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chevronIcon {
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 4px;
+}
+
+.chevronIconRotate {
+  transform: rotate(180deg);
+  color: #0086EC;
+}
+
+/* Custom Theme Dropdown Popup Menu */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: #0e172d;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease-in-out;
+}
+
+.menuItem:hover {
+  background: rgba(0, 134, 236, 0.15);
+  color: #ffffff;
+}
+
+.menuItemActive {
+  background: rgba(0, 134, 236, 0.15);
+  color: #0086EC;
+  font-weight: 700;
+}
+
+.checkIcon {
+  color: #0086EC;
+  font-size: 1rem;
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES (White Theme)
+   ========================================= */
+:global(.light-theme) .dropdownBtn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+:global(.light-theme) .dropdownBtn:hover,
+:global(.light-theme) .dropdownBtnOpen {
+  background: #f8fafc !important;
+  border-color: #0086ec !important;
+  box-shadow: 0 4px 14px rgba(0, 134, 236, 0.12) !important;
+}
+
+:global(.light-theme) .sortIcon {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .sortLabel {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .sortValue {
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .chevronIcon {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .dropdownMenu {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+:global(.light-theme) .menuItem {
+  color: #334155 !important;
+}
+
+:global(.light-theme) .menuItem:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+:global(.light-theme) .menuItemActive {
+  background: #f0f7ff !important;
+  color: #0086ec !important;
+}
+
+@media (max-width: 768px) {
+  .dropdownBtn {
+    height: 44px;
+    padding: 0 14px;
+    gap: 6px;
+  }
+  
+  .sortLabel, .sortValue {
+    font-size: 0.85rem;
+  }
+}

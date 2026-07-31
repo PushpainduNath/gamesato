@@ -1,0 +1,762 @@
+/* Gamebite Premium Global Design System */
+
+:root {
+  /* Dark Theme variables (default) */
+  --bg-color: #07080d;
+  --bg-card: rgba(15, 18, 36, 0.6);
+  --bg-nav: rgba(7, 8, 13, 0.8);
+  --bg-header-sidebar: #10182f;
+  --glass-bg: transparent;
+  --glass-border: transparent;
+  --glass-border-hover: transparent;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  
+  --color-primary: #5b75fa; /* Blue-violet from mockup active button */
+  --color-primary-glow: rgba(91, 117, 250, 0.3);
+  --color-secondary: #ec4899; /* Pink */
+  --color-secondary-glow: rgba(236, 72, 153, 0.4);
+  --color-accent: #06b6d4; /* Cyan */
+  --color-accent-glow: rgba(6, 182, 212, 0.3);
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 20px var(--color-primary-glow);
+  --page-bg: #000000;
+}
+
+/* ===================================================
+   GAMEBITE ADMIN MULTI-THEME DESIGN SYSTEM
+   =================================================== */
+
+/* 1. Cyber Dark (Default) */
+[data-admin-theme="default"], :root {
+  --adm-bg: #0c0d14;
+  --adm-sidebar-bg: #161b22;
+  --adm-header-bg: #0c0e12;
+  --adm-card-bg: #161b22;
+  --adm-table-header-bg: #161b22;
+  --adm-border: rgba(255, 255, 255, 0.08);
+  --adm-border-hover: rgba(255, 255, 255, 0.15);
+  --adm-text-primary: #ffffff;
+  --adm-text-secondary: #94a3b8;
+  --adm-text-muted: #64748b;
+  --adm-accent: #0086ec;
+  --adm-accent-hover: #0284c7;
+  --adm-accent-light: rgba(0, 134, 236, 0.15);
+  --adm-accent-gradient: linear-gradient(135deg, #0086ec 0%, #2c00fc 100%);
+  --adm-table-row-hover: rgba(30, 41, 59, 0.85);
+  --adm-input-bg: #0d1117;
+  --adm-modal-bg: #161b22;
+  --adm-amber-bg: rgba(234, 179, 8, 0.08);
+  --adm-amber-border: rgba(234, 179, 8, 0.25);
+  --adm-amber-text: #fbbf24;
+  --adm-red-bg: rgba(239, 68, 68, 0.08);
+  --adm-red-border: rgba(239, 68, 68, 0.25);
+  --adm-red-text: #ef4444;
+}
+
+/* 2. Cyber White */
+[data-admin-theme="cyberwhite"] {
+  --adm-bg: #f0f4f9;
+  --adm-sidebar-bg: #ffffff;
+  --adm-header-bg: #f8fafc;
+  --adm-card-bg: #ffffff;
+  --adm-table-header-bg: #f1f5f9;
+  --adm-border: rgba(15, 23, 42, 0.12);
+  --adm-border-hover: rgba(15, 23, 42, 0.25);
+  --adm-text-primary: #0f172a;
+  --adm-text-secondary: #475569;
+  --adm-text-muted: #64748b;
+  --adm-accent: #0086ec;
+  --adm-accent-hover: #0284c7;
+  --adm-accent-light: rgba(0, 134, 236, 0.12);
+  --adm-accent-gradient: linear-gradient(135deg, #0086ec 0%, #2563eb 100%);
+  --adm-table-row-hover: #f8fafc;
+  --adm-input-bg: #f8fafc;
+  --adm-modal-bg: #ffffff;
+  --adm-amber-bg: rgba(245, 158, 11, 0.12);
+  --adm-amber-border: rgba(245, 158, 11, 0.35);
+  --adm-amber-text: #d97706;
+  --adm-red-bg: rgba(239, 68, 68, 0.12);
+  --adm-red-border: rgba(239, 68, 68, 0.35);
+  --adm-red-text: #dc2626;
+}
+
+/* 3. Creamy White */
+[data-admin-theme="creamy"] {
+  --adm-bg: #f5f2eb;
+  --adm-sidebar-bg: #e8e2d5;
+  --adm-header-bg: #eee9de;
+  --adm-card-bg: #fbf9f4;
+  --adm-table-header-bg: #e5dfd2;
+  --adm-border: rgba(60, 45, 30, 0.14);
+  --adm-border-hover: rgba(60, 45, 30, 0.28);
+  --adm-text-primary: #2c221e;
+  --adm-text-secondary: #6e6056;
+  --adm-text-muted: #9e8e82;
+  --adm-accent: #d97706;
+  --adm-accent-hover: #b45309;
+  --adm-accent-light: rgba(217, 119, 6, 0.15);
+  --adm-accent-gradient: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  --adm-table-row-hover: #ede6d8;
+  --adm-input-bg: #ffffff;
+  --adm-modal-bg: #fbf9f4;
+  --adm-amber-bg: rgba(217, 119, 6, 0.12);
+  --adm-amber-border: rgba(217, 119, 6, 0.4);
+  --adm-amber-text: #b45309;
+  --adm-red-bg: rgba(220, 38, 38, 0.12);
+  --adm-red-border: rgba(220, 38, 38, 0.4);
+  --adm-red-text: #b91c1c;
+}
+
+/* 3. Forest Green */
+[data-admin-theme="forest"] {
+  --adm-bg: #06120c;
+  --adm-sidebar-bg: #0c2117;
+  --adm-header-bg: #091811;
+  --adm-card-bg: #0f281c;
+  --adm-table-header-bg: #0c2117;
+  --adm-border: rgba(52, 211, 153, 0.15);
+  --adm-border-hover: rgba(52, 211, 153, 0.3);
+  --adm-text-primary: #f0fdf4;
+  --adm-text-secondary: #a7f3d0;
+  --adm-text-muted: #6ee7b7;
+  --adm-accent: #10b981;
+  --adm-accent-hover: #059669;
+  --adm-accent-light: rgba(16, 185, 129, 0.18);
+  --adm-accent-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  --adm-table-row-hover: #143525;
+  --adm-input-bg: #08170f;
+  --adm-modal-bg: #0f281c;
+  --adm-amber-bg: rgba(245, 158, 11, 0.12);
+  --adm-amber-border: rgba(245, 158, 11, 0.35);
+  --adm-amber-text: #fcd34d;
+  --adm-red-bg: rgba(239, 68, 68, 0.12);
+  --adm-red-border: rgba(239, 68, 68, 0.35);
+  --adm-red-text: #fca5a5;
+}
+
+/* 4. Blue Ocean */
+[data-admin-theme="ocean"] {
+  --adm-bg: #071124;
+  --adm-sidebar-bg: #0e1d3d;
+  --adm-header-bg: #0a1733;
+  --adm-card-bg: #112247;
+  --adm-table-header-bg: #0e1d3d;
+  --adm-border: rgba(56, 189, 248, 0.18);
+  --adm-border-hover: rgba(56, 189, 248, 0.35);
+  --adm-text-primary: #f0f9ff;
+  --adm-text-secondary: #bae6fd;
+  --adm-text-muted: #7dd3fc;
+  --adm-accent: #0284c7;
+  --adm-accent-hover: #0369a1;
+  --adm-accent-light: rgba(2, 132, 199, 0.2);
+  --adm-accent-gradient: linear-gradient(135deg, #0284c7 0%, #1e40af 100%);
+  --adm-table-row-hover: #162b59;
+  --adm-input-bg: #091630;
+  --adm-modal-bg: #112247;
+  --adm-amber-bg: rgba(245, 158, 11, 0.12);
+  --adm-amber-border: rgba(245, 158, 11, 0.35);
+  --adm-amber-text: #fcd34d;
+  --adm-red-bg: rgba(239, 68, 68, 0.12);
+  --adm-red-border: rgba(239, 68, 68, 0.35);
+  --adm-red-text: #fca5a5;
+}
+
+.light-theme {
+  --bg-color: #ffffff;
+  --bg-card: #ffffff;
+  --bg-nav: #ffffff;
+  --bg-header-sidebar: #ffffff;
+  --glass-bg: rgba(0, 0, 0, 0.01);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border-hover: rgba(0, 0, 0, 0.15);
+  
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  
+  --color-primary: #0086EC;
+  --color-primary-glow: rgba(0, 134, 236, 0.1);
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.08);
+  --page-bg: #ffffff;
+}
+
+html.light-theme,
+html.light-theme body,
+html.light-theme main,
+html.light-theme [class*="bottomSectionWrapper"],
+html.light-theme [class*="appLayout"],
+html.light-theme [class*="mainLayout"],
+html.light-theme [class*="contentArea"],
+html.light-theme [class*="mainContent"],
+html.light-theme [class*="pageWrapper"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Admin Panel Theme Isolation (Prevents Portal Light Theme Bleed) */
+html[data-admin-active="true"],
+body[data-admin-active="true"],
+[data-admin-theme] {
+  background-color: var(--adm-bg, #0c0d14) !important;
+  color: var(--adm-text-primary, #ffffff) !important;
+}
+
+[data-admin-theme] h1:not([class*="featuredTitle"]),
+[data-admin-theme] h2:not([class*="featuredTitle"]),
+[data-admin-theme] h3:not([class*="featuredTitle"]),
+[data-admin-theme] h4:not([class*="featuredTitle"]),
+[data-admin-theme] h5:not([class*="featuredTitle"]),
+[data-admin-theme] h6:not([class*="featuredTitle"]) {
+  color: var(--adm-text-primary, #ffffff) !important;
+}
+
+[data-admin-theme] p,
+[data-admin-theme] span,
+[data-admin-theme] label {
+  color: var(--adm-text-primary, #ffffff);
+}
+
+/* Ensure white text & icons on all blue action buttons and active sidebar tabs in Admin Theme */
+[data-admin-theme] [class*="activeItem"],
+[data-admin-theme] [class*="activeItem"] *,
+[data-admin-theme] [class*="addGameBtn"],
+[data-admin-theme] [class*="addGameBtn"] *,
+[data-admin-theme] [class*="submitBtn"],
+[data-admin-theme] [class*="submitBtn"] *,
+[data-admin-theme] [class*="uploadBtn"],
+[data-admin-theme] [class*="uploadBtn"] *,
+[data-admin-theme] [class*="gradientSubmitBtn"],
+[data-admin-theme] [class*="gradientSubmitBtn"] *,
+[data-admin-theme] [class*="reconcileBtn"],
+[data-admin-theme] [class*="reconcileBtn"] *,
+[data-admin-theme] [class*="customApplyBtn"],
+[data-admin-theme] [class*="customApplyBtn"] *,
+[data-admin-theme] [class*="activePageBtn"],
+[data-admin-theme] [class*="activePageBtn"] *,
+[data-admin-theme] [class*="paginationBtnActive"],
+[data-admin-theme] [class*="paginationBtnActive"] * {
+  color: #ffffff !important;
+}
+
+[data-admin-theme] [class*="activeItem"] svg,
+[data-admin-theme] [class*="addGameBtn"] svg,
+[data-admin-theme] [class*="submitBtn"] svg,
+[data-admin-theme] [class*="uploadBtn"] svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Global Light Theme Typography & Static Pages Overrides (Excluding Admin Panel) */
+:root:not([data-admin-active="true"]) .light-theme h1:not([class*="featuredTitle"]),
+:root:not([data-admin-active="true"]) .light-theme h2:not([class*="featuredTitle"]),
+:root:not([data-admin-active="true"]) .light-theme h3:not([class*="featuredTitle"]),
+:root:not([data-admin-active="true"]) .light-theme h4:not([class*="featuredTitle"]),
+:root:not([data-admin-active="true"]) .light-theme h5:not([class*="featuredTitle"]),
+:root:not([data-admin-active="true"]) .light-theme h6:not([class*="featuredTitle"]) {
+  color: #0f172a !important;
+}
+
+:root:not([data-admin-active="true"]) .light-theme p,
+:root:not([data-admin-active="true"]) .light-theme span:not(.activeCategoryBtn):not(.heroTitleHighlight):not(.categoryTag):not([class*="featured"]):not([class*="likesCount"]):not([class*="featuredLikesCount"]):not([class*="label"]):not([class*="Sidebar"]):not([class*="activeItem"]):not([class*="playNow"]):not([class*="PlayNow"]):not([class*="statVal"]):not([class*="statItem"]):not([class*="actionCapsule"]):not([class*="actionValue"]),
+:root:not([data-admin-active="true"]) .light-theme li {
+  color: #334155 !important;
+}
+
+:root:not([data-admin-active="true"]) .light-theme strong,
+:root:not([data-admin-active="true"]) .light-theme b {
+  color: #0f172a !important;
+}
+
+/* Bullet Points & Numbered Lists Left Clearance & Indentation */
+.htmlContentPreview ul,
+.htmlContentPreview ol,
+[class*="seoSection"] ul,
+[class*="seoSection"] ol,
+[class*="seoText"] ul,
+[class*="seoText"] ol {
+  padding-left: 1.25rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.75rem !important;
+  list-style-position: outside !important;
+}
+
+.htmlContentPreview li,
+[class*="seoSection"] li,
+[class*="seoText"] li {
+  margin-bottom: 0.35rem !important;
+  padding-left: 0 !important;
+}
+
+/* SEO Cards & FAQ Boxes in Light Theme (Matching Figma Specs) */
+.light-theme [class*="seoSection"],
+.light-theme [class*="faqBox"],
+.light-theme [class*="faqSection"] {
+  background: #f8fafc !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+@media (min-width: 769px) {
+  .light-theme [class*="seoSection"],
+  .light-theme [class*="faqBox"],
+  .light-theme [class*="faqSection"] {
+    padding: 32px 25px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .light-theme [class*="seoSection"],
+  .light-theme [class*="faqBox"],
+  .light-theme [class*="faqSection"] {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+}
+
+.light-theme [class*="faqTitle"] {
+  color: #181C1E !important;
+  font-size: 22px !important;
+  line-height: 28px !important;
+  font-weight: 700 !important;
+}
+
+.light-theme [class*="faqItem"] {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #D1D5DB !important;
+}
+
+.light-theme [class*="faqItem"]:last-child {
+  border-bottom: none !important;
+}
+
+.light-theme [class*="faqItem"][open] {
+  background: transparent !important;
+}
+
+.light-theme [class*="faqQuestion"] {
+  color: #181C1E !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+  font-weight: 500 !important;
+}
+
+.light-theme [class*="faqQuestion"] svg,
+.light-theme [class*="chevronIcon"],
+.light-theme [class*="faqChevron"] {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+.light-theme [class*="faqAnswer"] {
+  color: #181C1E !important;
+  font-size: 14px !important;
+  line-height: 22.75px !important;
+  font-weight: 400 !important;
+}
+
+/* Light Theme Breadcrumbs Overrides */
+.light-theme [class*="breadcrumbSeparator"],
+.light-theme [class*="breadcrumbDivider"],
+.light-theme [class*="breadcrumbSeparator"] svg,
+.light-theme [class*="breadcrumbDivider"] svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+.light-theme [class*="breadcrumbActive"],
+.light-theme [class*="breadcrumbCurrent"] {
+  color: #181C1E !important;
+}
+
+.light-theme .glass:not([class*="gameCard"]):not([class*="game_card"]),
+.light-theme .glass-card:not([class*="gameCard"]):not([class*="game_card"]) {
+  background: #f8fafc !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+}
+
+html {
+  height: 100%;
+  background-color: #050716;
+}
+
+body {
+  background: linear-gradient(180deg, #000000 0%, #000D38 50%, #000000 100%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  background-size: 100% 100% !important;
+  color: var(--text-primary);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Simple page background design without glowing layers */
+
+/* Hide scrollbars globally */
+::-webkit-scrollbar {
+  display: none !important;
+}
+
+html, body {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+/* Utility Styles */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Glassmorphism Containers - Premium Subtle Card Styling */
+.glass {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.glass-interactive {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-interactive::after {
+  display: none !important;
+}
+
+/* Animation utilities */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Home Page Background Gradient (Only on .pageWrapper) */
+.pageWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================
+   Light Theme Custom Overrides
+   ========================================== */
+.light-theme,
+.light-theme body,
+.light-theme html {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Light Theme overrides for Header and Sidebar */
+.light-theme [class*="Header_header"] {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-theme [class*="Header_logoText"] {
+  color: #111827 !important;
+}
+
+.light-theme [class*="Header_searchContainer"] {
+  background: #f3f4f6 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-theme [class*="Header_searchIcon"] {
+  color: #9ca3af !important;
+}
+
+.light-theme [class*="Header_searchInput"] {
+  color: #1f2937 !important;
+}
+
+.light-theme [class*="Header_searchInput"]::placeholder {
+  color: #9ca3af !important;
+}
+
+.light-theme [class*="Header_langSelector"] {
+  background: #f3f4f6 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #1f2937 !important;
+}
+
+.light-theme [class*="Header_langSelector"]:hover {
+  background: #e5e7eb !important;
+}
+
+.light-theme [class*="Header_langDropdown"] {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-theme [class*="Header_langDropdownItem"] {
+  color: #1f2937 !important;
+}
+
+.light-theme [class*="Header_langDropdownItem"]:hover {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.light-theme [class*="Sidebar_sidebar"] {
+  background: #ffffff !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-theme [class*="Sidebar_item"]:not([class*="activeItem"]):not([class*="Sidebar_activeItem"]) {
+  color: #334155 !important;
+}
+
+.light-theme [class*="Sidebar_item"]:not([class*="activeItem"]):not([class*="Sidebar_activeItem"]):hover {
+  background: #f1f5f9 !important;
+  color: #0086ec !important;
+}
+
+[class*="Sidebar_activeItem"],
+[class*="Sidebar_activeItem"]:hover,
+.light-theme [class*="Sidebar_activeItem"],
+.light-theme [class*="Sidebar_activeItem"]:hover {
+  background: linear-gradient(90deg, #0086EC 0%, #2C00FC 100%) !important;
+  border: none !important;
+}
+
+[class*="Sidebar_activeItem"] span,
+[class*="Sidebar_activeItem"] [class*="label"],
+[class*="Sidebar_activeItem"] [class*="icon"],
+.light-theme [class*="Sidebar_activeItem"] span,
+.light-theme [class*="Sidebar_activeItem"] [class*="label"],
+.light-theme [class*="Sidebar_activeItem"] [class*="icon"],
+.light-theme [class*="Sidebar_activeItem"]:hover span,
+.light-theme [class*="Sidebar_activeItem"]:hover [class*="label"],
+.light-theme [class*="Sidebar_activeItem"]:hover [class*="icon"] {
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+.light-theme [class*="Sidebar_separator"],
+.light-theme [class*="Sidebar_mobileOnlyDivider"] {
+  border-top: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Light Theme overrides for Homepage titles and links */
+.light-theme [class*="page_sectionTitle"],
+.light-theme [class*="page_categorySectionTitle"] {
+  color: #111827 !important;
+}
+
+.light-theme [class*="page_viewAllBtn"],
+.light-theme [class*="page_viewAllLink"],
+.light-theme [class*="viewAllBtn"],
+.light-theme [class*="viewAllLink"] {
+  color: #2E2E2E !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 16px !important;
+  letter-spacing: 0.4px !important;
+  text-transform: uppercase !important;
+}
+
+.light-theme [class*="page_gameTitle"] {
+  color: #1f2937 !important;
+}
+
+.light-theme [class*="page_gameCategory"] {
+  color: #4b5563 !important;
+}
+
+.light-theme [class*="page_playCount"]:not([class*="featuredPlayCount"]) {
+  color: #4b5563 !important;
+}
+
+.light-theme [class*="featuredTitle"] {
+  color: #ffffff !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95) !important;
+}
+
+.light-theme [class*="featuredCategory"] {
+  color: #00e5ff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95) !important;
+}
+
+.light-theme [class*="featuredPlayCount"],
+.light-theme [class*="featuredPlayCount"] * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+.light-theme [class*="likesCount"],
+.light-theme [class*="featuredLikesCount"],
+.light-theme [class*="featuredLikesCount"] * {
+  color: #ff4b91 !important;
+  fill: #ff4b91 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+.light-theme [class*="page_seoTitle"],
+.light-theme [class*="page_seoSubTitle"] {
+  color: #111827 !important;
+}
+
+.light-theme [class*="page_seoText"] {
+  color: #4b5563 !important;
+}
+
+.light-theme [class*="page_faqTitle"],
+.light-theme [class*="page_faqQuestion"] {
+  color: #111827 !important;
+}
+
+.light-theme [class*="page_faqAnswer"] {
+  color: #4b5563 !important;
+}
+
+.light-theme [class*="page_faqItem"] {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-theme [class*="page_categoryBtn"] {
+  background: #f3f4f6 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #1f2937 !important;
+}
+
+.light-theme [class*="page_categoryBtn"]:hover {
+  background: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+.light-theme [class*="page_activeCategoryBtn"] {
+  background: linear-gradient(90deg, #0086EC 0%, #2C00FC 100%) !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.light-theme [class*="page_carouselDot"] {
+  background: rgba(0, 0, 0, 0.15) !important;
+}
+
+.light-theme [class*="page_carouselDotActive"] {
+  background: #0086EC !important;
+}
+
+/* Light Theme overrides for generic glass components */
+.light-theme .glass:not([class*="gameCard"]):not([class*="game_card"]):not([class*="seoSection"]):not([class*="faqSection"]):not([class*="faqBox"]) {
+  background: #F8FAFC !important;
+  border: 1px solid #D1D5DB !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.light-theme .glass:not([class*="gameCard"]):not([class*="game_card"]):hover {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Light Theme Game Card Rules - Transparent outer wrapper, no square background/border */
+.light-theme [class*="gameCard"],
+.light-theme [class*="game_card"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+@media (min-width: 769px) {
+  .pageWrapper {
+    background: linear-gradient(
+      to bottom,
+      #000000 0%,
+      #000000 50%,
+      #010d33 65%,
+      #010d33 90%,
+      #000000 100%
+    ) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageWrapper {
+    background: linear-gradient(
+      to bottom,
+      #000000 0%,
+      #000000 42%,
+      #010d33 58%,
+      #010d33 88%,
+      #000000 100%
+    ) !important;
+  }
+}

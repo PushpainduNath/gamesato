@@ -1,0 +1,178 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.headerLabel {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.requiredAsterisk {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.hiddenInput {
+  display: none !important;
+}
+
+.dropzone {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 72px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  overflow: hidden;
+}
+
+.dropzone:hover {
+  border-color: rgba(0, 134, 236, 0.5);
+  background: rgba(0, 134, 236, 0.06);
+}
+
+.dragging {
+  border-color: #0086ec !important;
+  background: rgba(0, 134, 236, 0.18) !important;
+  box-shadow: 0 0 20px rgba(0, 134, 236, 0.3);
+  transform: scale(1.01);
+}
+
+.hasFile {
+  border-style: solid;
+  border-color: rgba(0, 134, 236, 0.4);
+  background: rgba(16, 24, 48, 0.7);
+}
+
+.placeholderContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 134, 236, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0086ec;
+  flex-shrink: 0;
+}
+
+.placeholderText {
+  display: flex;
+  flex-direction: column;
+}
+
+.mainText {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.mainText strong {
+  color: #0086ec;
+  font-weight: 600;
+}
+
+.subText {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.fileSelectedInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.imagePreview {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.fileIcon {
+  color: #0086ec;
+  flex-shrink: 0;
+}
+
+.fileDetails {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.fileName {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+}
+
+.fileSize {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.removeBtn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.removeBtn:hover {
+  background: rgba(239, 68, 68, 0.4);
+  color: #ffffff;
+}
+
+.changeBadge {
+  font-size: 0.72rem;
+  color: #0086ec;
+  background: rgba(0, 134, 236, 0.12);
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}

@@ -1,0 +1,407 @@
+/* Mobile details wrapper matches Figma exact linear gradient */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* Breadcrumbs styling matching mockup */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 12px 16px;
+  font-family: var(--font-sans);
+}
+
+.breadcrumbLink {
+  color: #0086ec;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumbLink:hover {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1px;
+}
+
+.breadcrumbActive {
+  color: #0086ec;
+  font-weight: 600;
+}
+
+/* Edge-to-edge banner image styling */
+.bannerContainer {
+  width: 100%;
+  aspect-ratio: 16 / 15;
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+  cursor: pointer;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bannerOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 90%, rgba(0, 0, 0, 1) 100%);
+  pointer-events: none;
+}
+
+.playButtonWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.playButtonImage {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: block;
+}
+
+.playNowText {
+  font-size: 24px;
+  font-weight: 500;
+  color: #ffffff !important;
+  font-family: var(--font-sans);
+  text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.69);
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+:global(.light-theme) .playNowText {
+  color: #ffffff !important;
+}
+
+/* active tap feedback for mobile */
+.bannerContainer:active .playButtonImage {
+  transform: scale(0.92);
+}
+
+/* Content block with horizontal paddings */
+.contentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 14px 16px 0 16px;
+  box-sizing: border-box;
+}
+
+/* Title row with heart button */
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.gameTitle {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.heartBtn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.heartBtn:active {
+  transform: scale(0.85);
+}
+
+.heartActive svg {
+  filter: drop-shadow(0 0 4px rgba(255, 75, 130, 0.4));
+}
+
+/* Category row styling */
+/* Category row styling matching mockup */
+.categoryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+}
+
+.categoryIconImg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.categoryName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  font-family: var(--font-sans);
+  color: #ffffff;
+}
+
+/* Description styling */
+.description {
+  font-size: 0.88rem;
+  color: #ffffff;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 400;
+  font-family: var(--font-sans);
+}
+
+/* Social actions row (Like, Dislike, Share) */
+.actionsRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.actionCapsule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 117px;
+  height: 44px;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  background: #07162D;
+  border: 1px solid #2A2F45;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: var(--font-sans);
+}
+
+.actionCapsule:active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.96);
+}
+
+.actionValue {
+  color: #ffffff;
+}
+
+.activeLike {
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.activeDislike {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* Toast styling */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13, 18, 34, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 100000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  font-family: var(--font-sans);
+}
+
+/* How to Play Section */
+.howToPlayBox {
+  background: rgba(7, 22, 45, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  width: 100%;
+  backdrop-filter: blur(12px);
+}
+
+.howToPlayTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+  font-family: var(--font-sans);
+}
+
+.howToPlayList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 18px;
+  list-style-type: disc;
+}
+
+.howToPlayItem {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-sans);
+}
+
+.howToPlayItem::marker {
+  color: #0086ec;
+  font-size: 1.1em;
+}
+
+:global(.light-theme) .breadcrumbLink {
+  color: #0086ec !important;
+}
+
+:global(.light-theme) .breadcrumbSeparator,
+:global(.light-theme) .breadcrumbSeparator svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+:global(.light-theme) .breadcrumbActive {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .gameTitle {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .categoryName {
+  color: #475569 !important;
+}
+
+:global(.light-theme) .description {
+  color: #334155 !important;
+}
+
+:global(.light-theme) .actionCapsule {
+  background: #F8F9FC !important;
+  border: 1px solid #D1D5DB !important;
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .actionCapsule svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+:global(.light-theme) .actionValue {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .howToPlayBox {
+  background: #F8FAFC !important;
+  border: 1px solid #D1D5DB !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+:global(.light-theme) .howToPlayTitle {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .howToPlayItem {
+  color: #334155 !important;
+}
+
+:global(.light-theme) .howToPlayItem::marker {
+  color: #0086EC !important;
+}
+
+/* More Games Section in Mobile View */
+.moreGamesSection {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.moreGamesTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+:global(.light-theme) .moreGamesTitle {
+  color: #181C1E !important;
+}
+
+.moreGamesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.moreGameCard {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  display: block;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.moreGameCard:active {
+  transform: scale(0.95);
+}
+
+.moreGameThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+}

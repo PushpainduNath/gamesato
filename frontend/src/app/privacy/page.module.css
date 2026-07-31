@@ -1,0 +1,156 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  color: #ffffff;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  letter-spacing: 0;
+  font-family: var(--font-sans);
+}
+
+.updatedAt {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 1.5rem 0;
+  line-height: 1;
+  letter-spacing: 0;
+  font-family: var(--font-sans);
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.contentBody {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #ffffff;
+  margin: 0;
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contentBody p {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #ffffff;
+  margin: 0;
+}
+
+.contentBody h1,
+.contentBody h2,
+.contentBody h3,
+.contentBody h4 {
+  color: #ffffff;
+  font-weight: 700;
+  margin: 0.5rem 0 0.25rem 0;
+  font-family: var(--font-sans);
+}
+
+.contentBody h2 {
+  font-size: 20px;
+}
+
+.contentBody h3 {
+  font-size: 18px;
+}
+
+.contentBody a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.sectionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Mobile Responsive Adjustments (for mobile screens <= 768px) */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.25rem 1rem;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 0.35rem;
+  }
+
+  .updatedAt {
+    font-size: 13px;
+    margin-bottom: 1rem;
+  }
+
+  .divider {
+    margin-bottom: 1.25rem;
+  }
+
+  .contentBody {
+    font-size: 15px;
+    gap: 1.15rem;
+  }
+
+  .contentBody p {
+    font-size: 15px;
+  }
+
+  .contentBody h2 {
+    font-size: 18px;
+  }
+
+  .contentBody h3 {
+    font-size: 16px;
+  }
+}
+
+/* Light Theme Overrides (Figma Exact Spec Match: #1B1C1E for Desktop & Mobile) */
+:global(.light-theme) .container {
+  color: #1b1c1e !important;
+}
+
+:global(.light-theme) .title {
+  color: #1b1c1e !important;
+}
+
+:global(.light-theme) .updatedAt {
+  color: rgba(27, 28, 30, 0.8) !important;
+}
+
+:global(.light-theme) .divider {
+  border-top-color: rgba(27, 28, 30, 0.1) !important;
+}
+
+:global(.light-theme) .contentBody,
+:global(.light-theme) .contentBody p {
+  color: #1b1c1e !important;
+}
+
+:global(.light-theme) .contentBody h1,
+:global(.light-theme) .contentBody h2,
+:global(.light-theme) .contentBody h3,
+:global(.light-theme) .contentBody h4 {
+  color: #1b1c1e !important;
+}
+
+:global(.light-theme) .contentBody a {
+  color: #1b1c1e !important;
+}

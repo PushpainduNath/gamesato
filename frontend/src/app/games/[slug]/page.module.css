@@ -1,0 +1,627 @@
+.container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 2.5rem 0 0 0;
+  box-sizing: border-box;
+}
+
+/* ----------------- DESKTOP LAYOUT ----------------- */
+.desktopLayout {
+  display: block;
+  max-width: 1400px;
+  width: 97% !important;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  font-family: var(--font-sans);
+}
+
+.breadcrumbLink {
+  color: #0086ec;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1px;
+}
+
+.breadcrumbActive {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2.5rem;
+  align-items: stretch;
+  position: relative;
+}
+
+.leftColumn {
+  width: 100%;
+}
+
+.rightColumn {
+  width: 100%;
+  position: relative;
+}
+
+.moreGamesBox {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.moreGamesTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 1.25rem 0;
+  font-family: var(--font-sans);
+  flex-shrink: 0;
+}
+
+.moreGamesScrollWrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+
+/* Custom premium scrollbar for moreGamesScrollWrapper */
+.moreGamesScrollWrapper::-webkit-scrollbar {
+  width: 5px;
+}
+
+.moreGamesScrollWrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.moreGamesScrollWrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+
+.moreGamesScrollWrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.moreGamesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-content: start;
+}
+
+.moreGamesCard {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.moreGamesThumbWrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  overflow: hidden;
+  background: #0f172a;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.2s ease;
+}
+
+.moreGamesCard:hover .moreGamesThumbWrapper {
+  transform: scale(1.06);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.moreGamesThumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.moreGamesCardContent {
+  padding: 6px 2px 0 2px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.moreGamesCardTitle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  width: 100%;
+  display: block;
+  font-family: var(--font-sans);
+  transition: color 0.2s ease;
+}
+
+.moreGamesCard:hover .moreGamesCardTitle {
+  color: #ffffff;
+}
+
+.detailsBox {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  margin-top: 1.25rem;
+}
+
+.detailsTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  font-family: var(--font-sans);
+}
+
+.categoryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.categoryIcon {
+  color: #3b82f6;
+}
+
+.categoryLabel {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: var(--font-sans);
+}
+
+.detailsContent {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  font-family: var(--font-sans);
+}
+
+/* ----------------- MOBILE LAYOUT ----------------- */
+.mobileLayout {
+  display: none;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.backLink:hover {
+  color: var(--text-primary);
+}
+
+.mainContentMobile {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.imageWrapperSquare {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  padding-top: 100%; /* 1:1 Square Ratio */
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gameMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.categoryTag {
+  align-self: flex-start;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  color: var(--color-accent);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  margin-top: 1.5rem;
+}
+
+.panelTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.descriptionBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.descriptionTitle {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.descriptionContent {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ----------------- MEDIA QUERIES ----------------- */
+@media (max-width: 992px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0 1.5rem 0;
+  }
+
+  .desktopLayout {
+    display: none;
+  }
+
+  .mobileLayout {
+    display: block;
+  }
+
+  .mobileBottomHomeSections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.25rem 16px 1.5rem 16px;
+  }
+}
+
+.bottomHomeSections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.seoSection {
+  padding: 20px !important;
+  border-radius: 8px !important;
+  background: rgba(7, 22, 45, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.seoTitle {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  line-height: 28px !important;
+  color: #FFFFFF !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 4px !important;
+  font-family: var(--font-sans);
+}
+
+.seoSubTitle {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  margin-top: 8px !important;
+  margin-bottom: 2px !important;
+  font-family: var(--font-sans);
+}
+
+.seoText {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 22.75px !important;
+  color: #E9E9E9 !important;
+  margin-bottom: 0 !important;
+  font-family: var(--font-sans);
+}
+
+.seoList {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 4px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.seoList li {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 22.75px !important;
+  color: #E9E9E9 !important;
+  font-family: var(--font-sans);
+}
+
+.faqSection {
+  display: flex;
+  flex-direction: column;
+  background: rgba(7, 22, 45, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.faqTitle {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  line-height: 28px !important;
+  color: #FFFFFF !important;
+  padding: 20px 20px 10px 20px !important;
+  margin: 0 !important;
+  font-family: var(--font-sans);
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+}
+
+.faqItem {
+  border: none !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s ease;
+}
+
+.faqItem:last-child {
+  border-bottom: none !important;
+}
+
+.faqItem[open] {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.faqQuestion {
+  padding: 14px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  cursor: pointer;
+  outline: none;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  font-family: var(--font-sans);
+}
+
+.faqQuestion::-webkit-details-marker {
+  display: none !important;
+}
+
+.chevronIcon {
+  color: rgba(255, 255, 255, 0.6) !important;
+  transition: transform 0.25s ease !important;
+}
+
+.faqItem[open] .chevronIcon {
+  transform: rotate(180deg) !important;
+  color: #FFFFFF !important;
+}
+
+.faqAnswer {
+  padding: 0 20px 14px 20px !important;
+  color: #E9E9E9 !important;
+  font-size: 14px !important;
+  line-height: 22px !important;
+  font-family: var(--font-sans);
+}
+
+/* How to Play Section */
+.howToPlayBox {
+  background: rgba(7, 22, 45, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+  backdrop-filter: blur(12px);
+}
+
+.howToPlayTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.howToPlayList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.howToPlayItem {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.howToPlayItem::marker {
+  color: #0086ec;
+  font-size: 1.1em;
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES (White Theme)
+   ========================================= */
+:global(.light-theme) .container {
+  background: #ffffff !important;
+}
+
+:global(.light-theme) .moreGamesBox,
+:global(.light-theme) .detailsBox,
+:global(.light-theme) .howToPlayBox,
+:global(.light-theme) .faqBox {
+  background: #F8FAFC !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 16px !important;
+  padding: 32px 25px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+:global(.light-theme) .moreGamesTitle,
+:global(.light-theme) .detailsTitle,
+:global(.light-theme) .howToPlayTitle,
+:global(.light-theme) .faqTitle {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .moreGamesCardTitle,
+:global(.light-theme) .detailsContent,
+:global(.light-theme) .howToPlayItem,
+:global(.light-theme) .faqAnswer {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .breadcrumbLink {
+  color: #0086ec !important;
+}
+
+:global(.light-theme) .breadcrumbSeparator,
+:global(.light-theme) .breadcrumbSeparator svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
+
+:global(.light-theme) .breadcrumbActive {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .categoryLabel {
+  color: #64748b !important;
+}
+
+:global(.light-theme) .faqItem {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #D1D5DB !important;
+}
+
+:global(.light-theme) .faqItem:last-child {
+  border-bottom: none !important;
+}
+
+:global(.light-theme) .faqItem[open] {
+  background: transparent !important;
+}
+
+:global(.light-theme) .faqQuestion {
+  color: #181C1E !important;
+  font-weight: 500 !important;
+}
+
+:global(.light-theme) .faqQuestion svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
+}
