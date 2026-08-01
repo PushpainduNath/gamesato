@@ -110,7 +110,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         const found = data.find(c => c.slug.toLowerCase() === slug);
         if (found) {
           setCategoryData(found);
-          document.title = found.meta_title || `${found.name} Games - GameBite`;
+          document.title = found.meta_title || `${found.name} Games - Gamesato`;
 
           if (found.meta_description) {
             let desc = document.querySelector('meta[name="description"]');
@@ -132,13 +132,13 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
           }
         } else {
           const catTitle = categoryInfo.name;
-          document.title = `${catTitle} - GameBite`;
+          document.title = `${catTitle} - Gamesato`;
         }
       })
       .catch((err) => {
         console.error('Failed to load category details:', err);
         const catTitle = categoryInfo.name;
-        document.title = `${catTitle} - GameBite`;
+        document.title = `${catTitle} - Gamesato`;
       });
   }, [slug]);
 

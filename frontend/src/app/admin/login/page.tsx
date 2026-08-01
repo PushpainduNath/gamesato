@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
           <Shield size={32} />
         </div>
         <h1 className={styles.title}>Admin Panel</h1>
-        <p className={styles.subtitle}>GameBite — Restricted Access</p>
+        <p className={styles.subtitle}>Gamesato — Restricted Access</p>
 
         {error && <div className={styles.error}>{error}</div>}
         
@@ -71,7 +71,7 @@ export default function AdminLoginPage() {
             <input
               type="email"
               required
-              placeholder="superadmin@gamebite.com"
+              placeholder="superadmin@gamesato.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={styles.input}

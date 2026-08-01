@@ -274,7 +274,7 @@ export default function GamePlayerCard({
               </button>
 
               <div className={styles.statItem}>
-                <ThumbsUp size={16} fill="#3b82f6" stroke="#3b82f6" />
+                <ThumbsUp size={16} fill="#14b8a6" stroke="#14b8a6" />
                 <span className={styles.statVal} style={{ color: '#ffffff' }}>{likes}</span>
               </div>
             </div>

@@ -124,60 +124,60 @@ async function run() {
       {
         title: 'About Us',
         slug: 'about',
-        content: '<h3>About Gamebite</h3><p>Welcome to Gamebite, your ultimate destination for high-quality, instant-play HTML5 games. We bring together a diverse catalog of fun and engaging games that you can play directly in your browser on mobile, tablet, or desktop.</p>',
+        content: '<h3>About Gamesato</h3><p>Welcome to Gamesato, your ultimate destination for high-quality, instant-play HTML5 games. We bring together a diverse catalog of fun and engaging games that you can play directly in your browser on mobile, tablet, or desktop.</p>',
         status: 'published',
-        meta_title: 'About Gamebite - Play Free HTML5 Games Online',
-        meta_description: 'Discover and play free HTML5 games instantly on Gamebite. No downloads or installations required.',
-        meta_tags: 'about, gamebite, play free games, html5 games'
+        meta_title: 'About Gamesato - Play Free HTML5 Games Online',
+        meta_description: 'Discover and play free HTML5 games instantly on Gamesato. No downloads or installations required.',
+        meta_tags: 'about, gamesato, play free games, html5 games'
       },
       {
         title: 'Privacy Policy',
         slug: 'privacy',
-        content: '<h3>Privacy Policy</h3><p>At Gamebite, we take your privacy seriously. This privacy policy describes what information we collect, how we use it, and your rights to control your personal data.</p>',
+        content: '<h3>Privacy Policy</h3><p>At Gamesato, we take your privacy seriously. This privacy policy describes what information we collect, how we use it, and your rights to control your personal data.</p>',
         status: 'published',
-        meta_title: 'Privacy Policy - Gamebite',
-        meta_description: 'Read the privacy policy of Gamebite to learn how we collect, use, and protect your personal data.',
-        meta_tags: 'privacy policy, gamebite, privacy, data protection'
+        meta_title: 'Privacy Policy - Gamesato',
+        meta_description: 'Read the privacy policy of Gamesato to learn how we collect, use, and protect your personal data.',
+        meta_tags: 'privacy policy, gamesato, privacy, data protection'
       },
       {
         title: 'Terms of Service',
         slug: 'terms',
-        content: '<h3>Terms of Service</h3><p>By accessing and playing games on Gamebite, you agree to comply with our Terms of Service. Please read these terms carefully before using our platform.</p>',
+        content: '<h3>Terms of Service</h3><p>By accessing and playing games on Gamesato, you agree to comply with our Terms of Service. Please read these terms carefully before using our platform.</p>',
         status: 'published',
-        meta_title: 'Terms of Service - Gamebite',
-        meta_description: 'Review the Terms of Service for using the Gamebite platform and playing free online games.',
-        meta_tags: 'terms of service, terms, gamebite'
+        meta_title: 'Terms of Service - Gamesato',
+        meta_description: 'Review the Terms of Service for using the Gamesato platform and playing free online games.',
+        meta_tags: 'terms of service, terms, gamesato'
       },
       {
         title: 'Contact Us',
         slug: 'contact',
-        content: '<h3>Contact Gamebite</h3><p>Have questions, feedback, or business inquiries? Get in touch with the Gamebite team. We would love to hear from you!</p>',
+        content: '<h3>Contact Gamesato</h3><p>Have questions, feedback, or business inquiries? Get in touch with the Gamesato team. We would love to hear from you!</p>',
         status: 'published',
-        meta_title: 'Contact Us - Gamebite Support & Inquiries',
-        meta_description: 'Get in touch with the Gamebite support, feedback, and business teams. We are here to help.',
-        meta_tags: 'contact, gamebite support, business inquiry'
+        meta_title: 'Contact Us - Gamesato Support & Inquiries',
+        meta_description: 'Get in touch with the Gamesato support, feedback, and business teams. We are here to help.',
+        meta_tags: 'contact, gamesato support, business inquiry'
       },
       {
         title: 'Frequently Asked Questions',
         slug: 'faq',
         content: JSON.stringify([
-          { q: 'Is Gamebite free to use?', a: 'Yes! All games on Gamebite are completely free to play directly in your web browser.' },
+          { q: 'Is Gamesato free to use?', a: 'Yes! All games on Gamesato are completely free to play directly in your web browser.' },
           { q: 'Do I need to download games?', a: 'No, there are no downloads or installations required. Just click and play!' },
-          { q: 'Can I play games on my phone?', a: 'Absolutely. Gamebite is fully optimized for mobile devices, tablets, and desktop computers.' }
+          { q: 'Can I play games on my phone?', a: 'Absolutely. Gamesato is fully optimized for mobile devices, tablets, and desktop computers.' }
         ]),
         status: 'published',
-        meta_title: 'Frequently Asked Questions - Gamebite Help Center',
-        meta_description: 'Find quick answers to common questions about playing games, account creation, and platform compatibility on Gamebite.',
-        meta_tags: 'faq, help center, gamebite help, common questions'
+        meta_title: 'Frequently Asked Questions - Gamesato Help Center',
+        meta_description: 'Find quick answers to common questions about playing games, account creation, and platform compatibility on Gamesato.',
+        meta_tags: 'faq, help center, gamesato help, common questions'
       },
       {
-        title: 'Gamebite Intro Content',
+        title: 'Gamesato Intro Content',
         slug: 'home',
         content: '<h2 class="title text-gradient">Unlimited Free Gaming</h2><p>Experience the best instant-play browser games curated just for you. No installations, no ads disruption, just pure fun.</p>',
         status: 'published',
-        meta_title: 'Gamebite - Play Free Online HTML5 Games',
-        meta_description: 'Play the best free online HTML5 games on Gamebite. Explore racing, action, sports, arcade, adventure, logic, and more!',
-        meta_tags: 'free online games, play html5 games, browser games, gamebite'
+        meta_title: 'Gamesato - Play Free Online HTML5 Games',
+        meta_description: 'Play the best free online HTML5 games on Gamesato. Explore racing, action, sports, arcade, adventure, logic, and more!',
+        meta_tags: 'free online games, play html5 games, browser games, gamesato'
       }
     ];
 
@@ -204,8 +204,8 @@ async function run() {
       { key: 'social_facebook', value: 'https://facebook.com' },
       { key: 'social_youtube', value: 'https://youtube.com' },
       { key: 'social_instagram', value: 'https://instagram.com' },
-      { key: 'support_email', value: 'support@gamebite.com' },
-      { key: 'site_name', value: 'Gamebite Portal' },
+      { key: 'support_email', value: 'support@gamesato.com' },
+      { key: 'site_name', value: 'Gamesato Portal' },
       { key: 'analytics_id', value: 'UA-182948123-1' },
       { key: 'maintenance_mode', value: 'false' }
     ];

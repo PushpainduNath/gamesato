@@ -1,10 +1,10 @@
 .backdrop {
   width: 100%;
-  min-height: auto;
+  min-height: 100vh !important;
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #000000 0%, #000D38 50%, #000000 100%);
+  background: transparent !important;
   box-sizing: border-box;
 }
 
@@ -96,8 +96,8 @@
   height: 100%;
   border-radius: 50%;
   padding: 3px;
-  background: linear-gradient(135deg, #0086EC 0%, #2C00FC 100%);
-  box-shadow: 0 0 20px rgba(0, 134, 236, 0.4);
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.4);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -111,6 +111,22 @@
   box-sizing: border-box;
 }
 
+.defaultAvatarCircle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  font-weight: 800;
+  color: #ffffff;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .editBtn {
   position: absolute;
   bottom: 0;
@@ -118,19 +134,19 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1e293b;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: #061e1c;
+  border: 1.5px solid rgba(20, 184, 166, 0.35);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .editBtn:hover {
-  background-color: #334155;
+  background-color: #14b8a6;
   transform: scale(1.08);
 }
 
@@ -154,7 +170,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1e293b;
+  background: #061e1c;
   border: 1.5px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
@@ -171,8 +187,9 @@
 
 /* Favorites Card */
 .favoritesCard {
-  background: rgba(15, 18, 36, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(4, 23, 22, 0.75) 0%, rgba(7, 32, 38, 0.6) 100%) !important;
+  border: 1px solid rgba(20, 184, 166, 0.28) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(45, 212, 191, 0.15) !important;
   border-radius: 16px;
   padding: 1.25rem;
   margin-bottom: 2rem;
@@ -200,8 +217,8 @@
 }
 
 .navBtn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(20, 184, 166, 0.15);
+  border: 1px solid rgba(20, 184, 166, 0.3);
   border-radius: 50%;
   width: 28px;
   height: 28px;
@@ -215,8 +232,8 @@
 }
 
 .navBtn:hover {
-  background: rgba(0, 134, 236, 0.3);
-  border-color: #0086ec;
+  background: rgba(20, 184, 166, 0.35);
+  border-color: #2dd4bf;
   color: #ffffff;
 }
 
@@ -239,12 +256,12 @@
   height: 157px;
   flex-shrink: 0;
   scroll-snap-align: start;
-  background: #1B243C;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: #051817;
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -252,6 +269,7 @@
 
 .favoriteCard:hover {
   transform: translateY(-2px);
+  border-color: #2dd4bf;
 }
 
 .favoriteThumbnailWrapper {
@@ -274,7 +292,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 2px;
-  background: #1B243C;
+  background: #051817;
   box-sizing: border-box;
 }
 
@@ -320,7 +338,7 @@
   width: 24px;
   height: 6px;
   border-radius: 4px;
-  background: #0086EC !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   opacity: 1;
 }
 
@@ -407,7 +425,7 @@
   height: 40px;
   border: 3px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  border-top-color: #0086EC;
+  border-top-color: #14b8a6;
   animation: spin 1s ease-in-out infinite;
 }
 
@@ -490,8 +508,8 @@
 
   .avatarGlowBorder {
     padding: 2.5px;
-    background: linear-gradient(135deg, #0086EC 0%, #a855f7 100%);
-    box-shadow: 0 0 15px rgba(0, 134, 236, 0.35);
+    background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
+    box-shadow: 0 0 15px rgba(20, 184, 166, 0.35);
   }
 
   .avatarImg {
@@ -556,7 +574,7 @@
   }
 
   .dotActive {
-    background: #0086EC !important;
+    background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   }
 
   /* Options list */
@@ -654,8 +672,8 @@
 }
 
 :global(.light-theme) .navBtn:hover {
-  background: #0086ec !important;
-  border-color: #0086ec !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
+  border-color: #14b8a6 !important;
   color: #ffffff !important;
 }
 
@@ -743,7 +761,7 @@
 }
 
 :global(.light-theme) .drawerFooter a:hover {
-  color: #0086ec !important;
+  color: #14b8a6 !important;
 }
 
 :global(.light-theme) .optionIcon {
@@ -772,7 +790,7 @@
 
 :global(.light-theme) .inputGroup input:focus,
 :global(.light-theme) .inputField:focus {
-  border-color: #0086ec !important;
+  border-color: #14b8a6 !important;
   background: #ffffff !important;
 }
 
@@ -795,6 +813,6 @@
 
 :global(.light-theme) .editBtn:hover {
   background: #f8fafc !important;
-  border-color: #0086ec !important;
-  color: #0086ec !important;
+  border-color: #14b8a6 !important;
+  color: #14b8a6 !important;
 }

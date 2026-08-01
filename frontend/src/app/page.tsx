@@ -253,9 +253,12 @@ export default async function HomePage(props: {
           </div>
         )}
       </section> {/* Close gamesSection (explore) */}
+
+      {/* Section Divider Line after last game section */}
+      <div className={styles.lastGameSectionDivider} />
     </div> {/* Close container */}
 
-      {/* Bottom Content Wrapper (with blue background) */}
+    {/* Bottom Content Wrapper (with blue background) */}
       <div className={styles.bottomSectionWrapper}>
         <div className={styles.bottomSectionContainer}>
           {/* SEO Section */}
@@ -270,7 +273,7 @@ export default async function HomePage(props: {
                 <Translate textKey="seoTitle" fallback="Game Bite: Your Instant Gaming Hub" />
               </h2>
               <p className={styles.seoText}>
-                <Translate textKey="seoText1" fallback="Experience the next generation of web-based gaming with GameBite. We provide a curated selection of high-quality, free-to-play games run directly in your browser without any downloads or installations. Our platform is designed for clarity, allowing you to jump straight into the action across various genres." />
+                <Translate textKey="seoText1" fallback="Experience the next generation of web-based gaming with Gamesato. We provide a curated selection of high-quality, free-to-play games run directly in your browser without any downloads or installations. Our platform is designed for clarity, allowing you to jump straight into the action across various genres." />
               </p>
               
               <h3 className={styles.seoSubTitle}>
@@ -313,7 +316,7 @@ export default async function HomePage(props: {
                 <>
                   <details className={styles.faqItem} open>
                     <summary className={styles.faqQuestion}>
-                      <Translate textKey="faq1Q" fallback="What are the best free games on GameBite?" />
+                      <Translate textKey="faq1Q" fallback="What are the best free games on Gamesato?" />
                       <ChevronDown className={styles.chevronIcon} size={16} />
                     </summary>
                     <div className={styles.faqAnswer}>
@@ -327,7 +330,7 @@ export default async function HomePage(props: {
                       <ChevronDown className={styles.chevronIcon} size={16} />
                     </summary>
                     <div className={styles.faqAnswer}>
-                      <Translate textKey="faq2A" fallback="Yes, all games on GameBite are instant-play HTML5 games. They run directly in your web browser without requiring any downloads, installation, or configuration." />
+                      <Translate textKey="faq2A" fallback="Yes, all games on Gamesato are instant-play HTML5 games. They run directly in your web browser without requiring any downloads, installation, or configuration." />
                     </div>
                   </details>
 
@@ -345,18 +348,6 @@ export default async function HomePage(props: {
             </div>
           </section>
 
-          {/* Explicit App Purpose & Data Transparency Section for Google OAuth & SEO Compliance */}
-          <section className={styles.seoIntroSection} style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary, #ffffff)' }}>
-              Gamebite - Free Online H5 Web Games Portal
-            </h1>
-            <p style={{ fontSize: '0.875rem', lineHeight: '1.6', marginBottom: '0.75rem', color: 'var(--text-secondary, #9ca3af)' }}>
-              Welcome to <strong>Gamebite</strong>, your premier destination for instant browser-based HTML5 web games. Enjoy hundreds of action, racing, puzzle, sports, and arcade games directly in your browser with zero downloads required.
-            </p>
-            <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'var(--text-secondary, #9ca3af)' }}>
-              <strong>Data Transparency &amp; Authentication:</strong> When you sign in to Gamebite using Google or social account providers, we request access only to your basic public profile (name and email address). This information is strictly used to authenticate your session, maintain your saved favorite games, and synchronize your gameplay history across devices. We do not sell or share your personal data with third parties. For complete details, please review our <Link href="/privacy" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Privacy Policy</Link> and <Link href="/terms" style={{ color: '#3b82f6', textDecoration: 'underline' }}>Terms of Service</Link>.
-            </p>
-          </section>
         </div>
       </div>
     </div>
@@ -369,8 +360,8 @@ export async function generateMetadata() {
     if (result.rows && result.rows.length > 0) {
       const page = result.rows[0];
       return {
-        title: page.meta_title || 'Gamebite - Play Free Online HTML5 Games',
-        description: page.meta_description || 'Play the best free online HTML5 games on Gamebite.',
+        title: page.meta_title || 'Gamesato - Play Free Online HTML5 Games',
+        description: page.meta_description || 'Play the best free online HTML5 games on Gamesato.',
         keywords: page.meta_tags || 'free online games, play html5 games'
       };
     }
@@ -378,7 +369,7 @@ export async function generateMetadata() {
     console.error('Error generating metadata for home:', err);
   }
   return {
-    title: 'Gamebite - Play Free Online HTML5 Games',
-    description: 'Play the best free online HTML5 games on Gamebite.'
+    title: 'Gamesato - Play Free Online HTML5 Games',
+    description: 'Play the best free online HTML5 games on Gamesato.'
   };
 }

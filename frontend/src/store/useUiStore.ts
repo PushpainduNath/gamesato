@@ -4,6 +4,7 @@ interface UiState {
   isSidebarOpen: boolean;
   isMenuIconCross: boolean;
   toggleSidebar: () => void;
+  openSidebar: () => void;
   closeSidebar: () => void;
   setSidebarOpen: (isOpen: boolean) => void;
   isProfileDrawerOpen: boolean;
@@ -46,6 +47,13 @@ export const useUiStore = create<UiState>((set, get) => ({
       const nextState = !isSidebarOpen;
       set({ isSidebarOpen: nextState, isMenuIconCross: nextState });
     }
+  },
+
+  openSidebar: () => {
+    const { isSidebarOpen } = get();
+    if (isSidebarOpen) return;
+    if (animationTimer) clearTimeout(animationTimer);
+    set({ isSidebarOpen: true, isMenuIconCross: true });
   },
 
   closeSidebar: () => {

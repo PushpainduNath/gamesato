@@ -1,6 +1,6 @@
 .footer {
-  background: transparent;
-  border-top: none;
+  background: #041716 !important;
+  border-top: 1px solid rgba(20, 184, 166, 0.22) !important;
   padding: 1.25rem 0 0 0;
   color: var(--text-secondary);
   font-family: var(--font-sans);
@@ -9,8 +9,8 @@
 
 @media (max-width: 768px) {
   .footer {
-    background: rgba(7, 22, 45, 0.4) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: #041716 !important;
+    border-top: 1px solid rgba(20, 184, 166, 0.22) !important;
     border-radius: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
@@ -47,9 +47,12 @@
   row-gap: 1.25rem !important;
   padding: 24px 25px 0px 28px !important;
   box-sizing: border-box !important;
-  background: rgba(7, 22, 45, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: #051817 !important;
+  border: 1px solid rgba(20, 184, 166, 0.22) !important;
   border-radius: 16px !important;
+  border: 1px solid rgba(20, 184, 166, 0.2) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
 }
 
 .brandCol {
@@ -61,6 +64,7 @@
 .logoArea {
   display: flex;
   align-items: center;
+  gap: 0.65rem;
 }
 
 .logo {
@@ -76,8 +80,16 @@
   color: var(--text-primary);
 }
 
-.logoTextBite {
-  color: #3b82f6;
+.logoTextSato {
+  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 50%, #06b6d4 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline-block !important;
+  font-weight: 900;
+  margin-left: 1px;
+  filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.45));
 }
 
 .tagline {
@@ -109,7 +121,7 @@
   box-sizing: border-box !important;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
-  background: #1B243C;
+  background: #051817;
   flex-shrink: 0 !important;
 }
 
@@ -262,7 +274,7 @@
 }
 
 .activeDark .moonIcon {
-  color: #3b82f6; /* Bright blue moon icon */
+  color: #14b8a6; /* Bright blue moon icon */
   fill: #3b82f6;
 }
 
@@ -342,10 +354,10 @@
 }
 
 .floatingThemeToggleLight {
-  background: #0086ec !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   border: none !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(0, 134, 236, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(20, 184, 166, 0.4) !important;
 }
 
 .floatingThemeIcon {
@@ -364,7 +376,7 @@
     align-items: center !important;
     position: fixed !important;
     bottom: 24px !important;
-    right: 24px !important;
+    right: 84px !important;
     width: 80px !important;
     height: 36px !important;
     border-radius: 9999px !important;
@@ -380,7 +392,7 @@
 
   .desktopOnlyThemeToggle:hover {
     transform: scale(1.04) !important;
-    box-shadow: 0 6px 20px rgba(0, 134, 236, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4) !important;
   }
 }
 
@@ -443,7 +455,9 @@
 }
 
 .mobileLogoArea {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
 }
 
 .mobileLogo {
@@ -491,7 +505,7 @@
 }
 
 .mobileQuickLinks a:hover {
-  color: #0086ec !important;
+  color: #14b8a6 !important;
 }
 
 .linkSeparator {
@@ -544,7 +558,7 @@
   position: relative;
   width: 44px;
   height: 24px;
-  background: #0086ec;
+  background: #14b8a6;
   border-radius: 50px;
   border: none;
   cursor: pointer;
@@ -582,7 +596,7 @@
   position: relative;
   width: 48px;
   height: 26px;
-  background: #1e293b;
+  background: #061e1c;
   border-radius: 50px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
@@ -686,7 +700,7 @@
 :global(.light-theme) .linksList a:hover,
 :global(.light-theme) .mobileQuickLinks a:hover,
 :global(.light-theme) .mobileLinksRow a:hover {
-  color: #0086ec !important;
+  color: #14b8a6 !important;
 }
 
 :global(.light-theme) .bottomBar {

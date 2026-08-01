@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
   return {
-    title: 'Privacy Policy | Gamebite',
+    title: 'Privacy Policy | Gamesato',
   };
 }
 
@@ -85,7 +85,7 @@ export default async function PrivacyPage() {
       <div className={styles.contentBody}>
         <div>
           <p>
-            At Gamebite, we value your privacy and are committed to protecting your personal data. This Privacy Policy outlines how we collect, use, and safeguard information when you visit and play games on our platform.
+            At Gamesato, we value your privacy and are committed to protecting your personal data. This Privacy Policy outlines how we collect, use, and safeguard information when you visit and play games on our platform.
           </p>
         </div>
 

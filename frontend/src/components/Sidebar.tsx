@@ -19,8 +19,20 @@ interface SidebarItem {
 export default function Sidebar() {
   const pathname = usePathname();
   const [activeHash, setActiveHash] = React.useState('');
-  const { isSidebarOpen, isMenuIconCross, closeSidebar } = useUiStore();
+  const { isSidebarOpen, isMenuIconCross, openSidebar, closeSidebar } = useUiStore();
   const { t } = useTranslation();
+
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && window.innerWidth > 768) {
+      openSidebar();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (typeof window !== 'undefined' && window.innerWidth > 768) {
+      closeSidebar();
+    }
+  };
   const [categories, setCategories] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [theme, setTheme] = React.useState<'dark' | 'light'>('dark');
@@ -211,13 +223,17 @@ export default function Sidebar() {
       {isSidebarOpen && (
         <div className={styles.backdrop} onClick={closeSidebar} />
       )}
-      <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
+      <aside 
+        className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Mobile Sidebar Header */}
         <div className={styles.sidebarHeader}>
           <Link href="/" className={styles.sidebarLogoArea} onClick={() => handleLinkClick('/')}>
             <img 
               src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
-              alt="Gamebite Logo" 
+              alt="Gamesato Logo" 
               className={styles.sidebarLogo} 
               onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
             />

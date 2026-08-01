@@ -45,14 +45,7 @@ export default function PortalLayoutWrapper({ children }: { children: React.Reac
   }, [isProfileDrawerOpen]);
 
   React.useEffect(() => {
-    const handleInitialSidebarState = () => {
-      if (window.innerWidth > 768) {
-        setSidebarOpen(true);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
-    handleInitialSidebarState();
+    setSidebarOpen(false);
   }, [setSidebarOpen]);
 
   React.useEffect(() => {
@@ -78,15 +71,15 @@ export default function PortalLayoutWrapper({ children }: { children: React.Reac
           pointerEvents: shouldBlur ? 'none' : 'auto'
         }}
       >
-        <Suspense fallback={null}>
-          <Sidebar />
-        </Suspense>
         <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
           <div style={{ flex: 1 }}>
             {children}
           </div>
           <Footer />
         </main>
+        <Suspense fallback={null}>
+          <Sidebar />
+        </Suspense>
       </div>
       <ProfileDrawer />
       <CookieConsent />

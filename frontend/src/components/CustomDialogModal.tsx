@@ -43,9 +43,9 @@ export default function CustomDialogModal({
       case 'success':
         return <CheckCircle2 size={26} style={{ color: '#10b981' }} />;
       case 'confirm':
-        return <AlertTriangle size={26} style={{ color: '#0086ec' }} />;
+        return <AlertTriangle size={26} style={{ color: '#14b8a6' }} />;
       default:
-        return <Info size={26} style={{ color: '#0086ec' }} />;
+        return <Info size={26} style={{ color: '#14b8a6' }} />;
     }
   };
 
@@ -58,7 +58,7 @@ export default function CustomDialogModal({
       case 'success':
         return 'rgba(16, 185, 129, 0.15)';
       default:
-        return 'rgba(0, 134, 236, 0.15)';
+        return 'rgba(20, 184, 166, 0.15)';
     }
   };
 
@@ -106,7 +106,7 @@ export default function CustomDialogModal({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: type === 'danger' ? '0 0 20px rgba(239, 68, 68, 0.25)' : '0 0 20px var(--adm-accent-light, rgba(0, 134, 236, 0.25))'
+            boxShadow: type === 'danger' ? '0 0 20px rgba(239, 68, 68, 0.25)' : '0 0 20px var(--adm-accent-light, rgba(20, 184, 166, 0.25))'
           }}>
             {getIcon()}
           </div>
@@ -157,7 +157,7 @@ export default function CustomDialogModal({
                 border: 'none',
                 background: type === 'danger' 
                   ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' 
-                  : 'var(--adm-accent-gradient, var(--adm-accent, #0086ec))',
+                  : 'var(--adm-accent-gradient, var(--adm-accent, #14b8a6))',
                 color: '#ffffff',
                 fontWeight: 600,
                 fontSize: '0.88rem',

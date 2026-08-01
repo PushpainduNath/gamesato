@@ -6,7 +6,7 @@ function uuidv4() {
     return v.toString(16);
   });
 }
-require('dotenv').config({ path: '/Users/pushpaindunath/Desktop/Gamebite/gb-project/backend/.env' });
+require('dotenv').config({ path: '/Users/pushpaindunath/Desktop/Gamesato/gb-project/backend/.env' });
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL

@@ -21,7 +21,7 @@
 }
 
 .uploadBtn {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+  background: #000000 !important;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: var(--border-radius-md);
@@ -153,7 +153,7 @@
   gap: 1rem;
   flex-grow: 1;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 134, 236, 0.5) rgba(255, 255, 255, 0.03);
+  scrollbar-color: rgba(20, 184, 166, 0.5) rgba(255, 255, 255, 0.03);
 }
 
 .settingsFormScrollable::-webkit-scrollbar {
@@ -166,12 +166,12 @@
 }
 
 .settingsFormScrollable::-webkit-scrollbar-thumb {
-  background: rgba(0, 134, 236, 0.5);
+  background: rgba(20, 184, 166, 0.5);
   border-radius: 4px;
 }
 
 .settingsFormScrollable::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 134, 236, 0.85);
+  background: rgba(20, 184, 166, 0.85);
 }
 
 .table {
@@ -400,7 +400,7 @@
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: #000000 !important;
   color: white;
   padding: 0.85rem;
   border-radius: var(--border-radius-md);
@@ -522,14 +522,14 @@
 }
 
 .activePageBtn {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: #000000 !important;
   border-color: transparent;
   color: white;
   box-shadow: 0 2px 8px var(--color-primary-glow);
 }
 
 .activePageBtn:hover {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: #000000 !important;
   color: white;
 }
 
@@ -604,7 +604,7 @@
 }
 
 .dateRangeBtnActive {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%) !important;
+  background: #000000 !important;
   color: white !important;
   box-shadow: 0 4px 12px var(--color-primary-glow) !important;
 }
@@ -630,7 +630,7 @@
 }
 
 .customApplyBtn {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: #000000 !important;
   color: white;
   border: none;
   padding: 0.5rem 1.25rem;
@@ -705,23 +705,55 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 3px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  z-index: 2;
+}
+
+.accentLine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  pointer-events: none;
+  z-index: 1;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
 }
 
 .accentPurple::before {
-  background: linear-gradient(90deg, #8B5CF6 0%, rgba(139, 92, 246, 0) 100%);
+  background: linear-gradient(90deg, #c084fc 0%, #a855f7 50%, #9333ea 100%) !important;
+  box-shadow: 0 0 12px #c084fc, 0 0 22px rgba(168, 85, 247, 0.8) !important;
+}
+.accentPurple::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.35) 0%, rgba(168, 85, 247, 0) 80%) !important;
 }
 
 .accentCyan::before {
-  background: linear-gradient(90deg, #22D3EE 0%, rgba(34, 211, 238, 0) 100%);
+  background: linear-gradient(90deg, #22d3ee 0%, #06b6d4 50%, #0891b2 100%) !important;
+  box-shadow: 0 0 12px #22d3ee, 0 0 22px rgba(6, 182, 212, 0.8) !important;
+}
+.accentCyan::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.35) 0%, rgba(6, 182, 212, 0) 80%) !important;
 }
 
 .accentAmber::before {
-  background: linear-gradient(90deg, #F59E0B 0%, rgba(245, 158, 11, 0) 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%) !important;
+  box-shadow: 0 0 12px #fbbf24, 0 0 22px rgba(245, 158, 11, 0.8) !important;
+}
+.accentAmber::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.35) 0%, rgba(245, 158, 11, 0) 80%) !important;
 }
 
 .accentGreen::before {
-  background: linear-gradient(90deg, #34D399 0%, rgba(52, 211, 153, 0) 100%);
+  background: linear-gradient(90deg, #34d399 0%, #10b981 50%, #059669 100%) !important;
+  box-shadow: 0 0 12px #34d399, 0 0 22px rgba(16, 185, 129, 0.8) !important;
+}
+.accentGreen::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.35) 0%, rgba(16, 185, 129, 0) 80%) !important;
 }
 
 .metricContent {
@@ -831,7 +863,7 @@
 }
 
 .addGameBtn {
-  background: linear-gradient(135deg, #0086ec 0%, #2c00fc 100%) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   color: #ffffff !important;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -886,9 +918,9 @@
 }
 
 .placementPopular {
-  background: rgba(59, 130, 246, 0.12) !important;
+  background: rgba(20, 184, 166, 0.12) !important;
   color: #60a5fa !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+  border: 1px solid rgba(20, 184, 166, 0.2) !important;
   text-transform: capitalize;
 }
 
@@ -1077,7 +1109,7 @@
 }
 
 .figmaInput:focus {
-  border-color: var(--adm-accent, #0086ec);
+  border-color: var(--adm-accent, #14b8a6);
 }
 
 .figmaTextarea {
@@ -1097,7 +1129,7 @@
 }
 
 .figmaTextarea:focus {
-  border-color: var(--adm-accent, #0086ec);
+  border-color: var(--adm-accent, #14b8a6);
 }
 
 .figmaSelect {
@@ -1152,9 +1184,9 @@
 }
 
 .placementPillActive {
-  border-color: var(--adm-accent, #0086ec);
-  background: var(--adm-accent-light, rgba(0, 134, 236, 0.1));
-  color: var(--adm-accent, #0086ec);
+  border-color: var(--adm-accent, #14b8a6);
+  background: var(--adm-accent-light, rgba(20, 184, 166, 0.1));
+  color: var(--adm-accent, #14b8a6);
 }
 
 /* File uploads row */
@@ -1188,15 +1220,15 @@
 }
 
 .figmaFileLabel:hover {
-  border-color: var(--adm-accent, #0086ec);
+  border-color: var(--adm-accent, #14b8a6);
   color: var(--adm-text-primary, #ffffff);
 }
 
 .figmaFileSelected {
   border-style: solid;
-  border-color: var(--adm-accent, #0086ec);
-  background: var(--adm-accent-light, rgba(0, 134, 236, 0.05));
-  color: var(--adm-accent, #0086ec);
+  border-color: var(--adm-accent, #14b8a6);
+  background: var(--adm-accent-light, rgba(20, 184, 166, 0.05));
+  color: var(--adm-accent, #14b8a6);
 }
 
 /* Modal Actions bar */
@@ -1226,7 +1258,7 @@
 }
 
 .gradientSubmitBtn {
-  background: var(--adm-accent-gradient, linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)) !important;
+  background: var(--adm-accent-gradient, linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)) !important;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -1321,13 +1353,13 @@
 }
 
 .customSelectOptionActive {
-  background: var(--adm-accent-light, rgba(0, 134, 236, 0.08));
-  color: var(--adm-accent, #0086ec);
+  background: var(--adm-accent-light, rgba(20, 184, 166, 0.08));
+  color: var(--adm-accent, #14b8a6);
   font-weight: 600;
 }
 
 .customSelectCreateBtn {
-  background: linear-gradient(135deg, #0086ec 0%, #2c00fc 100%);
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   color: #ffffff;
   padding: 14px 16px;
   font-size: 0.9rem;
@@ -1367,8 +1399,8 @@
 }
 
 .toggleSwitchActive {
-  background: var(--adm-accent, #0086ec);
-  border-color: var(--adm-accent, #0086ec);
+  background: var(--adm-accent, #14b8a6);
+  border-color: var(--adm-accent, #14b8a6);
 }
 
 .toggleKnob {
@@ -1398,7 +1430,7 @@
 }
 
 .gameTitleLink:hover {
-  color: var(--adm-accent, #0086ec) !important;
+  color: var(--adm-accent, #14b8a6) !important;
 }
 
 .editableDateCell {
@@ -1415,7 +1447,7 @@
 
 .editableDateCell:hover {
   color: var(--adm-text-primary, #ffffff) !important;
-  border-bottom: 1px dashed var(--adm-accent, #0086ec);
+  border-bottom: 1px dashed var(--adm-accent, #14b8a6);
 }
 
 .editDateIcon {
@@ -1425,7 +1457,7 @@
 
 .editableDateCell:hover .editDateIcon {
   opacity: 0.9;
-  color: var(--adm-accent, #0086ec);
+  color: var(--adm-accent, #14b8a6);
   transform: scale(1.1);
 }
 
@@ -1476,7 +1508,7 @@
 }
 
 .paginationBtnActive {
-  background: var(--adm-accent-gradient, linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)) !important;
+  background: var(--adm-accent-gradient, linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)) !important;
   color: #ffffff !important;
   border: none !important;
 }
@@ -1494,7 +1526,7 @@
 
 .filterSelect {
   height: 36px;
-  background: #161b22;
+  background: #051817;
   border: 1px solid #334155;
   border-radius: 8px;
   padding: 0 32px 0 12px;
@@ -1514,7 +1546,7 @@
 }
 
 .filterSelect:focus, .filterSelect:hover {
-  border-color: #0086ec;
+  border-color: #14b8a6;
 }
 
 /* Toast Notification Styles */

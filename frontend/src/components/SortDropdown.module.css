@@ -22,8 +22,8 @@
 
 .dropdownBtn:hover, .dropdownBtnOpen {
   background: rgba(7, 22, 45, 0.95);
-  border-color: rgba(0, 134, 236, 0.4);
-  box-shadow: 0 4px 14px rgba(0, 134, 236, 0.15);
+  border-color: rgba(20, 184, 166, 0.4);
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.15);
 }
 
 .sortIcon {
@@ -53,7 +53,7 @@
 
 .chevronIconRotate {
   transform: rotate(180deg);
-  color: #0086EC;
+  color: #14b8a6;
 }
 
 /* Custom Theme Dropdown Popup Menu */
@@ -102,18 +102,18 @@
 }
 
 .menuItem:hover {
-  background: rgba(0, 134, 236, 0.15);
+  background: rgba(20, 184, 166, 0.15);
   color: #ffffff;
 }
 
 .menuItemActive {
-  background: rgba(0, 134, 236, 0.15);
-  color: #0086EC;
+  background: rgba(20, 184, 166, 0.15);
+  color: #14b8a6;
   font-weight: 700;
 }
 
 .checkIcon {
-  color: #0086EC;
+  color: #14b8a6;
   font-size: 1rem;
 }
 
@@ -128,8 +128,8 @@
 :global(.light-theme) .dropdownBtn:hover,
 :global(.light-theme) .dropdownBtnOpen {
   background: #f8fafc !important;
-  border-color: #0086ec !important;
-  box-shadow: 0 4px 14px rgba(0, 134, 236, 0.12) !important;
+  border-color: #14b8a6 !important;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.12) !important;
 }
 
 :global(.light-theme) .sortIcon {
@@ -165,7 +165,7 @@
 
 :global(.light-theme) .menuItemActive {
   background: #f0f7ff !important;
-  color: #0086ec !important;
+  color: #14b8a6 !important;
 }
 
 @media (max-width: 768px) {

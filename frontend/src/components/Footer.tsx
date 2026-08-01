@@ -35,12 +35,11 @@ export default function Footer() {
       .catch((err) => console.error('Failed to fetch footer settings:', err));
   }, []);
 
-  // Sync with active theme on mount
+  // Sync with active theme on mount (forced dark by default)
   useEffect(() => {
     setMounted(true);
-    if (document.documentElement.classList.contains('light-theme')) {
-      setTheme('light');
-    }
+    document.documentElement.classList.remove('light-theme');
+    setTheme('dark');
   }, []);
 
   const toggleTheme = (targetTheme: 'dark' | 'light') => {
@@ -103,11 +102,14 @@ export default function Footer() {
           <div className={styles.brandCol}>
             <Link href="/" className={styles.logoArea}>
               <img 
-                src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
-                alt="Gamebite Logo" 
+                src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
+                alt="Gamesato Logo" 
                 className={styles.logo} 
                 onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
               />
+              <span className={styles.logoText}>
+                Game<span className={styles.logoTextSato}>sato</span>
+              </span>
             </Link>
             <p className={styles.tagline}>
               Your premier destination for instant browser-based gaming. Fast, fun, and free forever.
@@ -178,7 +180,7 @@ export default function Footer() {
             fontSize: '0.825rem',
             color: 'var(--text-secondary, rgba(255, 255, 255, 0.5))'
           }}>
-            © 2026 Gamebite. All rights reserved.
+            © 2026 Gamesato. All rights reserved.
           </div>
         </div>
 
@@ -187,11 +189,14 @@ export default function Footer() {
           {/* Logo */}
           <Link href="/" className={styles.mobileLogoArea}>
             <img 
-              src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
-              alt="Gamebite Logo" 
+              src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
+              alt="Gamesato Logo" 
               className={styles.mobileLogo} 
               onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
             />
+            <span className={styles.logoText}>
+              Game<span className={styles.logoTextSato}>sato</span>
+            </span>
           </Link>
 
           {/* Tagline */}
@@ -248,14 +253,14 @@ export default function Footer() {
 
           {/* Copyright */}
           <span className={styles.mobileCopyright}>
-            © 2026 Gamebite. All rights reserved.
+            © 2026 Gamesato. All rights reserved.
           </span>
         </div>
       </footer>
       )}
 
-      {/* Render floating theme toggle button at root body level via Portal to escape backdrop-filter containing block */}
-      {mounted && createPortal(floatingThemeBtn, document.body)}
+      {/* Floating theme toggle button disabled/hidden for now */}
+      {/* {mounted && createPortal(floatingThemeBtn, document.body)} */}
     </>
   );
 }

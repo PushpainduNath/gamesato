@@ -17,7 +17,7 @@ export async function GET() {
       social_facebook: 'https://facebook.com',
       social_youtube: 'https://youtube.com',
       social_instagram: 'https://instagram.com',
-      support_email: 'support@gamebite.com'
+      support_email: 'support@gamesato.com'
     });
   } catch (err) {
     return NextResponse.json({
@@ -25,7 +25,7 @@ export async function GET() {
       social_facebook: 'https://facebook.com',
       social_youtube: 'https://youtube.com',
       social_instagram: 'https://instagram.com',
-      support_email: 'support@gamebite.com'
+      support_email: 'support@gamesato.com'
     });
   }
 }

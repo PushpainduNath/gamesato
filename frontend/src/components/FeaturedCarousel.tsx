@@ -33,9 +33,7 @@ export default function FeaturedCarousel({ featuredSlots: initialFeaturedSlots }
   
   const validInitialSlots = (initialFeaturedSlots || []).filter((g): g is Game => Boolean(g));
   const [featuredSlots, setFeaturedSlots] = useState<Game[]>(validInitialSlots);
-  
-  const isProgrammaticScroll = useRef(false);
-  const isResetting = useRef(false);
+  const [activeDotIndex, setActiveDotIndex] = useState(0);
 
   // Sync state if props change from parent
   useEffect(() => {
@@ -48,14 +46,16 @@ export default function FeaturedCarousel({ featuredSlots: initialFeaturedSlots }
     let isMounted = true;
     const fetchLatestFeaturedOnLand = async () => {
       try {
-        const res = await fetch(`/api/games?featured=true&limit=5&t=${Date.now()}`, {
+        const res = await fetch(`/api/games?featured=true&limit=8&t=${Date.now()}`, {
           cache: 'no-store'
         });
         if (res.ok) {
           const data = await res.json();
           if (data.games && isMounted) {
             const freshGames: Game[] = (data.games || []).filter((g: any): g is Game => Boolean(g));
-            setFeaturedSlots(freshGames);
+            if (freshGames.length > 0) {
+              setFeaturedSlots(freshGames);
+            }
           }
         }
       } catch (err) {
@@ -73,147 +73,98 @@ export default function FeaturedCarousel({ featuredSlots: initialFeaturedSlots }
     return null;
   }
 
-  // Clone first and last items for infinite scroll transitions
+  // Create 5 sets of slides for seamless 100% infinite scrolling without ever hitting container boundaries
   const slides = featuredSlots.length > 1
-    ? [featuredSlots[featuredSlots.length - 1], ...featuredSlots, featuredSlots[0]]
+    ? [...featuredSlots, ...featuredSlots, ...featuredSlots, ...featuredSlots, ...featuredSlots]
     : featuredSlots;
 
-  const [activeDOMIndex, setActiveDOMIndex] = useState(featuredSlots.length > 1 ? 1 : 0);
+  const N = featuredSlots.length;
 
-  // Mount effect to silently scroll to the first real slide (index 1) initially
+  // Mount effect to scroll to the middle set (index 2 * N)
   useEffect(() => {
     const container = containerRef.current;
-    if (container && featuredSlots.length > 1) {
-      isResetting.current = true;
+    if (container && N > 1) {
       const cards = container.children;
-      if (cards.length > 1) {
-        const targetCard = cards[1] as HTMLElement;
-        container.scrollLeft = targetCard.offsetLeft - container.offsetLeft - 16;
-      }
-    }
-  }, [featuredSlots.length]);
-
-  // Automatic slide transitions
-  useEffect(() => {
-    if (isPaused || featuredSlots.length <= 1) return;
-
-    const interval = setInterval(() => {
-      if (containerRef.current) {
-        const scrollAmount = containerRef.current.clientWidth;
-        containerRef.current.scrollBy({
-          left: scrollAmount,
-          behavior: 'smooth',
-        });
-      }
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [isPaused, featuredSlots.length]);
-
-  // Programmatic scroll effect to activeDOMIndex
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || featuredSlots.length <= 1) return;
-
-    const cards = container.children;
-    if (cards.length > activeDOMIndex) {
-      const targetCard = cards[activeDOMIndex] as HTMLElement;
-      if (targetCard) {
-        isProgrammaticScroll.current = true;
-        
-        container.scrollTo({
-          left: targetCard.offsetLeft - container.offsetLeft,
-          behavior: isResetting.current ? 'auto' : 'smooth',
-        });
-
-        if (isResetting.current) {
-          isResetting.current = false;
-          isProgrammaticScroll.current = false;
-        } else {
-          // Wait for smooth scroll completion, then check boundaries and jump silently if needed
-          const timer = setTimeout(() => {
-            isProgrammaticScroll.current = false;
-            
-            const N = featuredSlots.length;
-            if (activeDOMIndex === N + 1) {
-              isResetting.current = true;
-              setActiveDOMIndex(1);
-            } else if (activeDOMIndex === 0) {
-              isResetting.current = true;
-              setActiveDOMIndex(N);
-            }
-          }, 600);
-          return () => clearTimeout(timer);
+      if (cards.length >= 2 * N) {
+        const targetCard = cards[2 * N] as HTMLElement;
+        if (targetCard) {
+          container.scrollLeft = targetCard.offsetLeft - container.offsetLeft - 16;
         }
       }
     }
-  }, [activeDOMIndex, featuredSlots.length]);
+  }, [N]);
 
-  // Handle manual scrolls/swipes
-  const handleScroll = () => {
-    if (!containerRef.current || featuredSlots.length <= 1) return;
+  // Automatic slide transitions
+  useEffect(() => {
+    if (isPaused || N <= 1) return;
 
-    if (isProgrammaticScroll.current) return;
-
-    if (isResetting.current) {
-      isResetting.current = false;
-      return;
-    }
-
-    const container = containerRef.current;
-    const scrollLeft = container.scrollLeft;
-    const cards = container.children;
-
-    let closestIndex = activeDOMIndex;
-    let minDistance = Infinity;
-
-    for (let i = 0; i < cards.length; i++) {
-      const card = cards[i] as HTMLElement;
-      const distance = Math.abs(card.offsetLeft - container.offsetLeft - 16 - scrollLeft);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = i;
+    const interval = setInterval(() => {
+      if (containerRef.current) {
+        const container = containerRef.current;
+        const firstCard = container.children[0] as HTMLElement;
+        const scrollDistance = firstCard ? (firstCard.offsetWidth + 16) : (container.clientWidth / 3);
+        
+        container.scrollBy({
+          left: scrollDistance,
+          behavior: 'smooth',
+        });
       }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, N]);
+
+  // Handle manual scroll and seamless infinite loop boundary jumping
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container || N <= 1) return;
+
+    const cards = container.children;
+    if (cards.length < 5 * N) return;
+
+    const firstCard = cards[0] as HTMLElement;
+    const cardStep = firstCard ? (firstCard.offsetWidth + 16) : 300;
+
+    const currentScroll = container.scrollLeft;
+    const minScrollThreshold = (1 * N) * cardStep - 8;
+    const maxScrollThreshold = (3 * N) * cardStep - 8;
+
+    // Boundary jump check - triggered far before hitting container edges
+    if (currentScroll >= maxScrollThreshold) {
+      container.scrollLeft -= N * cardStep;
+    } else if (currentScroll <= minScrollThreshold) {
+      container.scrollLeft += N * cardStep;
     }
 
-    if (closestIndex !== activeDOMIndex) {
-      setActiveDOMIndex(closestIndex);
-    }
-
-    if (closestIndex === 0) {
-      isProgrammaticScroll.current = true;
-      const realLastCard = cards[featuredSlots.length] as HTMLElement;
-      container.scrollLeft = realLastCard.offsetLeft - container.offsetLeft - 16;
-      setActiveDOMIndex(featuredSlots.length);
-      setTimeout(() => {
-        isProgrammaticScroll.current = false;
-      }, 50);
-    } else if (closestIndex === featuredSlots.length + 1) {
-      isProgrammaticScroll.current = true;
-      const realFirstCard = cards[1] as HTMLElement;
-      container.scrollLeft = realFirstCard.offsetLeft - container.offsetLeft - 16;
-      setActiveDOMIndex(1);
-      setTimeout(() => {
-        isProgrammaticScroll.current = false;
-      }, 50);
-    }
+    // Active dot index calculation
+    const currentMiddleScroll = container.scrollLeft;
+    const rawIndex = Math.round((currentMiddleScroll - 16) / cardStep);
+    const normalizedDot = ((rawIndex % N) + N) % N;
+    setActiveDotIndex(normalizedDot);
   };
-
-  // Logical pagination indicator index calculation
-  let currentIndex = activeDOMIndex - 1;
-  if (featuredSlots.length > 1) {
-    if (activeDOMIndex === 0) {
-      currentIndex = featuredSlots.length - 1;
-    } else if (activeDOMIndex === featuredSlots.length + 1) {
-      currentIndex = 0;
-    }
-  }
 
   const scrollFeatured = (direction: 'left' | 'right') => {
     if (containerRef.current) {
-      const scrollAmount = containerRef.current.clientWidth;
-      containerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+      const container = containerRef.current;
+      const firstCard = container.children[0] as HTMLElement;
+      const scrollDistance = firstCard ? (firstCard.offsetWidth + 16) : (container.clientWidth / 3);
+      
+      container.scrollBy({
+        left: direction === 'left' ? -scrollDistance : scrollDistance,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const scrollToDot = (dotIndex: number) => {
+    if (!containerRef.current || N <= 1) return;
+    const container = containerRef.current;
+    const cards = container.children;
+    const targetCardIndex = 2 * N + dotIndex;
+    const targetCard = cards[targetCardIndex] as HTMLElement;
+    if (targetCard) {
+      container.scrollTo({
+        left: targetCard.offsetLeft - container.offsetLeft - 16,
         behavior: 'smooth',
       });
     }
@@ -221,98 +172,99 @@ export default function FeaturedCarousel({ featuredSlots: initialFeaturedSlots }
 
   return (
     <div className={styles.featuredCarouselWrapper}>
-      {featuredSlots.length > 1 && (
-        <>
-          <div className={`${styles.navOverlay} ${styles.navOverlayLeft}`}>
-            <button 
-              className={`${styles.navBtn} ${styles.navBtnLeft}`} 
-              onClick={() => scrollFeatured('left')}
-              aria-label="Previous Featured Game"
-            >
-              <ChevronLeft size={34} strokeWidth={2.5} />
-            </button>
-          </div>
-          <div className={`${styles.navOverlay} ${styles.navOverlayRight}`}>
-            <button 
-              className={`${styles.navBtn} ${styles.navBtnRight}`} 
-              onClick={() => scrollFeatured('right')}
-              aria-label="Next Featured Game"
-            >
-              <ChevronRight size={34} strokeWidth={2.5} />
-            </button>
-          </div>
-        </>
-      )}
-      <div 
-        className={styles.featuredCarousel}
-        ref={containerRef}
-        onScroll={handleScroll}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
-      >
-        {slides.map((game, index) => {
-          if (!game) return null;
+      <div className={styles.carouselCardsTrack}>
+        {N > 1 && (
+          <>
+            <div className={`${styles.navOverlay} ${styles.navOverlayLeft}`}>
+              <button 
+                className={`${styles.navBtn} ${styles.navBtnLeft}`} 
+                onClick={() => scrollFeatured('left')}
+                aria-label="Previous Featured Game"
+              >
+                <ChevronLeft size={34} strokeWidth={2.5} />
+              </button>
+            </div>
+            <div className={`${styles.navOverlay} ${styles.navOverlayRight}`}>
+              <button 
+                className={`${styles.navBtn} ${styles.navBtnRight}`} 
+                onClick={() => scrollFeatured('right')}
+                aria-label="Next Featured Game"
+              >
+                <ChevronRight size={34} strokeWidth={2.5} />
+              </button>
+            </div>
+          </>
+        )}
+        <div 
+          className={styles.featuredCarousel}
+          ref={containerRef}
+          onScroll={handleScroll}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+        >
+          {slides.map((game, index) => {
+            if (!game) return null;
 
-          const thumbUrl = getImageUrl(game.thumbnail_url);
-          const desktopImgUrl = getImageUrl(game.featured_desktop_url || game.thumbnail_url);
-          const mobileImgUrl = getImageUrl(game.featured_mobile_url || game.new_game_both_url || game.thumbnail_url);
+            const desktopImgUrl = getImageUrl(game.featured_desktop_url || game.thumbnail_url);
+            const mobileImgUrl = getImageUrl(game.featured_mobile_url || game.new_game_both_url || game.thumbnail_url);
 
-          return (
-            <Link 
-              key={`${game.id}-${index}`} 
-              href={`/games/${game.slug}`} 
-              className={`${styles.featuredCard} glass glass-interactive`}
-            >
-              <div className={styles.featuredThumbnailWrapper}>
-                <img 
-                  src={desktopImgUrl} 
-                  alt={game.title} 
-                  className={`${styles.featuredThumbnail} ${styles.desktopOnlyThumbnail}`} 
-                  fetchPriority={index === 1 ? 'high' : 'low'}
-                  loading={index === 1 ? 'eager' : 'lazy'}
-                  decoding={index === 1 ? 'sync' : 'async'}
-                />
-                <img 
-                  src={mobileImgUrl} 
-                  alt={game.title} 
-                  className={`${styles.featuredThumbnail} ${styles.mobileOnlyThumbnail}`} 
-                  fetchPriority={index === 1 ? 'high' : 'low'}
-                  loading={index === 1 ? 'eager' : 'lazy'}
-                  decoding={index === 1 ? 'sync' : 'async'}
-                />
-                <div className={styles.featuredOverlay}>
-                  <div className={styles.featuredOverlayBottom}>
-                    <div className={styles.featuredTextContent}>
-                      <span className={styles.featuredCategory}>{game.category}</span>
-                      <h3 className={styles.featuredTitle}>
-                        {t(`game_${game.slug}_title` as any) || game.title}
-                      </h3>
-                    </div>
-                    <div className={styles.featuredStats}>
-                      <span className={styles.featuredPlayCount}>
-                        <Play size={10} fill="currentColor" /> {formatCompactNumber(game.play_count)}
-                      </span>
-                      <span className={styles.featuredLikesCount}>
-                        <Heart size={10} fill="currentColor" /> {formatCompactNumber(game.likes_count)}
-                      </span>
+            return (
+              <Link 
+                key={`${game.id}-${index}`} 
+                href={`/games/${game.slug}`} 
+                className={`${styles.featuredCard} glass glass-interactive`}
+              >
+                <div className={styles.featuredThumbnailWrapper}>
+                  <img 
+                    src={desktopImgUrl} 
+                    alt={game.title} 
+                    className={`${styles.featuredThumbnail} ${styles.desktopOnlyThumbnail}`} 
+                    fetchPriority={index < 3 ? 'high' : 'low'}
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                    decoding={index < 3 ? 'sync' : 'async'}
+                  />
+                  <img 
+                    src={mobileImgUrl} 
+                    alt={game.title} 
+                    className={`${styles.featuredThumbnail} ${styles.mobileOnlyThumbnail}`} 
+                    fetchPriority={index < 3 ? 'high' : 'low'}
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                    decoding={index < 3 ? 'sync' : 'async'}
+                  />
+                  <div className={styles.featuredOverlay}>
+                    <div className={styles.featuredOverlayBottom}>
+                      <div className={styles.featuredTextContent}>
+                        <span className={styles.featuredCategory}>{game.category}</span>
+                        <h3 className={styles.featuredTitle}>
+                          {t(`game_${game.slug}_title` as any) || game.title}
+                        </h3>
+                      </div>
+                      <div className={styles.featuredStats}>
+                        <span className={styles.featuredPlayCount}>
+                          <Play size={10} fill="currentColor" /> {formatCompactNumber(game.play_count)}
+                        </span>
+                        <span className={styles.featuredLikesCount}>
+                          <Heart size={10} fill="currentColor" /> {formatCompactNumber(game.likes_count)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
-      {featuredSlots.length > 1 && (
+      {N > 1 && (
         <div className={styles.carouselDots}>
           {featuredSlots.map((_, index) => (
             <button
               key={index}
-              onClick={() => setActiveDOMIndex(index + 1)}
-              className={`${styles.carouselDot} ${index === currentIndex ? styles.carouselDotActive : ''}`}
+              onClick={() => scrollToDot(index)}
+              className={`${styles.carouselDot} ${index === activeDotIndex ? styles.carouselDotActive : ''}`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}

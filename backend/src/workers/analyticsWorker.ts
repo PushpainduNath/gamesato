@@ -1,7 +1,7 @@
 import redis from '../config/redis';
 import { pool } from '../config/db';
 
-const QUEUE_KEY = 'gamebite:analytics:queue';
+const QUEUE_KEY = 'gamesato:analytics:queue';
 const BATCH_SIZE = 100;
 const TICK_INTERVAL = 10000; // 10 seconds
 

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     // Password validation for standard login (when password is provided)
     if (password !== undefined) {
-      const allowedPassword = process.env.ADMIN_PASSWORD || 'gamebiteadminpassword123';
+      const allowedPassword = process.env.ADMIN_PASSWORD || 'gamesatoadminpassword123';
       if (password !== allowedPassword) {
         return NextResponse.json({ error: 'Invalid admin password' }, { status: 401 });
       }

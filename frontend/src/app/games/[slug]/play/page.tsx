@@ -17,7 +17,7 @@ export async function generateMetadata(props: PlayPageProps) {
     const res = await query('SELECT title FROM games WHERE slug = $1', [slug]);
     if (res.rows.length === 0) return { title: 'Play Game' };
     return {
-      title: `Playing ${res.rows[0].title} | Gamebite`,
+      title: `Playing ${res.rows[0].title} | Gamesato`,
       robots: 'noindex, nofollow', // Play pages do not need to be indexed directly by search engines
     };
   } catch {

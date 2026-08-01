@@ -1,0 +1,40 @@
+<svg width="240" height="56" viewBox="0 0 240 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gs_cyber_icon_light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#E11D48"/>
+    </linearGradient>
+
+    <linearGradient id="gs_cyber_text_light" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#E11D48"/>
+    </linearGradient>
+
+    <filter id="gs_glow_effect_light" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(4, 4)" filter="url(#gs_glow_effect_light)">
+    <path d="M 24 2 L 42 12 V 36 L 24 46 L 6 36 V 12 Z" fill="url(#gs_cyber_icon_light)" />
+    <path d="M 14 18 C 14 15.5 16.5 14 19 14 H 29 C 31.5 14 34 15.5 34 18 V 28 C 34 30.5 31.5 32 29 32 H 19 C 16.5 32 14 30.5 14 28 Z" fill="#FFFFFF" fill-opacity="0.85"/>
+    <path d="M 19 20 H 21 V 23 H 24 V 25 H 21 V 28 H 19 V 25 H 16 V 23 H 19 Z" fill="#0284C7"/>
+    <circle cx="28" cy="21" r="2.2" fill="#E11D48"/>
+    <circle cx="31.5" cy="24" r="2.2" fill="#059669"/>
+    <circle cx="28" cy="27" r="2.2" fill="#D97706"/>
+    <circle cx="24.5" cy="24" r="2.2" fill="#7C3AED"/>
+  </g>
+
+  <g transform="translate(56, 0)">
+    <text x="0" y="37" font-family="System-UI, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5" fill="#0F172A">
+      Game
+    </text>
+    <text x="76" y="37" font-family="System-UI, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5" fill="url(#gs_cyber_text_light)">
+      sato
+    </text>
+    <circle cx="140" cy="34" r="3.5" fill="#0284C7"/>
+  </g>
+</svg>

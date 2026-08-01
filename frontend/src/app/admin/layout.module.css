@@ -44,8 +44,15 @@
   letter-spacing: -0.2px;
 }
 
-.logoTextBite {
-  color: var(--adm-accent, #3b82f6);
+.logoTextSato {
+  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 50%, #06b6d4 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline-block !important;
+  font-weight: 900;
+  margin-left: 1px;
 }
 
 .menu {
@@ -79,7 +86,7 @@
 
 .activeItem {
   color: #ffffff !important;
-  background: var(--adm-accent-gradient, linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)) !important;
+  background: var(--adm-accent-gradient, linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   font-weight: 600;
 }
@@ -92,7 +99,7 @@
 }
 
 .activeItem:hover {
-  background: var(--adm-accent-gradient, linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)) !important;
+  background: var(--adm-accent-gradient, linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)) !important;
   color: #ffffff !important;
 }
 
@@ -318,7 +325,7 @@
 
 .themeToggleSlider:hover {
   transform: scale(1.04);
-  box-shadow: 0 4px 20px rgba(0, 134, 236, 0.35);
+  box-shadow: 0 4px 20px rgba(20, 184, 166, 0.35);
 }
 
 .themeToggleDark {

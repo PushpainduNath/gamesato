@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+*/node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Next.js build output
+.next/
+*/.next/
+frontend/.next/
+out/
+*/out/
+frontend/out/
+
+# TypeScript / Node build output
+dist/
+*/dist/
+backend/dist/
+build/
+*/build/
+backend/dist/
+
+# Environment files
+.env
+.env.*
+*.env
+*.env.*
+*.env.local
+.env.local
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.local
+frontend/.env.*
+
+# Logs & OS & IDE
+*.log
+.DS_Store
+**/.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+ignore_assets/
+scratch/

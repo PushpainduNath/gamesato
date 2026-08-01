@@ -14,8 +14,8 @@ import styles from './layout.module.css';
 import CustomDialogModal, { DialogState } from '@/components/CustomDialogModal';
 
 const THEME_OPTIONS: { id: AdminTheme; label: string; bg: string; accent: string; dotColor: string }[] = [
-  { id: 'default', label: 'Dark', bg: '#0c0d14', accent: '#0086ec', dotColor: '#0f172a' },
-  { id: 'cyberwhite', label: 'White', bg: '#f0f4f9', accent: '#0086ec', dotColor: '#ffffff' },
+  { id: 'default', label: 'Dark', bg: '#0c0d14', accent: '#14b8a6', dotColor: '#0f172a' },
+  { id: 'cyberwhite', label: 'White', bg: '#f0f4f9', accent: '#14b8a6', dotColor: '#ffffff' },
   // { id: 'creamy', label: 'Creamy White', bg: '#f5f2eb', accent: '#d97706', dotColor: '#f5f2eb' },
   // { id: 'forest', label: 'Forest Green', bg: '#06120c', accent: '#10b981', dotColor: '#10b981' },
   // { id: 'ocean', label: 'Ocean Blue', bg: '#071124', accent: '#0284c7', dotColor: '#0284c7' },
@@ -138,9 +138,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Left Sidebar */}
       <aside className={styles.sidebar}>
         <Link href="/" className={styles.logoArea}>
-          <img src="/logo.png" alt="Gamebite" className={styles.logoImg} />
+          <img src="/dark_logo_withoutbg.png" alt="Gamesato" className={styles.logoImg} />
           <span className={styles.logoText}>
-            Game <span className={styles.logoTextBite}>Bite</span>
+            Game<span className={styles.logoTextSato}>sato</span>
           </span>
         </Link>
 

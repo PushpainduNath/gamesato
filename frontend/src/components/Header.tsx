@@ -333,29 +333,16 @@ function HeaderContent() {
     <>
       <header className={styles.header}>
         <div className={styles.leftHeaderSection}>
-          {/* Menu Toggle Button */}
-          <button 
-            className={`${styles.menuToggleBtn} ${isMenuIconCross ? styles.menuOpen : ''}`} 
-            onClick={toggleSidebar}
-            aria-label="Toggle sidebar"
-          >
-            <div className={styles.hamburgerIcon}>
-              <span className={styles.hamburgerBar} />
-              <span className={styles.hamburgerBar} />
-              <span className={styles.hamburgerBar} />
-            </div>
-          </button>
-
           {/* Left Logo */}
-          <Link href="/" className={styles.logoArea} title="Gamebite" aria-label="Gamebite">
+          <Link href="/" className={styles.logoArea} title="Gamesato" aria-label="Gamesato">
             <img 
-              src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
-              alt="Gamebite Logo" 
+              src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
+              alt="Gamesato Logo" 
               className={styles.logo} 
               onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
             />
             <span className={styles.logoText}>
-              Game<span className={styles.logoTextBite}>bite</span>
+              Game<span className={styles.logoTextSato}>sato</span>
             </span>
           </Link>
         </div>
@@ -385,6 +372,14 @@ function HeaderContent() {
                 <X size={16} />
               </button>
             )}
+            <button
+              type="button"
+              onClick={startVoiceSearch}
+              className={`${styles.micBtn} ${isListening ? styles.micBtnListening : ''}`}
+              title={isListening ? "Listening..." : "Voice Search"}
+            >
+              <Mic size={18} className={styles.micIconInner} />
+            </button>
           </div>
 
           {isSearchFocused && (
@@ -392,7 +387,7 @@ function HeaderContent() {
               {searchQuery.trim() ? (
                 <>
                   <h3 className={styles.searchDropdownHeader}>
-                    <Search size={20} color="#0086ec" className={styles.searchDropdownStar} />
+                    <Search size={20} color="#14b8a6" className={styles.searchDropdownStar} />
                     <span>Search Results</span>
                     {isSearching && (
                       <span className={styles.searchingBadge}>Searching...</span>
@@ -537,7 +532,7 @@ function HeaderContent() {
             )}
           </div>
 
-          {/* User profile avatar / Login button (desktop second) */}
+          {/* User profile avatar / Login button */}
           <div className={styles.profileArea} ref={dropdownRef}>
             {status === 'loading' ? (
               <div className="pulse" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>...</div>
@@ -589,6 +584,19 @@ function HeaderContent() {
               </div>
             )}
           </div>
+
+          {/* Menu Toggle Button (Right side on Mobile) */}
+          <button 
+            className={`${styles.menuToggleBtn} ${isMenuIconCross ? styles.menuOpen : ''}`} 
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
+          >
+            <div className={styles.hamburgerIcon}>
+              <span className={styles.hamburgerBar} />
+              <span className={styles.hamburgerBar} />
+              <span className={styles.hamburgerBar} />
+            </div>
+          </button>
         </div>
 
         {/* Fullscreen Mobile Search Screen */}
@@ -632,7 +640,7 @@ function HeaderContent() {
               {searchQuery.trim() ? (
                 <>
                   <div className={styles.mobileSearchHeaderRow}>
-                    <Search size={24} color="#0086EC" />
+                    <Search size={24} color="#14b8a6" />
                     <h3 className={styles.mobileSearchHeaderTitle}>Search Results</h3>
                     {isSearching && (
                       <span className={styles.searchingBadge}>Searching...</span>
@@ -731,7 +739,7 @@ function HeaderContent() {
             </div>
 
             <h3 className={styles.modalTitle}>
-              {authMode === 'login' ? (t('welcomeBack' as any) || 'Welcome Back!') : (t('joinGamebite' as any) || 'Join GameBite')}
+              {authMode === 'login' ? (t('welcomeBack' as any) || 'Welcome Back!') : (t('joinGamesato' as any) || 'Join Gamesato')}
             </h3>
             <p className={styles.modalDesc}>
               {authMode === 'login' 

@@ -77,7 +77,7 @@
 }
 
 .cardSelected {
-  border-color: #0086ec !important;
+  border-color: #14b8a6 !important;
   background-color: rgba(7, 22, 45, 0.8) !important;
 }
 
@@ -131,8 +131,8 @@
 }
 
 .radioSelected {
-  border-color: #0086ec !important;
-  background: #0086ec !important;
+  border-color: #14b8a6 !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
 }
 
 .radioDot {
@@ -161,7 +161,7 @@
 }
 
 .continueBtn {
-  background: linear-gradient(90deg, #0086ec 0%, #2c00fc 100%) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   color: white;
   border: none;
   border-radius: 9999px;
@@ -175,7 +175,7 @@
   text-align: center;
   transition: transform 0.2s ease, opacity 0.2s ease;
   outline: none;
-  box-shadow: 0 4px 15px rgba(0, 134, 236, 0.35);
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.35);
 }
 
 /* Light Theme Overrides */
@@ -208,7 +208,7 @@
 }
 
 :global(.light-theme) .cardSelected {
-  border-color: #0086ec !important;
+  border-color: #14b8a6 !important;
   background: #eff6ff !important;
 }
 

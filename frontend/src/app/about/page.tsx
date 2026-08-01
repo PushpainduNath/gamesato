@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
   return {
-    title: 'About Us | Gamebite',
+    title: 'About Us | Gamesato',
   };
 }
 
@@ -74,7 +74,7 @@ export default async function AboutPage() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
-        About Gamebite
+        About Gamesato
       </h1>
       <p className={styles.updatedAt}>
         Last updated on 1/12/2021
@@ -85,7 +85,7 @@ export default async function AboutPage() {
       <div className={styles.contentBody}>
         <div>
           <p>
-            Welcome to Gamebite, your ultimate destination for high-quality, instant-play HTML5 H5 web games. Our mission is to deliver a fast, responsive, and engaging gaming experience right inside your browser—no downloads, installations, or sign-ups required to start playing.
+            Welcome to Gamesato, your ultimate destination for high-quality, instant-play HTML5 H5 web games. Our mission is to deliver a fast, responsive, and engaging gaming experience right inside your browser—no downloads, installations, or sign-ups required to start playing.
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export default async function AboutPage() {
         <div className={styles.sectionBlock}>
           <h2>Developer Platform</h2>
           <p>
-            Gamebite is also built to support the game developer community. We provide creators with developer-centric tools to upload ZIP game packages, monitor analytics, evaluate real-time play counts, and get in-depth user feedback metrics securely.
+            Gamesato is also built to support the game developer community. We provide creators with developer-centric tools to upload ZIP game packages, monitor analytics, evaluate real-time play counts, and get in-depth user feedback metrics securely.
           </p>
         </div>
       </div>

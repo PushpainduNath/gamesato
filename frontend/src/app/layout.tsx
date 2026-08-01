@@ -5,13 +5,13 @@ import PortalLayoutWrapper from '@/components/PortalLayoutWrapper';
 import React from 'react';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://gamebite.io'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com'),
   title: {
-    default: 'Gamebite | Free Online Web Games',
-    template: '%s | Gamebite',
+    default: 'Gamesato | Free Online Web Games',
+    template: '%s | Gamesato',
   },
-  description: 'Play free online HTML5 games instantly on Gamebite. Action, racing, sports, logic, adventure, and arcade games available to play in your browser with no downloads required.',
-  keywords: ['Gamebite', 'H5 games', 'web games', 'free online games', 'arcade', 'racing games', 'action games', 'mobile games'],
+  description: 'Play free online HTML5 games instantly on Gamesato. Action, racing, sports, logic, adventure, and arcade games available to play in your browser with no downloads required.',
+  keywords: ['Gamesato', 'H5 games', 'web games', 'free online games', 'arcade', 'racing games', 'action games', 'mobile games'],
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
@@ -21,17 +21,17 @@ export const metadata: Metadata = {
     google: 'google72b218ef6dc38146',
   },
   openGraph: {
-    title: 'Gamebite | Free Online Web Games',
-    description: 'Play free online HTML5 games instantly on Gamebite. No downloads required.',
-    url: 'https://gamebite.io',
-    siteName: 'Gamebite',
+    title: 'Gamesato | Free Online Web Games',
+    description: 'Play free online HTML5 games instantly on Gamesato. No downloads required.',
+    url: 'https://gamesato.com',
+    siteName: 'Gamesato',
     type: 'website',
     images: ['/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Gamebite | Free Online Web Games',
-    description: 'Play free online HTML5 games instantly on Gamebite. No downloads required.',
+    title: 'Gamesato | Free Online Web Games',
+    description: 'Play free online HTML5 games instantly on Gamesato. No downloads required.',
     images: ['/logo.png'],
   },
 };
@@ -57,10 +57,8 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('theme');
-                  if (theme === 'light') {
-                    document.documentElement.classList.add('light-theme');
-                  }
+                  document.documentElement.classList.remove('light-theme');
+                  localStorage.setItem('theme', 'dark');
                 } catch (e) {}
               })();
             `,

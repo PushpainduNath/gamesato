@@ -1,9 +1,9 @@
 .deleteLayout {
   display: flex;
   flex-direction: column;
-  min-height: auto;
+  min-height: 100vh !important;
   flex: 1;
-  background: linear-gradient(180deg, #000000 0%, #000D38 50%, #000000 100%);
+  background: transparent !important;
   color: white;
   box-sizing: border-box;
 }
@@ -15,7 +15,7 @@
   justify-content: space-between;
   padding: 1.25rem 1rem;
   background: transparent;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(20, 184, 166, 0.18);
   box-sizing: border-box;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .headerBtn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(20, 184, 166, 0.15);
 }
 
 .headerTitle {
@@ -127,9 +127,9 @@
 .customCheckbox {
   width: 20px;
   height: 20px;
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(20, 184, 166, 0.3);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(4, 23, 22, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -139,8 +139,8 @@
 }
 
 .checkboxChecked {
-  border-color: #0086EC;
-  background: #0086EC;
+  border-color: #2dd4bf;
+  background: #14b8a6;
 }
 
 .checkboxChecked::after {
@@ -175,26 +175,26 @@
 }
 
 .passwordInput {
-  background: #090c1e;
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: rgba(4, 23, 22, 0.75) !important;
+  border: 1px solid rgba(20, 184, 166, 0.3) !important;
+  border-radius: 12px !important;
   padding: 0.85rem 1rem;
-  color: white;
+  color: white !important;
   font-size: 0.9rem;
   outline: none;
   font-family: var(--font-sans);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
   box-sizing: border-box;
   width: 100%;
 }
 
 .passwordInput:focus {
-  border-color: #0086EC;
-  box-shadow: 0 0 0 3px rgba(0, 134, 236, 0.15);
+  border-color: #2dd4bf !important;
+  box-shadow: 0 0 12px rgba(20, 184, 166, 0.3) !important;
 }
 
 .passwordInput::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+  color: #94a3b8;
 }
 
 .errorMessage {
@@ -257,7 +257,7 @@
 
 .spinner {
   animation: spin 1s linear infinite;
-  color: #0086EC;
+  color: #14b8a6;
 }
 
 .btnSpinner {
@@ -277,7 +277,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #0d122e 0%, #050716 100%);
+  background: #000000 !important;
   padding: 2rem;
   box-sizing: border-box;
 }
@@ -297,7 +297,7 @@
 }
 
 .backHomeBtn {
-  background: #0086EC;
+  background: #14b8a6;
   color: white;
   border: none;
   border-radius: 8px;

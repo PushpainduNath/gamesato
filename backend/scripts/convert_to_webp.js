@@ -4,7 +4,7 @@ const { Pool } = require('pg');
 
 // Database connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://portal_admin:PortalSecure%40321@localhost:5432/gamebite?schema=public'
+  connectionString: process.env.DATABASE_URL || 'postgresql://portal_admin:PortalSecure%40321@localhost:5432/gamesato?schema=public'
 });
 
 // Try loading sharp for fast, high-quality WebP conversion

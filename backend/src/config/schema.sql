@@ -1,4 +1,4 @@
--- Setup Database Schema for Gamebite
+-- Setup Database Schema for Gamesato
 
 -- Enable pgcrypto for gen_random_uuid() if not loaded
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

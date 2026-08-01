@@ -172,7 +172,7 @@ export async function optionalAuthenticate(req: AuthenticatedRequest, res: Respo
 }
 
 import jwt from 'jsonwebtoken';
-const JWT_SECRET = process.env.JWT_SECRET || 'gamebite-admin-secret-key-12345';
+const JWT_SECRET = process.env.JWT_SECRET || 'gamesato-admin-secret-key-12345';
 
 export function authenticateAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {

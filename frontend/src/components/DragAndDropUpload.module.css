@@ -43,20 +43,20 @@
 }
 
 .dropzone:hover {
-  border-color: rgba(0, 134, 236, 0.5);
-  background: rgba(0, 134, 236, 0.06);
+  border-color: rgba(20, 184, 166, 0.5);
+  background: rgba(20, 184, 166, 0.06);
 }
 
 .dragging {
-  border-color: #0086ec !important;
-  background: rgba(0, 134, 236, 0.18) !important;
-  box-shadow: 0 0 20px rgba(0, 134, 236, 0.3);
+  border-color: #14b8a6 !important;
+  background: rgba(20, 184, 166, 0.18) !important;
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
   transform: scale(1.01);
 }
 
 .hasFile {
   border-style: solid;
-  border-color: rgba(0, 134, 236, 0.4);
+  border-color: rgba(20, 184, 166, 0.4);
   background: rgba(16, 24, 48, 0.7);
 }
 
@@ -70,11 +70,11 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(0, 134, 236, 0.12);
+  background: rgba(20, 184, 166, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0086ec;
+  color: #14b8a6;
   flex-shrink: 0;
 }
 
@@ -89,7 +89,7 @@
 }
 
 .mainText strong {
-  color: #0086ec;
+  color: #14b8a6;
   font-weight: 600;
 }
 
@@ -117,7 +117,7 @@
 }
 
 .fileIcon {
-  color: #0086ec;
+  color: #14b8a6;
   flex-shrink: 0;
 }
 
@@ -167,8 +167,8 @@
 
 .changeBadge {
   font-size: 0.72rem;
-  color: #0086ec;
-  background: rgba(0, 134, 236, 0.12);
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.12);
   padding: 3px 6px;
   border-radius: 4px;
   display: flex;

@@ -20,13 +20,13 @@
 }
 
 .breadcrumbLink {
-  color: #0086ec;
+  color: #14b8a6;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .breadcrumbLink:hover {
-  color: #3b82f6;
+  color: #14b8a6;
   text-decoration: underline;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .breadcrumbActive {
-  color: #0086ec;
+  color: #14b8a6;
   font-weight: 600;
 }
 
@@ -66,7 +66,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 90%, rgba(0, 0, 0, 1) 100%);
+  background: #000000 !important;
   pointer-events: none;
 }
 
@@ -227,9 +227,9 @@
 }
 
 .activeLike {
-  color: #3b82f6;
-  border-color: rgba(59, 130, 246, 0.3);
-  background: rgba(59, 130, 246, 0.05);
+  color: #14b8a6;
+  border-color: rgba(20, 184, 166, 0.3);
+  background: rgba(20, 184, 166, 0.05);
 }
 
 .activeDislike {
@@ -293,12 +293,12 @@
 }
 
 .howToPlayItem::marker {
-  color: #0086ec;
+  color: #14b8a6;
   font-size: 1.1em;
 }
 
 :global(.light-theme) .breadcrumbLink {
-  color: #0086ec !important;
+  color: #14b8a6 !important;
 }
 
 :global(.light-theme) .breadcrumbSeparator,
@@ -353,7 +353,7 @@
 }
 
 :global(.light-theme) .howToPlayItem::marker {
-  color: #0086EC !important;
+  color: #14b8a6 !important;
 }
 
 /* More Games Section in Mobile View */

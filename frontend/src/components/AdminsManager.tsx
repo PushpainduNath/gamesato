@@ -460,7 +460,7 @@ export default function AdminsManager() {
                     cursor: 'pointer',
                     width: '14px',
                     height: '14px',
-                    accentColor: '#0086ec'
+                    accentColor: '#14b8a6'
                   }}
                 />
                 Paginate
@@ -710,7 +710,7 @@ export default function AdminsManager() {
                   required
                   autoComplete="new-email"
                   name="create_admin_email_field"
-                  placeholder="e.g. john@gamebite.com"
+                  placeholder="e.g. john@gamesato.com"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   className={styles.figmaInput}

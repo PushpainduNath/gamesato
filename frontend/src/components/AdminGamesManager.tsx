@@ -257,8 +257,8 @@ const FileTreeNodeItem: React.FC<{
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingRight: '8px' }}>
           {node.isDirectory ? (
             <>
-              {isOpen ? <ChevronDown size={14} style={{ color: 'var(--adm-accent, #0086ec)', flexShrink: 0 }} /> : <ChevronRight size={14} style={{ color: 'var(--adm-text-muted, #64748b)', flexShrink: 0 }} />}
-              {isOpen ? <FolderOpen size={15} style={{ color: 'var(--adm-accent, #0086ec)', flexShrink: 0 }} /> : <Folder size={15} style={{ color: 'var(--adm-accent, #0086ec)', flexShrink: 0 }} />}
+              {isOpen ? <ChevronDown size={14} style={{ color: 'var(--adm-accent, #14b8a6)', flexShrink: 0 }} /> : <ChevronRight size={14} style={{ color: 'var(--adm-text-muted, #64748b)', flexShrink: 0 }} />}
+              {isOpen ? <FolderOpen size={15} style={{ color: 'var(--adm-accent, #14b8a6)', flexShrink: 0 }} /> : <Folder size={15} style={{ color: 'var(--adm-accent, #14b8a6)', flexShrink: 0 }} />}
               <span style={{ fontWeight: 600, color: 'var(--adm-text-primary, #ffffff)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {node.name}
               </span>
@@ -269,7 +269,7 @@ const FileTreeNodeItem: React.FC<{
           ) : (
             <>
               <span style={{ width: '14px', flexShrink: 0 }} />
-              <FileText size={14} style={{ color: node.name.toLowerCase() === 'index.html' ? '#22c55e' : 'var(--adm-accent, #0086ec)', flexShrink: 0 }} />
+              <FileText size={14} style={{ color: node.name.toLowerCase() === 'index.html' ? '#22c55e' : 'var(--adm-accent, #14b8a6)', flexShrink: 0 }} />
               <span style={{ color: node.name.toLowerCase() === 'index.html' ? '#22c55e' : 'var(--adm-text-primary, #ffffff)', fontWeight: node.name.toLowerCase() === 'index.html' ? 700 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {node.name}
               </span>
@@ -1489,7 +1489,7 @@ export default function AdminGamesManager() {
                     cursor: 'pointer',
                     width: '14px',
                     height: '14px',
-                    accentColor: '#0086ec'
+                    accentColor: '#14b8a6'
                   }}
                 />
                 Paginate
@@ -1524,17 +1524,17 @@ export default function AdminGamesManager() {
                     ? 'translateX(100%)' 
                     : 'translateX(200%)',
                 background: statusFilter === 'all'
-                  ? 'rgba(56, 189, 248, 0.2)'
+                  ? 'rgba(45, 212, 191, 0.2)'
                   : statusFilter === 'published'
                     ? 'rgba(34, 197, 94, 0.2)'
                     : 'rgba(239, 68, 68, 0.2)',
                 border: statusFilter === 'all'
-                  ? '1px solid rgba(56, 189, 248, 0.5)'
+                  ? '1px solid rgba(45, 212, 191, 0.5)'
                   : statusFilter === 'published'
                     ? '1px solid rgba(34, 197, 94, 0.5)'
                     : '1px solid rgba(239, 68, 68, 0.5)',
                 boxShadow: statusFilter === 'all'
-                  ? '0 0 10px rgba(56, 189, 248, 0.2)'
+                  ? '0 0 10px rgba(45, 212, 191, 0.2)'
                   : statusFilter === 'published'
                     ? '0 0 10px rgba(34, 197, 94, 0.2)'
                     : '0 0 10px rgba(239, 68, 68, 0.2)',
@@ -1652,8 +1652,8 @@ export default function AdminGamesManager() {
                       cursor: 'pointer',
                       padding: '3px 8px',
                       borderRadius: '6px',
-                      background: categoryFilter !== 'all' ? 'rgba(0, 134, 236, 0.2)' : 'transparent',
-                      border: categoryFilter !== 'all' ? '1px solid rgba(0, 134, 236, 0.45)' : '1px solid transparent',
+                      background: categoryFilter !== 'all' ? 'rgba(20, 184, 166, 0.2)' : 'transparent',
+                      border: categoryFilter !== 'all' ? '1px solid rgba(20, 184, 166, 0.45)' : '1px solid transparent',
                       transition: 'all 0.2s ease'
                     }}
                     title="Click to filter by category"
@@ -1690,7 +1690,7 @@ export default function AdminGamesManager() {
                           cursor: 'pointer',
                           fontSize: '0.8rem',
                           fontWeight: categoryFilter === 'all' ? 700 : 500,
-                          background: categoryFilter === 'all' ? 'rgba(0, 134, 236, 0.2)' : 'transparent',
+                          background: categoryFilter === 'all' ? 'rgba(20, 184, 166, 0.2)' : 'transparent',
                           color: categoryFilter === 'all' ? '#38bdf8' : '#e2e8f0',
                           display: 'flex',
                           justifyContent: 'space-between',
@@ -1718,7 +1718,7 @@ export default function AdminGamesManager() {
                                   cursor: 'pointer',
                                   fontSize: '0.8rem',
                                   fontWeight: isSelected ? 700 : 400,
-                                  background: isSelected ? 'rgba(0, 134, 236, 0.2)' : 'transparent',
+                                  background: isSelected ? 'rgba(20, 184, 166, 0.2)' : 'transparent',
                                   color: isSelected ? '#38bdf8' : '#cbd5e1',
                                   display: 'flex',
                                   justifyContent: 'space-between',
@@ -1766,8 +1766,8 @@ export default function AdminGamesManager() {
                       cursor: 'pointer',
                       padding: '3px 8px',
                       borderRadius: '6px',
-                      background: featuredFilter !== 'all' ? 'rgba(0, 134, 236, 0.2)' : 'transparent',
-                      border: featuredFilter !== 'all' ? '1px solid rgba(0, 134, 236, 0.45)' : '1px solid transparent',
+                      background: featuredFilter !== 'all' ? 'rgba(20, 184, 166, 0.2)' : 'transparent',
+                      border: featuredFilter !== 'all' ? '1px solid rgba(20, 184, 166, 0.45)' : '1px solid transparent',
                       transition: 'all 0.2s ease'
                     }}
                     title="Click to filter by Featured status"
@@ -1804,7 +1804,7 @@ export default function AdminGamesManager() {
                           cursor: 'pointer',
                           fontSize: '0.8rem',
                           fontWeight: featuredFilter === 'all' ? 700 : 500,
-                          background: featuredFilter === 'all' ? 'rgba(0, 134, 236, 0.2)' : 'transparent',
+                          background: featuredFilter === 'all' ? 'rgba(20, 184, 166, 0.2)' : 'transparent',
                           color: featuredFilter === 'all' ? '#38bdf8' : '#e2e8f0',
                           display: 'flex',
                           justifyContent: 'space-between',
@@ -2021,7 +2021,7 @@ export default function AdminGamesManager() {
                           title={game.status === 'published' ? 'Active Game (Click to Deactivate)' : 'Inactive Game (Click to Activate)'}
                         >
                           {game.status === 'published' ? (
-                            <ToggleRight size={18} style={{ color: '#0086ec' }} />
+                            <ToggleRight size={18} style={{ color: '#14b8a6' }} />
                           ) : (
                             <ToggleLeft size={18} style={{ color: '#64748b' }} />
                           )}
@@ -2404,7 +2404,7 @@ export default function AdminGamesManager() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                   <div style={{ background: 'var(--adm-input-bg, rgba(15, 23, 42, 0.6))', border: '1px solid var(--adm-border, rgba(255, 255, 255, 0.08))', borderRadius: '10px', padding: '12px 14px' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--adm-text-secondary, #94a3b8)', display: 'block' }}>Total Size</span>
-                    <strong style={{ fontSize: '1.1rem', color: 'var(--adm-accent, #0086ec)' }}>{filesInfo.totalSizeFormatted}</strong>
+                    <strong style={{ fontSize: '1.1rem', color: 'var(--adm-accent, #14b8a6)' }}>{filesInfo.totalSizeFormatted}</strong>
                   </div>
 
                   <div style={{ background: 'var(--adm-input-bg, rgba(15, 23, 42, 0.6))', border: '1px solid var(--adm-border, rgba(255, 255, 255, 0.08))', borderRadius: '10px', padding: '12px 14px' }}>
@@ -2457,9 +2457,9 @@ export default function AdminGamesManager() {
                         bottom: '3px',
                         left: '3px',
                         width: 'calc(50% - 3px)',
-                        background: 'linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)',
+                        background: 'linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)',
                         borderRadius: '6px',
-                        boxShadow: '0 2px 8px rgba(0, 134, 236, 0.35)',
+                        boxShadow: '0 2px 8px rgba(20, 184, 166, 0.35)',
                         transform: filesViewMode === 'list' ? 'translateX(0)' : 'translateX(100%)',
                         transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                         zIndex: 1
@@ -2538,7 +2538,7 @@ export default function AdminGamesManager() {
                       .map((file, idx) => (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', borderBottom: idx < filesInfo.files.length - 1 ? '1px solid var(--adm-border, rgba(255, 255, 255, 0.04))' : 'none', fontSize: '0.8rem' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1, paddingRight: '12px' }}>
-                            <FileText size={14} style={{ color: file.name.toLowerCase() === 'index.html' ? '#22c55e' : 'var(--adm-accent, #0086ec)', flexShrink: 0 }} />
+                            <FileText size={14} style={{ color: file.name.toLowerCase() === 'index.html' ? '#22c55e' : 'var(--adm-accent, #14b8a6)', flexShrink: 0 }} />
                             <span style={{ color: file.name.toLowerCase() === 'index.html' ? '#22c55e' : 'var(--adm-text-primary, #e2e8f0)', fontWeight: file.name.toLowerCase() === 'index.html' ? 700 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={file.relativePath}>
                               {file.relativePath}
                             </span>

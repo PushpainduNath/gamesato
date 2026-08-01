@@ -220,7 +220,8 @@ export default function ProfilePage() {
     return null;
   }
 
-  // Use custom uploaded avatar, session avatar, or default profile icon
+  // Check if user has uploaded a custom image or has a real image URL
+  const hasCustomOrRealImage = Boolean(customAvatar) || (Boolean(session.user?.image) && !session.user?.image?.startsWith('data:image/svg+xml') && session.user?.image !== '/defaultprofileicon.jpeg');
   const avatarUrl = customAvatar || session.user?.image || '/defaultprofileicon.jpeg';
 
   return (
@@ -242,7 +243,13 @@ export default function ProfilePage() {
           <div className={styles.avatarSection}>
             <div className={styles.avatarOuterWrapper}>
               <div className={styles.avatarGlowBorder}>
-                <img src={avatarUrl} alt={session.user?.name || 'User'} className={styles.avatarImg} />
+                {hasCustomOrRealImage ? (
+                  <img src={avatarUrl} alt={session.user?.name || 'User'} className={styles.avatarImg} />
+                ) : (
+                  <div className={styles.defaultAvatarCircle}>
+                    {(session.user?.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
               <button className={styles.editBtn} onClick={triggerFileInput} aria-label="Edit Avatar">
                 <Pencil size={14} color="currentColor" />
@@ -335,7 +342,7 @@ export default function ProfilePage() {
             <div 
               className={styles.optionItem} 
               onClick={() => {
-                window.location.href = 'mailto:support@gamebite.com?subject=Gamebite%20Support%20Request';
+                window.location.href = 'mailto:support@gamesato.com?subject=Gamesato%20Support%20Request';
               }}
             >
               <div className={styles.optionLeft}>

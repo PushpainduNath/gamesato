@@ -13,7 +13,7 @@
 
 .playBtn {
   flex-grow: 1;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: #000000 !important;
   color: white;
   padding: 1rem 2rem;
   border-radius: var(--border-radius-md);

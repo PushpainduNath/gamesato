@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://pushpaindunath@localhost:5432/gamebite'
+  connectionString: process.env.DATABASE_URL || 'postgresql://pushpaindunath@localhost:5432/gamesato'
 });
 
 async function assignRandomAvatars() {

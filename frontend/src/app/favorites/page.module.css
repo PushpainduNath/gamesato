@@ -77,8 +77,8 @@
 
 .card:hover .thumbnailWrapper {
   transform: translateY(-4px);
-  border-color: rgba(0, 134, 236, 0.4) !important;
-  box-shadow: 0 6px 16px rgba(0, 134, 236, 0.25);
+  border-color: rgba(20, 184, 166, 0.4) !important;
+  box-shadow: 0 6px 16px rgba(20, 184, 166, 0.25);
 }
 
 .card:hover .thumbnail {
@@ -126,18 +126,19 @@
 }
 
 .exploreBtn {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   color: white;
   padding: 0.75rem 1.75rem;
   border-radius: 50px;
   font-size: 0.95rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4) !important;
+  transition: all 0.2s ease;
 }
 
 .exploreBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.55) !important;
 }
 
 @media (max-width: 768px) {

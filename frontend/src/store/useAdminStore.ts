@@ -34,7 +34,7 @@ export const useAdminStore = create<AdminStore>()(
       logout: () => set({ admin: null, token: null, globalSearchQuery: '' }),
     }),
     {
-      name: 'gamebite-admin-storage',
+      name: 'gamesato-admin-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )

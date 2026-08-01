@@ -17,8 +17,8 @@ const GAMES_DIR = process.env.GAMES_DIR || path.join(__dirname, '../../gb-games'
 // CORS configuration to support credentialed requests (cookies) from Next.js
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  'https://gamebite.io',
-  'https://gamebite.pushpaindunath.cloud',
+  'https://gamesato.com',
+  'https://gamesato.pushpaindunath.cloud',
   'https://games.hypertechgames.com',
   'https://games.metaplaystudios.com',
   'http://localhost:3021',
@@ -50,7 +50,7 @@ app.use('/api/categories', categoriesRouter);
 
 // Basic health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', server: 'Gamebite Express' });
+  res.json({ status: 'ok', server: 'Gamesato Express' });
 });
 
 // Global Error Handler
@@ -61,7 +61,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 const server = app.listen(PORT, () => {
-  console.log(`[Gamebite Server] Running on http://localhost:${PORT}`);
+  console.log(`[Gamesato Server] Running on http://localhost:${PORT}`);
   
   // Start the background Redis analytics worker
   startAnalyticsWorker();

@@ -547,7 +547,7 @@ export default function AdminCategoriesManager() {
                     cursor: 'pointer',
                     width: '14px',
                     height: '14px',
-                    accentColor: '#0086ec'
+                    accentColor: '#14b8a6'
                   }}
                 />
                 Paginate
@@ -647,7 +647,7 @@ export default function AdminCategoriesManager() {
                       <span style={{ fontFamily: 'monospace', color: 'var(--adm-text-secondary, #94a3b8)', fontSize: '0.85rem' }}>{cat.slug}</span>
                     </td>
                     <td>
-                      <span className={styles.badge} style={{ background: 'var(--adm-accent-light, rgba(0, 134, 236, 0.1))', color: 'var(--adm-accent, #0086ec)', border: '1px solid var(--adm-border, rgba(0, 134, 236, 0.2))', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                      <span className={styles.badge} style={{ background: 'var(--adm-accent-light, rgba(20, 184, 166, 0.1))', color: 'var(--adm-accent, #14b8a6)', border: '1px solid var(--adm-border, rgba(20, 184, 166, 0.2))', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>
                         {cat.games_count} {cat.games_count === 1 ? 'game' : 'games'}
                       </span>
                     </td>
@@ -933,7 +933,7 @@ export default function AdminCategoriesManager() {
                       <div 
                         key={game.id} 
                         onClick={() => toggleSelectGameToAdd(game.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', background: selectedGamesToAdd.includes(game.id) ? 'rgba(0,134,236,0.1)' : 'transparent' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', background: selectedGamesToAdd.includes(game.id) ? 'rgba(20, 184, 166,0.1)' : 'transparent' }}
                       >
                         <input 
                           type="checkbox" 
@@ -1042,7 +1042,7 @@ export default function AdminCategoriesManager() {
           <div className={styles.figmaModal} style={{ maxWidth: '440px' }}>
             <div className={styles.modalHeader}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Gamepad2 size={20} style={{ color: '#0086ec' }} />
+                <Gamepad2 size={20} style={{ color: '#14b8a6' }} />
                 <h3 className={styles.modalTitle}>Move Game Category</h3>
               </div>
               <button className={styles.modalCloseBtn} onClick={() => setGameToMove(null)}>

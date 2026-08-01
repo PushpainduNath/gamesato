@@ -1,7 +1,7 @@
 {
-  "name": "gamebite-backend",
+  "name": "gamesato-backend",
   "version": "1.0.0",
-  "description": "Backend server for Gamebite H5 Game Portal",
+  "description": "Backend server for Gamesato H5 Game Portal",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

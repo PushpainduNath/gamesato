@@ -1,4 +1,4 @@
-/* Gamebite Premium Global Design System */
+/* Gamesato Premium Global Design System */
 
 :root {
   /* Dark Theme variables (default) */
@@ -39,7 +39,7 @@
 }
 
 /* ===================================================
-   GAMEBITE ADMIN MULTI-THEME DESIGN SYSTEM
+   GAMESATO ADMIN MULTI-THEME DESIGN SYSTEM
    =================================================== */
 
 /* 1. Cyber Dark (Default) */
@@ -49,15 +49,15 @@
   --adm-header-bg: #0c0e12;
   --adm-card-bg: #161b22;
   --adm-table-header-bg: #161b22;
-  --adm-border: rgba(255, 255, 255, 0.08);
+  --adm-border: rgba(20, 184, 166, 0.15);
   --adm-border-hover: rgba(255, 255, 255, 0.15);
   --adm-text-primary: #ffffff;
   --adm-text-secondary: #94a3b8;
   --adm-text-muted: #64748b;
-  --adm-accent: #0086ec;
+  --adm-accent: #14b8a6;
   --adm-accent-hover: #0284c7;
-  --adm-accent-light: rgba(0, 134, 236, 0.15);
-  --adm-accent-gradient: linear-gradient(135deg, #0086ec 0%, #2c00fc 100%);
+  --adm-accent-light: rgba(20, 184, 166, 0.15);
+  --adm-accent-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
   --adm-table-row-hover: rgba(30, 41, 59, 0.85);
   --adm-input-bg: #0d1117;
   --adm-modal-bg: #161b22;
@@ -81,10 +81,10 @@
   --adm-text-primary: #0f172a;
   --adm-text-secondary: #475569;
   --adm-text-muted: #64748b;
-  --adm-accent: #0086ec;
+  --adm-accent: #14b8a6;
   --adm-accent-hover: #0284c7;
-  --adm-accent-light: rgba(0, 134, 236, 0.12);
-  --adm-accent-gradient: linear-gradient(135deg, #0086ec 0%, #2563eb 100%);
+  --adm-accent-light: rgba(20, 184, 166, 0.12);
+  --adm-accent-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
   --adm-table-row-hover: #f8fafc;
   --adm-input-bg: #f8fafc;
   --adm-modal-bg: #ffffff;
@@ -111,7 +111,7 @@
   --adm-accent: #d97706;
   --adm-accent-hover: #b45309;
   --adm-accent-light: rgba(217, 119, 6, 0.15);
-  --adm-accent-gradient: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  --adm-accent-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
   --adm-table-row-hover: #ede6d8;
   --adm-input-bg: #ffffff;
   --adm-modal-bg: #fbf9f4;
@@ -138,7 +138,7 @@
   --adm-accent: #10b981;
   --adm-accent-hover: #059669;
   --adm-accent-light: rgba(16, 185, 129, 0.18);
-  --adm-accent-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  --adm-accent-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
   --adm-table-row-hover: #143525;
   --adm-input-bg: #08170f;
   --adm-modal-bg: #0f281c;
@@ -157,15 +157,15 @@
   --adm-header-bg: #0a1733;
   --adm-card-bg: #112247;
   --adm-table-header-bg: #0e1d3d;
-  --adm-border: rgba(56, 189, 248, 0.18);
-  --adm-border-hover: rgba(56, 189, 248, 0.35);
+  --adm-border: rgba(45, 212, 191, 0.18);
+  --adm-border-hover: rgba(45, 212, 191, 0.35);
   --adm-text-primary: #f0f9ff;
   --adm-text-secondary: #bae6fd;
   --adm-text-muted: #7dd3fc;
   --adm-accent: #0284c7;
   --adm-accent-hover: #0369a1;
-  --adm-accent-light: rgba(2, 132, 199, 0.2);
-  --adm-accent-gradient: linear-gradient(135deg, #0284c7 0%, #1e40af 100%);
+  --adm-accent-light: rgba(13, 148, 136, 0.2);
+  --adm-accent-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
   --adm-table-row-hover: #162b59;
   --adm-input-bg: #091630;
   --adm-modal-bg: #112247;
@@ -190,8 +190,8 @@
   --text-secondary: #4b5563;
   --text-muted: #9ca3af;
   
-  --color-primary: #0086EC;
-  --color-primary-glow: rgba(0, 134, 236, 0.1);
+  --color-primary: #14b8a6;
+  --color-primary-glow: rgba(20, 184, 166, 0.1);
   
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.06);
@@ -408,14 +408,14 @@ body[data-admin-active="true"],
 
 html {
   height: 100%;
-  background-color: #050716;
+  background-color: #021211;
 }
 
 body {
-  background: linear-gradient(180deg, #000000 0%, #000D38 50%, #000000 100%) !important;
+  background: radial-gradient(circle at 50% 0%, #064e4b 0%, #042f2e 45%, #021211 100%) !important;
+  background-attachment: fixed !important;
   background-repeat: no-repeat !important;
-  background-attachment: scroll !important;
-  background-size: 100% 100% !important;
+  background-size: cover !important;
   color: var(--text-primary);
   min-height: 100dvh;
   display: flex;
@@ -423,6 +423,18 @@ body {
   overflow-x: hidden;
   position: relative;
   -webkit-font-smoothing: antialiased;
+}
+
+/* White Section Titles */
+.sectionTitle,
+.categorySectionTitle,
+[class*="sectionTitle"],
+[class*="categorySectionTitle"] {
+  color: #ffffff !important;
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Simple page background design without glowing layers */
@@ -444,6 +456,10 @@ a {
   transition: all 0.2s ease-in-out;
 }
 
+a:hover {
+  color: #14b8a6;
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -451,6 +467,34 @@ button {
   color: inherit;
   font-family: inherit;
   transition: all 0.2s ease-in-out;
+}
+
+/* Global Form Input Control Styles matching Tealish Theme */
+input[type="text"]:not([class*="searchInput"]),
+input[type="email"]:not([class*="searchInput"]),
+input[type="password"]:not([class*="searchInput"]),
+input[type="search"]:not([class*="searchInput"]),
+input[type="number"]:not([class*="searchInput"]),
+input[type="url"]:not([class*="searchInput"]),
+textarea,
+select {
+  background-color: #051817 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(20, 184, 166, 0.25) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+input[type="text"]:not([class*="searchInput"]):focus,
+input[type="email"]:not([class*="searchInput"]):focus,
+input[type="password"]:not([class*="searchInput"]):focus,
+input[type="search"]:not([class*="searchInput"]):focus,
+input[type="number"]:not([class*="searchInput"]):focus,
+input[type="url"]:not([class*="searchInput"]):focus,
+textarea:focus,
+select:focus {
+  border-color: #14b8a6 !important;
+  box-shadow: 0 0 12px rgba(20, 184, 166, 0.3) !important;
+  outline: none !important;
 }
 
 /* Glassmorphism Containers - Premium Subtle Card Styling */
@@ -582,14 +626,14 @@ button {
 
 .light-theme [class*="Sidebar_item"]:not([class*="activeItem"]):not([class*="Sidebar_activeItem"]):hover {
   background: #f1f5f9 !important;
-  color: #0086ec !important;
+  color: #14b8a6 !important;
 }
 
 [class*="Sidebar_activeItem"],
 [class*="Sidebar_activeItem"]:hover,
 .light-theme [class*="Sidebar_activeItem"],
 .light-theme [class*="Sidebar_activeItem"]:hover {
-  background: linear-gradient(90deg, #0086EC 0%, #2C00FC 100%) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   border: none !important;
 }
 
@@ -701,7 +745,7 @@ button {
 }
 
 .light-theme [class*="page_activeCategoryBtn"] {
-  background: linear-gradient(90deg, #0086EC 0%, #2C00FC 100%) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   border-color: transparent !important;
   color: #ffffff !important;
 }
@@ -711,7 +755,7 @@ button {
 }
 
 .light-theme [class*="page_carouselDotActive"] {
-  background: #0086EC !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
 }
 
 /* Light Theme overrides for generic glass components */
@@ -737,26 +781,12 @@ button {
 
 @media (min-width: 769px) {
   .pageWrapper {
-    background: linear-gradient(
-      to bottom,
-      #000000 0%,
-      #000000 50%,
-      #010d33 65%,
-      #010d33 90%,
-      #000000 100%
-    ) !important;
+    background: transparent !important;
   }
 }
 
 @media (max-width: 768px) {
   .pageWrapper {
-    background: linear-gradient(
-      to bottom,
-      #000000 0%,
-      #000000 42%,
-      #010d33 58%,
-      #010d33 88%,
-      #000000 100%
-    ) !important;
+    background: transparent !important;
   }
 }

@@ -1,9 +1,9 @@
 .pageLayout {
   display: flex;
   flex-direction: column;
-  min-height: auto;
+  min-height: 100vh !important;
   flex: 1;
-  background: linear-gradient(180deg, #000000 0%, #000D38 50%, #000000 100%);
+  background: transparent !important;
   color: white;
   box-sizing: border-box;
 }
@@ -14,7 +14,7 @@
   justify-content: space-between;
   padding: 1.25rem 1rem;
   background: transparent;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(20, 184, 166, 0.18);
   box-sizing: border-box;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .headerBtn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(20, 184, 166, 0.15);
 }
 
 .headerTitle {
@@ -63,7 +63,7 @@
 .descriptionText {
   font-size: 0.92rem;
   line-height: 1.5;
-  color: #A0A3B1;
+  color: #94a3b8;
   margin: 0 0 1.75rem 0;
   font-family: var(--font-sans);
 }
@@ -88,21 +88,22 @@
 }
 
 .inputGroup input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  background: rgba(4, 23, 22, 0.75) !important;
+  border: 1px solid rgba(20, 184, 166, 0.3) !important;
+  border-radius: 12px !important;
   padding: 0.75rem 1rem;
-  color: white;
+  color: white !important;
   font-size: 0.9rem;
   outline: none;
   font-family: var(--font-sans);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
   height: 48px;
   box-sizing: border-box;
 }
 
 .inputGroup input:focus {
-  border-color: #0086EC;
+  border-color: #2dd4bf !important;
+  box-shadow: 0 0 12px rgba(20, 184, 166, 0.3) !important;
 }
 
 .passwordInputWrapper {
@@ -127,27 +128,27 @@
   align-items: center;
   justify-content: center;
   padding: 4px;
-  color: #94a3b8;
+  color: #14b8a6;
   transition: color 0.2s ease;
 }
 
 .eyeToggleBtn:hover {
-  color: #ffffff;
+  color: #2dd4bf;
 }
 
 .inputGroup input:-webkit-autofill,
 .inputGroup input:-webkit-autofill:hover, 
 .inputGroup input:-webkit-autofill:focus, 
 .inputGroup input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #050716 inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #041716 inset !important;
   -webkit-text-fill-color: #ffffff !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
 .readonlyInput {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
-  color: #A0A3B1 !important;
+  background: rgba(4, 23, 22, 0.4) !important;
+  border-color: rgba(20, 184, 166, 0.15) !important;
+  color: #94a3b8 !important;
   cursor: not-allowed;
 }
 
@@ -177,8 +178,8 @@
   height: 48px;
   border-radius: 24px;
   border: none;
-  background: linear-gradient(90deg, #0086EC 0%, #4F00FF 100%) !important;
-  box-shadow: 0 4px 14px rgba(0, 134, 236, 0.35) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35) !important;
   color: white;
   font-weight: 700;
   font-size: 1rem;
@@ -273,6 +274,6 @@
 }
 
 :global(.light-theme) .submitBtn {
-  background: linear-gradient(90deg, #0086ec 0%, #2c00fc 100%) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%) !important;
   color: #ffffff !important;
 }

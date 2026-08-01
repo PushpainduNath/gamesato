@@ -104,7 +104,7 @@ export default function SignupPage() {
         <div className={styles.logoArea}>
           <img 
             src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
-            alt="Gamebite Logo" 
+            alt="Gamesato Logo" 
             className={styles.logo}
             onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
           />

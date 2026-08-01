@@ -3,7 +3,7 @@ import { optionalAuthenticate, AuthenticatedRequest } from '../middleware/auth';
 import redis from '../config/redis';
 
 const router = Router();
-const QUEUE_KEY = 'gamebite:analytics:queue';
+const QUEUE_KEY = 'gamesato:analytics:queue';
 
 /**
  * POST /api/analytics/event - Send analytics event (play, heartbeat)

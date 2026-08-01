@@ -57,16 +57,16 @@ export async function generateMetadata(props: {
 
     if (res.rows.length === 0) {
       return {
-        title: 'Game Not Found | Gamebite',
+        title: 'Game Not Found | Gamesato',
       };
     }
 
     const game = res.rows[0];
     return {
       title: `${game.title} - Play Free H5 Game Online`,
-      description: game.description || `Play ${game.title} instantly in your web browser. A high-performance H5 web game on Gamebite.`,
+      description: game.description || `Play ${game.title} instantly in your web browser. A high-performance H5 web game on Gamesato.`,
       openGraph: {
-        title: `${game.title} | Gamebite`,
+        title: `${game.title} | Gamesato`,
         description: game.description,
         images: [game.thumbnail_url],
       },
@@ -74,7 +74,7 @@ export async function generateMetadata(props: {
   } catch (err) {
     console.error('Error generating metadata for game page:', err);
     return {
-      title: 'Gamebite Portal',
+      title: 'Gamesato Portal',
     };
   }
 }

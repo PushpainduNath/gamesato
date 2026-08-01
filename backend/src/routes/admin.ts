@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import redis from '../config/redis';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'gamebite-admin-secret-key-12345';
+const JWT_SECRET = process.env.JWT_SECRET || 'gamesato-admin-secret-key-12345';
 
 const router = Router();
 
@@ -627,8 +627,8 @@ router.get('/settings', async (req: Request, res: Response) => {
       social_facebook: 'https://facebook.com',
       social_youtube: 'https://youtube.com',
       social_instagram: 'https://instagram.com',
-      support_email: 'support@gamebite.com',
-      site_name: 'Gamebite Portal',
+      support_email: 'support@gamesato.com',
+      site_name: 'Gamesato Portal',
       analytics_id: 'UA-182948123-1',
       maintenance_mode: 'false'
     };

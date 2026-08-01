@@ -77,8 +77,8 @@ export default function AdminContentManager() {
   };
 
   // Settings form states
-  const [siteName, setSiteName] = useState('Gamebite Portal');
-  const [contactEmail, setContactEmail] = useState('support@gamebite.com');
+  const [siteName, setSiteName] = useState('Gamesato Portal');
+  const [contactEmail, setContactEmail] = useState('support@gamesato.com');
   const [socialTwitter, setSocialTwitter] = useState('https://twitter.com');
   const [socialFacebook, setSocialFacebook] = useState('https://facebook.com');
   const [socialYoutube, setSocialYoutube] = useState('https://youtube.com');
@@ -374,12 +374,12 @@ export default function AdminContentManager() {
           style={{
             background: 'none',
             border: 'none',
-            color: activeTab === 'pages' ? '#0086ec' : '#94a3b8',
+            color: activeTab === 'pages' ? '#14b8a6' : '#94a3b8',
             fontSize: '0.95rem',
             fontWeight: 700,
             padding: '0.5rem 1rem',
             cursor: 'pointer',
-            borderBottom: activeTab === 'pages' ? '2px solid #0086ec' : '2px solid transparent',
+            borderBottom: activeTab === 'pages' ? '2px solid #14b8a6' : '2px solid transparent',
             transition: 'all 0.2s ease',
             display: 'flex',
             alignItems: 'center',
@@ -395,12 +395,12 @@ export default function AdminContentManager() {
           style={{
             background: 'none',
             border: 'none',
-            color: activeTab === 'settings' ? '#0086ec' : '#94a3b8',
+            color: activeTab === 'settings' ? '#14b8a6' : '#94a3b8',
             fontSize: '0.95rem',
             fontWeight: 700,
             padding: '0.5rem 1rem',
             cursor: 'pointer',
-            borderBottom: activeTab === 'settings' ? '2px solid #0086ec' : '2px solid transparent',
+            borderBottom: activeTab === 'settings' ? '2px solid #14b8a6' : '2px solid transparent',
             transition: 'all 0.2s ease',
             display: 'flex',
             alignItems: 'center',
@@ -437,7 +437,7 @@ export default function AdminContentManager() {
                       cursor: 'pointer',
                       width: '14px',
                       height: '14px',
-                      accentColor: '#0086ec'
+                      accentColor: '#14b8a6'
                     }}
                   />
                   Paginate
@@ -488,7 +488,7 @@ export default function AdminContentManager() {
                       </td>
                       <td>
                         {item.type === 'static' ? (
-                          <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(0, 134, 236, 0.15)', color: '#0086ec' }}>Static Page</span>
+                          <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(20, 184, 166, 0.15)', color: '#14b8a6' }}>Static Page</span>
                         ) : (
                           <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, background: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>Category</span>
                         )}
@@ -589,7 +589,7 @@ export default function AdminContentManager() {
                   className={styles.figmaInput} 
                   value={siteName}
                   onChange={(e) => setSiteName(e.target.value)}
-                  placeholder="e.g. Gamebite"
+                  placeholder="e.g. Gamesato"
                   required
                 />
               </div>
@@ -601,7 +601,7 @@ export default function AdminContentManager() {
                   className={styles.figmaInput} 
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
-                  placeholder="support@gamebite.io"
+                  placeholder="support@gamesato.com"
                 />
               </div>
 
@@ -623,7 +623,7 @@ export default function AdminContentManager() {
                       type="checkbox" 
                       checked={maintenanceMode} 
                       onChange={(e) => setMaintenanceMode(e.target.checked)} 
-                      style={{ accentColor: '#0086ec' }}
+                      style={{ accentColor: '#14b8a6' }}
                     />
                     Enable Maintenance Mode
                   </label>
@@ -632,7 +632,7 @@ export default function AdminContentManager() {
                       type="checkbox" 
                       checked={enableRegistration} 
                       onChange={(e) => setEnableRegistration(e.target.checked)} 
-                      style={{ accentColor: '#0086ec' }}
+                      style={{ accentColor: '#14b8a6' }}
                     />
                     Allow New User Signup
                   </label>
@@ -652,7 +652,7 @@ export default function AdminContentManager() {
                   className={styles.figmaInput} 
                   value={socialTwitter} 
                   onChange={(e) => setSocialTwitter(e.target.value)} 
-                  placeholder="https://twitter.com/gamebite"
+                  placeholder="https://twitter.com/gamesato"
                 />
               </div>
 
@@ -663,7 +663,7 @@ export default function AdminContentManager() {
                   className={styles.figmaInput} 
                   value={socialFacebook} 
                   onChange={(e) => setSocialFacebook(e.target.value)} 
-                  placeholder="https://facebook.com/gamebite"
+                  placeholder="https://facebook.com/gamesato"
                 />
               </div>
 
@@ -674,7 +674,7 @@ export default function AdminContentManager() {
                   className={styles.figmaInput} 
                   value={socialYoutube} 
                   onChange={(e) => setSocialYoutube(e.target.value)} 
-                  placeholder="https://youtube.com/c/gamebite"
+                  placeholder="https://youtube.com/c/gamesato"
                 />
               </div>
 
@@ -685,7 +685,7 @@ export default function AdminContentManager() {
                   className={styles.figmaInput} 
                   value={socialInstagram} 
                   onChange={(e) => setSocialInstagram(e.target.value)} 
-                  placeholder="https://instagram.com/gamebite"
+                  placeholder="https://instagram.com/gamesato"
                 />
               </div>
             </div>
@@ -695,7 +695,7 @@ export default function AdminContentManager() {
               <button 
                 type="submit" 
                 className={styles.addGameBtn}
-                style={{ background: 'linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)', border: 'none' }}
+                style={{ background: 'linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)', border: 'none' }}
                 disabled={settingsLoading}
               >
                 <Save size={16} />
@@ -738,7 +738,7 @@ export default function AdminContentManager() {
                       name="p_status" 
                       checked={editStatus === 'published'} 
                       onChange={() => setEditStatus('published')} 
-                      style={{ accentColor: '#0086ec' }}
+                      style={{ accentColor: '#14b8a6' }}
                     />
                     Published (Visible on site)
                   </label>
@@ -748,7 +748,7 @@ export default function AdminContentManager() {
                       name="p_status" 
                       checked={editStatus === 'draft'} 
                       onChange={() => setEditStatus('draft')} 
-                      style={{ accentColor: '#0086ec' }}
+                      style={{ accentColor: '#14b8a6' }}
                     />
                     Draft (Hidden from public)
                   </label>
@@ -787,7 +787,7 @@ export default function AdminContentManager() {
                       faqList.map((faq, index) => (
                         <div key={index} style={{ borderBottom: index < faqList.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: index < faqList.length - 1 ? '1rem' : 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.8rem', color: '#0086ec', fontWeight: 600 }}>FAQ Item #{index + 1}</span>
+                            <span style={{ fontSize: '0.8rem', color: '#14b8a6', fontWeight: 600 }}>FAQ Item #{index + 1}</span>
                             <button 
                               type="button"
                               onClick={() => handleRemoveFaq(index)}
@@ -832,7 +832,7 @@ export default function AdminContentManager() {
                         type="button"
                         onClick={() => setEditorMode('code')}
                         style={{
-                          background: editorMode === 'code' ? 'var(--adm-accent, #0086ec)' : 'transparent',
+                          background: editorMode === 'code' ? 'var(--adm-accent, #14b8a6)' : 'transparent',
                           color: editorMode === 'code' ? '#ffffff' : 'var(--adm-text-secondary, #94a3b8)',
                           border: 'none',
                           padding: '4px 10px',
@@ -852,7 +852,7 @@ export default function AdminContentManager() {
                         type="button"
                         onClick={() => setEditorMode('preview')}
                         style={{
-                          background: editorMode === 'preview' ? 'var(--adm-accent, #0086ec)' : 'transparent',
+                          background: editorMode === 'preview' ? 'var(--adm-accent, #14b8a6)' : 'transparent',
                           color: editorMode === 'preview' ? '#ffffff' : 'var(--adm-text-secondary, #94a3b8)',
                           border: 'none',
                           padding: '4px 10px',
@@ -919,7 +919,7 @@ export default function AdminContentManager() {
                       </button>
                       <button 
                         type="button" 
-                        onClick={() => insertHtmlTag('<a href="#" style="color:#0086ec;">', '</a>')} 
+                        onClick={() => insertHtmlTag('<a href="#" style="color:#14b8a6;">', '</a>')} 
                         style={{ background: 'var(--adm-card-bg, #1e293b)', color: 'var(--adm-text-primary, #f8fafc)', border: '1px solid var(--adm-border, #334155)', borderRadius: '4px', padding: '3px 8px', fontSize: '0.75rem', cursor: 'pointer' }}
                       >
                         &lt;a&gt; Link
@@ -927,7 +927,7 @@ export default function AdminContentManager() {
                       <button 
                         type="button" 
                         onClick={convertLinesToHtml} 
-                        style={{ background: 'rgba(0, 134, 236, 0.12)', color: 'var(--adm-accent, #0086ec)', border: '1px solid var(--adm-accent, rgba(59, 130, 246, 0.4))', borderRadius: '4px', padding: '3px 10px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600, marginLeft: 'auto' }}
+                        style={{ background: 'rgba(20, 184, 166, 0.12)', color: 'var(--adm-accent, #14b8a6)', border: '1px solid var(--adm-accent, rgba(20, 184, 166, 0.4))', borderRadius: '4px', padding: '3px 10px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600, marginLeft: 'auto' }}
                       >
                         ✨ Auto-wrap Lines to &lt;p&gt;
                       </button>
@@ -972,7 +972,7 @@ export default function AdminContentManager() {
 
               {/* SEO Meta Fields Section */}
               <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
-                <h4 style={{ margin: '0 0 1rem 0', color: '#0086ec', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <h4 style={{ margin: '0 0 1rem 0', color: '#14b8a6', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Sparkles size={14} /> SEO Meta Tag Settings
                 </h4>
 
@@ -989,7 +989,7 @@ export default function AdminContentManager() {
                       className={styles.figmaInput} 
                       value={editMetaTitle}
                       onChange={(e) => setEditMetaTitle(e.target.value)}
-                      placeholder="e.g. Play Free Online Games | Gamebite"
+                      placeholder="e.g. Play Free Online Games | Gamesato"
                     />
                   </div>
 
@@ -1036,7 +1036,7 @@ export default function AdminContentManager() {
                 <button 
                   type="submit" 
                   className={styles.addGameBtn}
-                  style={{ background: 'linear-gradient(135deg, #0086ec 0%, #2c00fc 100%)', border: 'none', padding: '0.5rem 1.25rem' }}
+                  style={{ background: 'linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)', border: 'none', padding: '0.5rem 1.25rem' }}
                   disabled={saveLoading}
                 >
                   {saveLoading ? 'Saving...' : <><Save size={16} /> Save Changes</>}

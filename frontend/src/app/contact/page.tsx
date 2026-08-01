@@ -66,7 +66,7 @@ export default function ContactPage() {
           />
 
           <div style={{ marginTop: '1rem' }}>
-            <Link href="/" style={{ background: 'linear-gradient(135deg, #5b75fa 0%, #3b82f6 100%)', color: 'white', padding: '0.8rem 1.8rem', borderRadius: '50px', fontWeight: 600 }}>
+            <Link href="/" style={{ background: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', color: 'white', padding: '0.8rem 1.8rem', borderRadius: '50px', fontWeight: 600 }}>
               Back to Home
             </Link>
           </div>
@@ -88,11 +88,11 @@ export default function ContactPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', margin: '1rem 0' }}>
           <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', padding: '1.5rem', borderRadius: '12px' }}>
             <h4 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>📧 General Inquiries</h4>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>support@gamebite.com</p>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>support@gamesato.com</p>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', padding: '1.5rem', borderRadius: '12px' }}>
             <h4 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>🛠️ Developer Relations</h4>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>developers@gamebite.com</p>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>developers@gamesato.com</p>
           </div>
         </div>
 
@@ -101,7 +101,7 @@ export default function ContactPage() {
         </p>
 
         <div style={{ marginTop: '1rem' }}>
-          <Link href="/" style={{ background: 'linear-gradient(135deg, #5b75fa 0%, #3b82f6 100%)', color: 'white', padding: '0.8rem 1.8rem', borderRadius: '50px', fontWeight: 600 }}>
+          <Link href="/" style={{ background: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', color: 'white', padding: '0.8rem 1.8rem', borderRadius: '50px', fontWeight: 600 }}>
             Back to Home
           </Link>
         </div>

@@ -473,7 +473,7 @@ export default function ProfileDrawer() {
                 <div 
                   className={styles.optionItem} 
                   onClick={() => {
-                    window.location.href = 'mailto:support@gamebite.com?subject=Gamebite%20Support%20Request';
+                    window.location.href = 'mailto:support@gamesato.com?subject=Gamesato%20Support%20Request';
                   }}
                 >
                   <div className={styles.optionLeft}>
@@ -754,7 +754,7 @@ export default function ProfileDrawer() {
                     <span>📧</span>
                     <strong style={{ color: 'white' }}>General Inquiries</strong>
                   </div>
-                  <p className={styles.supportCardEmail}>support@gamebite.com</p>
+                  <p className={styles.supportCardEmail}>support@gamesato.com</p>
                 </div>
 
                 <div className={styles.supportCard}>
@@ -762,7 +762,7 @@ export default function ProfileDrawer() {
                     <span>🛠️</span>
                     <strong style={{ color: 'white' }}>Developer Relations</strong>
                   </div>
-                  <p className={styles.supportCardEmail}>developers@gamebite.com</p>
+                  <p className={styles.supportCardEmail}>developers@gamesato.com</p>
                 </div>
               </div>
 
@@ -773,7 +773,7 @@ export default function ProfileDrawer() {
               </div>
 
               <a 
-                href="mailto:support@gamebite.com?subject=Gamebite Support Request" 
+                href="mailto:support@gamesato.com?subject=Gamesato Support Request" 
                 className={styles.saveChangesBtn}
                 style={{ display: 'flex', textDecoration: 'none', alignItems: 'center', justifyContent: 'center' }}
               >
