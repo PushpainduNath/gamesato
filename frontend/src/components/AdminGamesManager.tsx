@@ -2005,50 +2005,56 @@ export default function AdminGamesManager() {
                     style={game.status !== 'published' ? { background: 'rgba(239, 68, 68, 0.07)' } : undefined}
                   >
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                        <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, minWidth: '20px', textAlign: 'center', display: 'inline-block' }}>
-                          {paginationEnabled ? (currentPage - 1) * itemsPerPage + index + 1 : index + 1}
-                        </span>
-                        <a href={`/games/${game.slug}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block', flexShrink: 0 }}>
-                          <img src={game.thumbnailUrl ? (game.thumbnailUrl.startsWith('http') ? game.thumbnailUrl : `${backendUrl}${game.thumbnailUrl}`) : `${backendUrl}/games/${game.slug}/thumbnail.jpg`} alt="" className={styles.gameThumbnail} />
-                        </a>
-                        <div>
-                          <a href={`/games/${game.slug}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                            <div style={{ fontWeight: 700, color: 'var(--adm-text-primary, #ffffff)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }} className={styles.gameTitleLink}>
-                              <span>{game.title}</span>
-                              {(() => {
-                                const url = (game.gameUrl || (game as any).game_url || '').trim();
-                                const hasBuild = (game as any).hasBuild;
-                                if (!url || url === '#') {
-                                  return (
-                                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700 }}>
-                                      EMPTY
-                                    </span>
-                                  );
-                                }
-                                if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
-                                  return (
-                                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(6, 182, 212, 0.2)', color: '#06b6d4', border: '1px solid rgba(6, 182, 212, 0.4)', fontWeight: 700 }}>
-                                      LINK
-                                    </span>
-                                  );
-                                }
-                                if (hasBuild !== false) {
-                                  return (
-                                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700 }}>
-                                      BUILD
-                                    </span>
-                                  );
-                                }
-                                return (
-                                  <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700 }}>
-                                    EMPTY
-                                  </span>
-                                );
-                              })()}
-                            </div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--adm-text-secondary, var(--text-secondary))' }}>/{game.slug}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.65rem', width: '100%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flex: 1, minWidth: 0 }}>
+                          <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, minWidth: '20px', textAlign: 'center', display: 'inline-block', flexShrink: 0 }}>
+                            {paginationEnabled ? (currentPage - 1) * itemsPerPage + index + 1 : index + 1}
+                          </span>
+                          <a href={`/games/${game.slug}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block', flexShrink: 0 }}>
+                            <img src={game.thumbnailUrl ? (game.thumbnailUrl.startsWith('http') ? game.thumbnailUrl : `${backendUrl}${game.thumbnailUrl}`) : `${backendUrl}/games/${game.slug}/thumbnail.jpg`} alt="" className={styles.gameThumbnail} />
                           </a>
+                          <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
+                            <a href={`/games/${game.slug}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                              <div style={{ fontWeight: 700, color: 'var(--adm-text-primary, #ffffff)', fontSize: '0.95rem' }} className={styles.gameTitleLink}>
+                                {game.title}
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--adm-text-secondary, var(--text-secondary))' }}>/{game.slug}</div>
+                            </a>
+                          </div>
+                        </div>
+
+                        {/* Dedicated Fixed-Width Aligned Badge Container */}
+                        <div style={{ width: '56px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, marginLeft: 'auto' }}>
+                          {(() => {
+                            const url = (game.gameUrl || (game as any).game_url || '').trim();
+                            const hasBuild = (game as any).hasBuild;
+                            if (!url || url === '#') {
+                              return (
+                                <span style={{ fontSize: '0.68rem', width: '52px', textAlign: 'center', padding: '2px 0', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700, display: 'inline-block' }}>
+                                  EMPTY
+                                </span>
+                              );
+                            }
+                            if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
+                              return (
+                                <span style={{ fontSize: '0.68rem', width: '52px', textAlign: 'center', padding: '2px 0', borderRadius: '4px', background: 'rgba(6, 182, 212, 0.2)', color: '#06b6d4', border: '1px solid rgba(6, 182, 212, 0.4)', fontWeight: 700, display: 'inline-block' }}>
+                                  LINK
+                                </span>
+                              );
+                            }
+                            if (hasBuild !== false) {
+                              return (
+                                <span style={{ fontSize: '0.68rem', width: '52px', textAlign: 'center', padding: '2px 0', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700, display: 'inline-block' }}>
+                                  BUILD
+                                </span>
+                              );
+                            }
+                            return (
+                              <span style={{ fontSize: '0.68rem', width: '52px', textAlign: 'center', padding: '2px 0', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700, display: 'inline-block' }}>
+                                EMPTY
+                              </span>
+                            );
+                          })()}
                         </div>
                       </div>
                     </td>
