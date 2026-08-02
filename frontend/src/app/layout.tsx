@@ -13,10 +13,15 @@ export const metadata: Metadata = {
   description: 'Play free online HTML5 games instantly on Gamesato. Action, racing, sports, logic, adventure, and arcade games available to play in your browser with no downloads required.',
   keywords: ['Gamesato', 'H5 games', 'web games', 'free online games', 'arcade', 'racing games', 'action games', 'mobile games'],
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
     shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
+  manifest: '/site.webmanifest',
   verification: {
     google: 'google72b218ef6dc38146',
   },
