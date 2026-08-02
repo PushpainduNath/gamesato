@@ -691,6 +691,8 @@ export default function AdminGamesManager() {
         const json: DashboardData = await res.json();
         const sanitizedGames = (json.games || []).map((g: any) => ({
           ...g,
+          gameUrl: g.game_url || g.gameUrl || '',
+          game_url: g.game_url || g.gameUrl || '',
           howToPlay: g.how_to_play || g.howToPlay || '',
           how_to_play: g.how_to_play || g.howToPlay || '',
           isFeatured: !!g.isFeatured && !!g.featuredDesktopUrl && !!g.featuredMobileUrl
@@ -1948,11 +1950,28 @@ export default function AdminGamesManager() {
                           <a href={`/games/${game.slug}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                             <div style={{ fontWeight: 700, color: 'var(--adm-text-primary, #ffffff)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }} className={styles.gameTitleLink}>
                               <span>{game.title}</span>
-                              {((game.gameUrl || (game as any).game_url || '')).startsWith('http') ? (
-                                <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(6, 182, 212, 0.2)', color: '#06b6d4', border: '1px solid rgba(6, 182, 212, 0.4)', fontWeight: 700 }}>EMBED</span>
-                              ) : (
-                                <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700 }}>ZIP</span>
-                              )}
+                              {(() => {
+                                const url = (game.gameUrl || (game as any).game_url || '').trim();
+                                if (!url || url === '#') {
+                                  return (
+                                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700 }}>
+                                      EMPTY
+                                    </span>
+                                  );
+                                }
+                                if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
+                                  return (
+                                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(6, 182, 212, 0.2)', color: '#06b6d4', border: '1px solid rgba(6, 182, 212, 0.4)', fontWeight: 700 }}>
+                                      LINK
+                                    </span>
+                                  );
+                                }
+                                return (
+                                  <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700 }}>
+                                    BUILD
+                                  </span>
+                                );
+                              })()}
                             </div>
                             <div style={{ fontSize: '0.75rem', color: 'var(--adm-text-secondary, var(--text-secondary))' }}>/{game.slug}</div>
                           </a>
