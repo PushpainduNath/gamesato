@@ -155,6 +155,8 @@ function HeaderContent() {
   }, [searchQuery]);
   
   const [isListening, setIsListening] = useState(false);
+  const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
+  const feedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [recognition, setRecognition] = useState<any>(null);
   const [isMobileSearchExpanded, setIsMobileSearchExpanded] = useState(false);
 
@@ -170,19 +172,45 @@ function HeaderContent() {
 
         rec.onstart = () => {
           setIsListening(true);
+          setVoiceFeedback(null);
+          setIsSearchFocused(true);
+          if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
         };
 
         rec.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setSearchQuery(transcript);
-          if (transcript.trim()) {
-            router.push(`/?search=${encodeURIComponent(transcript.trim())}`);
+          setVoiceFeedback(null);
+          setIsSearchFocused(true);
+          if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+            setIsMobileSearchExpanded(true);
           }
+          setTimeout(() => {
+            if (searchInputRef.current) {
+              searchInputRef.current.focus();
+            }
+          }, 50);
         };
 
         rec.onerror = (event: any) => {
-          console.error('Speech recognition error:', event.error);
           setIsListening(false);
+          let message = '';
+          if (event.error === 'no-speech') {
+            message = 'No speech detected, try again...';
+          } else if (event.error === 'not-allowed') {
+            message = 'Microphone access denied';
+          } else if (event.error !== 'aborted') {
+            message = 'Voice recognition failed, try again...';
+            console.warn('Speech recognition status:', event.error);
+          }
+
+          if (message) {
+            setVoiceFeedback(message);
+            if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+            feedbackTimeoutRef.current = setTimeout(() => {
+              setVoiceFeedback(null);
+            }, 4000);
+          }
         };
 
         rec.onend = () => {
@@ -199,6 +227,14 @@ function HeaderContent() {
     if (!recognition) {
       alert('Speech recognition is not supported in this browser. Please try Chrome, Edge, or Safari.');
       return;
+    }
+
+    setIsSearchFocused(true);
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      setIsMobileSearchExpanded(true);
+    }
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
     }
 
     if (isListening) {
@@ -355,7 +391,7 @@ function HeaderContent() {
               ref={searchInputRef}
               type="text"
               className={styles.searchInput}
-              placeholder={isListening ? "Listening..." : "Search games"}
+              placeholder={voiceFeedback ? voiceFeedback : isListening ? "Listening... Speak now" : "Search games"}
               value={searchQuery}
               onFocus={() => setIsSearchFocused(true)}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -618,7 +654,7 @@ function HeaderContent() {
                   type="text"
                   autoFocus
                   className={styles.mobileSearchPillInput}
-                  placeholder="Search games"
+                  placeholder={voiceFeedback ? voiceFeedback : isListening ? "Listening... Speak now" : "Search games"}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

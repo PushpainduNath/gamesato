@@ -118,7 +118,12 @@ export default async function GameDetailPage(props: {
     console.error('Failed to fetch more games for details page:', err);
   }
 
-  const gameImageUrl = getImageUrl(game.game_page_both_url || game.thumbnail_url);
+  const gameImageUrl = getImageUrl(
+    (game as any).game_page_both_url ||
+    (game as any).featured_mobile_url ||
+    (game as any).featured_desktop_url ||
+    game.thumbnail_url
+  );
 
   return (
     <div className={styles.container}>

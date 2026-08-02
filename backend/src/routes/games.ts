@@ -151,6 +151,18 @@ router.get('/slug/:slug', optionalAuthenticate, async (req: AuthenticatedRequest
   }
 });
 
+function parseEmbedUrl(input: string): string {
+  if (!input) return '';
+  const trimmed = input.trim();
+  if (trimmed.includes('<iframe') || trimmed.startsWith('<iframe')) {
+    const match = trimmed.match(/src=["']([^"']+)["']/i);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+  return trimmed;
+}
+
 /**
  * POST /api/games - Admin upload a new H5 game
  */
@@ -169,15 +181,18 @@ router.post(
   async (req: AuthenticatedRequest, res: Response) => {
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     const { title, slug, description, category, status } = req.body;
+    const rawEmbed = req.body.embed_url || req.body.embedUrl || req.body.game_url || '';
+    const embedUrl = parseEmbedUrl(rawEmbed);
+    const hasZip = !!(files && files.zip && files.zip[0]);
 
-    if (!title || !slug || !category || !files || !files.zip || !files.thumbnail) {
+    if (!title || !slug || !category || !files || !files.thumbnail || (!hasZip && !embedUrl)) {
       if (files?.zip?.[0]) await deleteTempFile(files.zip[0].path);
       if (files?.thumbnail?.[0]) await deleteTempFile(files.thumbnail[0].path);
       if (files?.featured_desktop?.[0]) await deleteTempFile(files.featured_desktop[0].path);
       if (files?.featured_mobile?.[0]) await deleteTempFile(files.featured_mobile[0].path);
       if (files?.new_game_both?.[0]) await deleteTempFile(files.new_game_both[0].path);
       if (files?.game_page_both?.[0]) await deleteTempFile(files.game_page_both[0].path);
-      return res.status(400).json({ error: 'Missing required game files or fields (title, slug, category, zip, thumbnail)' });
+      return res.status(400).json({ error: 'Missing required game fields or files (title, slug, category, thumbnail, and either a ZIP build or an Embed URL)' });
     }
 
     // Pre-check if slug already exists in DB BEFORE processing any files!
@@ -232,15 +247,16 @@ router.post(
         gamePageBothUrl = await saveThumbnail(file.path, slug, file.originalname);
       }
 
-      // 2. Extract ZIP Build to Local folder
-      const zipFile = files.zip[0];
-      await extractGameBuild(zipFile.path, slug);
-
-      // Clean up the temp files
-      await deleteTempFile(zipFile.path);
-
-      // Game entry URL points to static extracted build folder path `/games/[slug]/index.html`
-      const gameUrl = `/games/${slug}/index.html`;
+      // 2. Determine Game URL (Extract ZIP or use Embed Link)
+      let gameUrl = '';
+      if (hasZip) {
+        const zipFile = files.zip[0];
+        await extractGameBuild(zipFile.path, slug);
+        await deleteTempFile(zipFile.path);
+        gameUrl = `/games/${slug}/index.html`;
+      } else {
+        gameUrl = embedUrl;
+      }
 
       // 3. Insert into Database
       const isPopular = req.body.isPopular === 'true' || req.body.isPopular === true || false;
@@ -411,14 +427,19 @@ router.put(
         gamePageBothUrl = await saveThumbnail(file.path, targetSlug, file.originalname);
       }
 
-      // 2. Process new ZIP build if uploaded
+      const rawEmbed = req.body.embed_url || req.body.embedUrl || req.body.game_url || '';
+      const embedUrl = parseEmbedUrl(rawEmbed);
+
+      // 2. Process new ZIP build or Embed URL if uploaded
       if (files?.zip?.[0]) {
         const zipFile = files.zip[0];
         // Extract new build
         await extractGameBuild(zipFile.path, targetSlug);
         await deleteTempFile(zipFile.path);
         gameUrl = `/games/${targetSlug}/index.html`;
-      } else if (slug && slug !== existingGame.slug) {
+      } else if (embedUrl) {
+        gameUrl = embedUrl;
+      } else if (slug && slug !== existingGame.slug && !existingGame.game_url.startsWith('http://') && !existingGame.game_url.startsWith('https://')) {
         // If slug changed but no zip was uploaded, rename the folder!
         const oldPath = path.join(process.env.GAMES_DIR || path.join(__dirname, '../../../gb-games'), existingGame.slug);
         const newPath = path.join(process.env.GAMES_DIR || path.join(__dirname, '../../../gb-games'), slug);

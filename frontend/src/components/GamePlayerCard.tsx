@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { Play, Heart, Share2, ThumbsUp, Maximize, Minimize, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Play, Heart, Share2, ThumbsUp, Maximize, Minimize, X, Wrench } from 'lucide-react';
 import styles from './GamePlayerCard.module.css';
 
 interface GamePlayerCardProps {
@@ -23,6 +24,7 @@ export default function GamePlayerCard({
   initialLikes,
 }: GamePlayerCardProps) {
   const { data: session } = useSession();
+  const router = useRouter();
   
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
@@ -30,15 +32,17 @@ export default function GamePlayerCard({
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
 
-  // Playing and Fullscreen States
+  // Playing, Fullscreen, and Maintenance States
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(false);
   const [sessionId, setSessionId] = useState('');
   
   const cardRef = useRef<HTMLDivElement>(null);
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
-  const iframeSrc = `${backendUrl}${gameUrl}`;
+  const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
+  const iframeSrc = isExternalEmbed ? gameUrl : `${backendUrl}${gameUrl}`;
 
   // Sync likes and check if user has liked this game
   useEffect(() => {
@@ -59,19 +63,39 @@ export default function GamePlayerCard({
     fetchStatus();
   }, [gameSlug, session, backendUrl, initialLikes]);
 
+  // Check if game files are accessible before or during play
+  const verifyGameFile = async () => {
+    if (isExternalEmbed) {
+      setIsMaintenance(false);
+      return;
+    }
+    try {
+      const res = await fetch(iframeSrc, { method: 'GET' });
+      if (!res.ok) {
+        setIsMaintenance(true);
+      } else {
+        setIsMaintenance(false);
+      }
+    } catch (err) {
+      console.warn('Game file fetch failed, setting maintenance status:', err);
+      setIsMaintenance(true);
+    }
+  };
+
   // Generate unique session ID when game starts playing
   useEffect(() => {
     if (isPlaying) {
       const uuid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       setSessionId(uuid);
+      verifyGameFile();
     } else {
       setSessionId('');
     }
-  }, [isPlaying]);
+  }, [isPlaying, iframeSrc]);
 
   // Send play event and setup heartbeat pings for analytics tracking
   useEffect(() => {
-    if (!sessionId || !isPlaying) return;
+    if (!sessionId || !isPlaying || isMaintenance) return;
 
     const eventUrl = `${backendUrl}/api/analytics/event`;
 
@@ -103,7 +127,7 @@ export default function GamePlayerCard({
     return () => {
       clearInterval(interval);
     };
-  }, [sessionId, gameId, backendUrl, isPlaying]);
+  }, [sessionId, gameId, backendUrl, isPlaying, isMaintenance]);
 
   // Track browser fullscreen status change
   useEffect(() => {
@@ -118,9 +142,10 @@ export default function GamePlayerCard({
     setIsPlaying(true);
   };
 
-  const handleExitPlay = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleExitPlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setIsPlaying(false);
+    setIsMaintenance(false);
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(err => console.error(err));
     }
@@ -193,21 +218,41 @@ export default function GamePlayerCard({
     }
   };
 
-  const handleVolumeClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMuted((prev) => !prev);
-  };
-
   return (
     <div className={styles.playerCard} ref={cardRef}>
       {isPlaying ? (
         <div className={styles.iframeContainer}>
-          <iframe
-            src={iframeSrc}
-            title={gameTitle}
-            className={styles.iframe}
-            allow="autoplay; fullscreen; keyboard; gamepad"
-          />
+          {isMaintenance ? (
+            <div className={styles.maintenanceContainer}>
+              <div className={styles.maintenanceCard}>
+                <div className={styles.iconPulseWrapper}>
+                  <Wrench size={32} />
+                </div>
+                <h3 className={styles.maintenanceTitle}>Game Under Maintenance</h3>
+                <p className={styles.maintenanceDescription}>
+                  The game files for this title are currently being updated or under maintenance. Please check back soon!
+                </p>
+                <div className={styles.maintenanceActions}>
+                  <button className={styles.exploreBtn} onClick={() => router.push('/')}>
+                    Explore Other Games
+                  </button>
+                  <button className={styles.exitBtn} onClick={handleExitPlay}>
+                    Back to Info
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <iframe
+              src={iframeSrc}
+              title={gameTitle}
+              className={styles.iframe}
+              allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
+              allowFullScreen
+              referrerPolicy="no-referrer"
+            />
+          )}
+
           {/* Floating exit control in top-right */}
           <div className={styles.exitControl}>
             <button onClick={handleExitPlay} className={styles.floatingBtn} title="Exit Game">
@@ -216,11 +261,13 @@ export default function GamePlayerCard({
           </div>
 
           {/* Floating fullscreen control in bottom-right */}
-          <div className={styles.fullscreenControl}>
-            <button onClick={toggleFullscreen} className={styles.floatingBtn} title="Toggle Fullscreen">
-              {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
-            </button>
-          </div>
+          {!isMaintenance && (
+            <div className={styles.fullscreenControl}>
+              <button onClick={toggleFullscreen} className={styles.floatingBtn} title="Toggle Fullscreen">
+                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className={styles.previewContainer} onClick={handlePlayClick}>

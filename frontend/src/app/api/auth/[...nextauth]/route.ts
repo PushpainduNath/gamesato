@@ -124,12 +124,17 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      // Sync latest email from the database to JWT token
+      // Sync latest email / user ID from the database to JWT token
       if (token.id) {
         try {
-          const res = await query('SELECT email FROM users WHERE id = $1', [token.id]);
+          const res = await query('SELECT id, email FROM users WHERE id = $1', [token.id]);
           if (res.rows.length > 0) {
             token.email = res.rows[0].email;
+          } else if (token.email) {
+            const emailRes = await query('SELECT id FROM users WHERE email = $1', [token.email]);
+            if (emailRes.rows.length > 0) {
+              token.id = emailRes.rows[0].id;
+            }
           }
         } catch (e) {
           console.error('Error syncing latest email in jwt callback:', e);

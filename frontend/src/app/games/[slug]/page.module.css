@@ -72,11 +72,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(4, 23, 22, 0.75) 0%, rgba(7, 32, 38, 0.6) 100%) !important;
+  border: 1px solid rgba(20, 184, 166, 0.28) !important;
+  border-radius: 16px !important;
   padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(45, 212, 191, 0.15) !important;
+  backdrop-filter: blur(12px) !important;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -183,14 +184,15 @@
 }
 
 .detailsBox {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 24px 32px;
+  background: linear-gradient(135deg, rgba(4, 23, 22, 0.75) 0%, rgba(7, 32, 38, 0.6) 100%) !important;
+  border: 1px solid rgba(20, 184, 166, 0.28) !important;
+  border-radius: 16px !important;
+  padding: 28px 32px;
   box-sizing: border-box;
   width: 100%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  margin-top: 1.25rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(45, 212, 191, 0.15) !important;
+  backdrop-filter: blur(12px) !important;
+  margin-top: 1.5rem;
 }
 
 .detailsTitle {
@@ -521,12 +523,14 @@
 
 /* How to Play Section */
 .howToPlayBox {
-  background: rgba(7, 22, 45, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 16px;
-  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(4, 23, 22, 0.75) 0%, rgba(7, 32, 38, 0.6) 100%) !important;
+  border: 1px solid rgba(20, 184, 166, 0.28) !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(45, 212, 191, 0.15) !important;
+  backdrop-filter: blur(12px) !important;
 }
 
 .howToPlayTitle {

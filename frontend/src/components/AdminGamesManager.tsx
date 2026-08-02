@@ -20,6 +20,8 @@ interface Game {
   slug: string;
   category: string;
   thumbnailUrl: string;
+  gameUrl?: string;
+  game_url?: string;
   playCount: number;
   likesCount: number;
   avgDuration: number;
@@ -408,8 +410,23 @@ export default function AdminGamesManager() {
     setCurrentPage(1);
   };
   
+  const extractSrcFromIframe = (input: string): string => {
+    if (!input) return '';
+    const trimmed = input.trim();
+    if (trimmed.includes('<iframe') || trimmed.startsWith('<iframe')) {
+      const match = trimmed.match(/src=["']([^"']+)["']/i);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+    return trimmed;
+  };
+
   // Upload modal states
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [sourceType, setSourceType] = useState<'zip' | 'embed'>('zip');
+  const [embedFormat, setEmbedFormat] = useState<'url' | 'iframe'>('url');
+  const [embedUrl, setEmbedUrl] = useState('');
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [category, setCategory] = useState('');
@@ -440,6 +457,9 @@ export default function AdminGamesManager() {
     setDescription('');
     setHowToPlay('');
     setStatus('published');
+    setSourceType('zip');
+    setEmbedFormat('url');
+    setEmbedUrl('');
     setZipFile(null);
     setThumbnailFile(null);
     setFeaturedDesktopFile(null);
@@ -460,6 +480,9 @@ export default function AdminGamesManager() {
 
   // Edit modal states
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editSourceType, setEditSourceType] = useState<'zip' | 'embed'>('zip');
+  const [editEmbedFormat, setEditEmbedFormat] = useState<'url' | 'iframe'>('url');
+  const [editEmbedUrl, setEditEmbedUrl] = useState('');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editGameId, setEditGameId] = useState('');
   const [editTitle, setEditTitle] = useState('');
@@ -778,9 +801,15 @@ export default function AdminGamesManager() {
       return;
     }
 
-    if (!zipFile) {
+    if (sourceType === 'zip' && !zipFile) {
       showToast('Please select and upload a Game Build ZIP file (.zip) containing index.html before publishing.', 'warning', 'Missing Game File');
       setMessage({ text: 'Game Build ZIP file is required!', type: 'error' });
+      return;
+    }
+
+    if (sourceType === 'embed' && !embedUrl.trim()) {
+      showToast('Please enter a valid Embed Link / iFrame URL before publishing.', 'warning', 'Missing Embed Link');
+      setMessage({ text: 'Embed Link / URL is required!', type: 'error' });
       return;
     }
 
@@ -813,7 +842,11 @@ export default function AdminGamesManager() {
       formData.append('description', description);
       formData.append('howToPlay', howToPlay);
       formData.append('status', status);
-      formData.append('zip', zipFile);
+      if (sourceType === 'zip' && zipFile) {
+        formData.append('zip', zipFile);
+      } else if (sourceType === 'embed' && embedUrl.trim()) {
+        formData.append('embed_url', extractSrcFromIframe(embedUrl));
+      }
       formData.append('thumbnail', thumbnailFile);
       if (featuredDesktopFile) formData.append('featured_desktop', featuredDesktopFile);
       if (featuredMobileFile) formData.append('featured_mobile', featuredMobileFile);
@@ -885,6 +918,10 @@ export default function AdminGamesManager() {
     setEditDescription(game.description || '');
     setEditHowToPlay(game.howToPlay || game.how_to_play || '');
     setEditStatus(game.status || 'published');
+    const initialUrl = game.gameUrl || game.game_url || '';
+    const isExt = initialUrl.startsWith('http://') || initialUrl.startsWith('https://') || initialUrl.startsWith('//');
+    setEditSourceType(isExt ? 'embed' : 'zip');
+    setEditEmbedUrl(isExt ? initialUrl : '');
     setEditZipFile(null);
     setEditThumbnailFile(null);
     setEditFeaturedDesktopFile(null);
@@ -918,6 +955,12 @@ export default function AdminGamesManager() {
         if (freshGame.meta_title) setEditMetaTitle(freshGame.meta_title);
         if (freshGame.meta_description) setEditMetaDescription(freshGame.meta_description);
         if (freshGame.meta_tags) setEditMetaTags(freshGame.meta_tags);
+        const freshUrl = freshGame.game_url || freshGame.gameUrl || '';
+        if (freshUrl) {
+          const freshExt = freshUrl.startsWith('http://') || freshUrl.startsWith('https://') || freshUrl.startsWith('//');
+          setEditSourceType(freshExt ? 'embed' : 'zip');
+          if (freshExt) setEditEmbedUrl(freshUrl);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch fresh game details for edit modal:', err);
@@ -996,7 +1039,11 @@ export default function AdminGamesManager() {
       formData.append('description', editDescription);
       formData.append('howToPlay', editHowToPlay);
       formData.append('status', editStatus);
-      if (editZipFile) formData.append('zip', editZipFile);
+      if (editSourceType === 'zip' && editZipFile) {
+        formData.append('zip', editZipFile);
+      } else if (editSourceType === 'embed' && editEmbedUrl.trim()) {
+        formData.append('embed_url', extractSrcFromIframe(editEmbedUrl));
+      }
       if (editThumbnailFile) formData.append('thumbnail', editThumbnailFile);
       if (editFeaturedDesktopFile) formData.append('featured_desktop', editFeaturedDesktopFile);
       if (editFeaturedMobileFile) formData.append('featured_mobile', editFeaturedMobileFile);
@@ -1899,7 +1946,14 @@ export default function AdminGamesManager() {
                         </a>
                         <div>
                           <a href={`/games/${game.slug}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                            <div style={{ fontWeight: 700, color: 'var(--adm-text-primary, #ffffff)', fontSize: '0.95rem' }} className={styles.gameTitleLink}>{game.title}</div>
+                            <div style={{ fontWeight: 700, color: 'var(--adm-text-primary, #ffffff)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }} className={styles.gameTitleLink}>
+                              <span>{game.title}</span>
+                              {((game.gameUrl || (game as any).game_url || '')).startsWith('http') ? (
+                                <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(6, 182, 212, 0.2)', color: '#06b6d4', border: '1px solid rgba(6, 182, 212, 0.4)', fontWeight: 700 }}>EMBED</span>
+                              ) : (
+                                <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700 }}>ZIP</span>
+                              )}
+                            </div>
                             <div style={{ fontSize: '0.75rem', color: 'var(--adm-text-secondary, var(--text-secondary))' }}>/{game.slug}</div>
                           </a>
                         </div>
@@ -2278,20 +2332,141 @@ export default function AdminGamesManager() {
                 {/* Empty block to align grid */}
                 <div className={styles.figmaFormGroup}></div>
 
+                {/* Game Source Type Selector */}
+                <div className={styles.figmaFormGroupFull}>
+                  <label className={styles.figmaLabel}>Game Source Mode</label>
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setSourceType('zip')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 16px',
+                        borderRadius: '10px',
+                        border: sourceType === 'zip' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: sourceType === 'zip' ? 'rgba(20, 184, 166, 0.18)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Upload size={18} color={sourceType === 'zip' ? '#14b8a6' : '#cbd5e1'} />
+                      Upload ZIP Build
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSourceType('embed')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 16px',
+                        borderRadius: '10px',
+                        border: sourceType === 'embed' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: sourceType === 'embed' ? 'rgba(20, 184, 166, 0.18)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Gamepad2 size={18} color={sourceType === 'embed' ? '#14b8a6' : '#cbd5e1'} />
+                      Embed Link / iFrame URL
+                    </button>
+                  </div>
+                </div>
+
+                {sourceType === 'embed' && (
+                  <div className={styles.figmaFormGroupFull} style={{ marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <label className={styles.figmaLabel} style={{ marginBottom: 0 }}>Embed Game Input *</label>
+                      <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.3)', padding: '3px', borderRadius: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setEmbedFormat('url')}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            border: 'none',
+                            background: embedFormat === 'url' ? '#14b8a6' : 'transparent',
+                            color: '#ffffff',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Direct Link (URL)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEmbedFormat('iframe')}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            border: 'none',
+                            background: embedFormat === 'iframe' ? '#14b8a6' : 'transparent',
+                            color: '#ffffff',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          iFrame Code
+                        </button>
+                      </div>
+                    </div>
+
+                    {embedFormat === 'url' ? (
+                      <input
+                        type="text"
+                        className={styles.figmaInput}
+                        placeholder="https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R"
+                        value={embedUrl}
+                        onChange={(e) => setEmbedUrl(e.target.value)}
+                        required
+                      />
+                    ) : (
+                      <textarea
+                        className={styles.figmaTextarea}
+                        rows={3}
+                        placeholder='<iframe seamless="seamless" allowtransparency="true" allowfullscreen="true" frameborder="0" style="width: 100%;height: 100%;border: 0px;" src="https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R"></iframe>'
+                        value={embedUrl}
+                        onChange={(e) => setEmbedUrl(e.target.value)}
+                        required
+                      />
+                    )}
+
+                    {embedUrl.trim() && (
+                      <span style={{ fontSize: '0.78rem', color: '#14b8a6', marginTop: '6px', display: 'block', wordBreak: 'break-all' }}>
+                        ✓ <strong>Parsed Embed URL:</strong> {extractSrcFromIframe(embedUrl)}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 {/* Files Grid (Full width) */}
                 <div className={styles.figmaFormGroupFull}>
-                  <label className={styles.figmaLabel}>Game Files & Images</label>
+                  <label className={styles.figmaLabel}>Game Assets & Images</label>
                   <div className={styles.fileUploadsGrid}>
                     {/* Game ZIP Build */}
-                    <DragAndDropUpload
-                      id="zip-input"
-                      accept=".zip"
-                      label="Game ZIP File"
-                      sublabel="Upload .zip build"
-                      required
-                      selectedFile={zipFile}
-                      onFileSelect={setZipFile}
-                    />
+                    {sourceType === 'zip' && (
+                      <DragAndDropUpload
+                        id="zip-input"
+                        accept=".zip"
+                        label="Game ZIP File"
+                        sublabel="Upload .zip build"
+                        required
+                        selectedFile={zipFile}
+                        onFileSelect={setZipFile}
+                      />
+                    )}
 
                     {/* Cover Thumbnail */}
                     <DragAndDropUpload
@@ -2781,19 +2956,138 @@ export default function AdminGamesManager() {
                 {/* Empty block to align grid */}
                 <div className={styles.figmaFormGroup}></div>
 
+                {/* Game Source Type Selector */}
+                <div className={styles.figmaFormGroupFull}>
+                  <label className={styles.figmaLabel}>Game Source Mode</label>
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setEditSourceType('zip')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 16px',
+                        borderRadius: '10px',
+                        border: editSourceType === 'zip' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: editSourceType === 'zip' ? 'rgba(20, 184, 166, 0.18)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Upload size={18} color={editSourceType === 'zip' ? '#14b8a6' : '#cbd5e1'} />
+                      Upload ZIP Build
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditSourceType('embed')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 16px',
+                        borderRadius: '10px',
+                        border: editSourceType === 'embed' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: editSourceType === 'embed' ? 'rgba(20, 184, 166, 0.18)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Gamepad2 size={18} color={editSourceType === 'embed' ? '#14b8a6' : '#cbd5e1'} />
+                      Embed Link / iFrame URL
+                    </button>
+                  </div>
+                </div>
+
+                {editSourceType === 'embed' && (
+                  <div className={styles.figmaFormGroupFull} style={{ marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <label className={styles.figmaLabel} style={{ marginBottom: 0 }}>Embed Game Input *</label>
+                      <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.3)', padding: '3px', borderRadius: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setEditEmbedFormat('url')}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            border: 'none',
+                            background: editEmbedFormat === 'url' ? '#14b8a6' : 'transparent',
+                            color: '#ffffff',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Direct Link (URL)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditEmbedFormat('iframe')}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            border: 'none',
+                            background: editEmbedFormat === 'iframe' ? '#14b8a6' : 'transparent',
+                            color: '#ffffff',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          iFrame Code
+                        </button>
+                      </div>
+                    </div>
+
+                    {editEmbedFormat === 'url' ? (
+                      <input
+                        type="text"
+                        className={styles.figmaInput}
+                        placeholder="https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R"
+                        value={editEmbedUrl}
+                        onChange={(e) => setEditEmbedUrl(e.target.value)}
+                      />
+                    ) : (
+                      <textarea
+                        className={styles.figmaTextarea}
+                        rows={3}
+                        placeholder='<iframe seamless="seamless" allowtransparency="true" allowfullscreen="true" frameborder="0" style="width: 100%;height: 100%;border: 0px;" src="https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R"></iframe>'
+                        value={editEmbedUrl}
+                        onChange={(e) => setEditEmbedUrl(e.target.value)}
+                      />
+                    )}
+
+                    {editEmbedUrl.trim() && (
+                      <span style={{ fontSize: '0.78rem', color: '#14b8a6', marginTop: '6px', display: 'block', wordBreak: 'break-all' }}>
+                        ✓ <strong>Parsed Embed URL:</strong> {extractSrcFromIframe(editEmbedUrl)}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 {/* Files Grid (Full width) */}
                 <div className={styles.figmaFormGroupFull}>
-                  <label className={styles.figmaLabel}>Update Game Files & Images (Optional)</label>
+                  <label className={styles.figmaLabel}>Update Game Assets & Images (Optional)</label>
                   <div className={styles.fileUploadsGrid}>
                     {/* Game ZIP Build */}
-                    <DragAndDropUpload
-                      id="edit-zip-input"
-                      accept=".zip"
-                      label="Update Game ZIP File"
-                      sublabel="Upload new build .zip"
-                      selectedFile={editZipFile}
-                      onFileSelect={setEditZipFile}
-                    />
+                    {editSourceType === 'zip' && (
+                      <DragAndDropUpload
+                        id="edit-zip-input"
+                        accept=".zip"
+                        label="Update Game ZIP File"
+                        sublabel="Upload new build .zip"
+                        selectedFile={editZipFile}
+                        onFileSelect={setEditZipFile}
+                      />
+                    )}
 
                     {/* Cover Thumbnail */}
                     <DragAndDropUpload

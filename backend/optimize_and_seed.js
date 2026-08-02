@@ -1,12 +1,13 @@
 const { Client } = require('pg');
-// Custom UUID generator to avoid dependency issues
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
 }
-require('dotenv').config({ path: '/Users/pushpaindunath/Desktop/Gamesato/gb-project/backend/.env' });
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL

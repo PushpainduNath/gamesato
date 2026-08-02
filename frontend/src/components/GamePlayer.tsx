@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Wrench } from 'lucide-react';
 import { useTranslation } from '@/store/useLanguageStore';
 import styles from './GamePlayer.module.css';
 
@@ -17,10 +17,33 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
   const router = useRouter();
   const [sessionId, setSessionId] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(false);
   const { t } = useTranslation();
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
-  const iframeSrc = `${backendUrl}${gameUrl}`;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
+  const iframeSrc = isExternalEmbed ? gameUrl : `${backendUrl}${gameUrl}`;
+
+  // Check if game files exist
+  useEffect(() => {
+    async function checkFile() {
+      if (isExternalEmbed) {
+        setIsMaintenance(false);
+        return;
+      }
+      try {
+        const res = await fetch(iframeSrc, { method: 'GET' });
+        if (!res.ok) {
+          setIsMaintenance(true);
+        } else {
+          setIsMaintenance(false);
+        }
+      } catch (err) {
+        setIsMaintenance(true);
+      }
+    }
+    checkFile();
+  }, [iframeSrc, isExternalEmbed]);
 
   // Generate unique session ID on client side mount
   useEffect(() => {
@@ -39,7 +62,7 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
 
   // Send play event and setup heartbeat pings
   useEffect(() => {
-    if (!sessionId) return;
+    if (!sessionId || isMaintenance) return;
 
     const eventUrl = `${backendUrl}/api/analytics/event`;
 
@@ -77,7 +100,7 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
     return () => {
       clearInterval(interval);
     };
-  }, [sessionId, gameId, backendUrl]);
+  }, [sessionId, gameId, backendUrl, isMaintenance]);
 
   const handleBack = () => {
     router.push(`/games/${gameSlug}`);
@@ -91,12 +114,36 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
         <ArrowLeft size={18} />
       </button>
 
-      <iframe 
-        src={iframeSrc} 
-        title={translatedTitle} 
-        className={styles.iframe}
-        allow="autoplay; fullscreen; keyboard; gamepad"
-      />
+      {isMaintenance ? (
+        <div className={styles.maintenanceContainer}>
+          <div className={styles.maintenanceCard}>
+            <div className={styles.iconPulseWrapper}>
+              <Wrench size={36} />
+            </div>
+            <h3 className={styles.maintenanceTitle}>Game Under Maintenance</h3>
+            <p className={styles.maintenanceDescription}>
+              The game files for this title are currently being updated or under maintenance. Please check back soon!
+            </p>
+            <div className={styles.maintenanceActions}>
+              <button className={styles.exploreBtn} onClick={() => router.push('/')}>
+                Explore Other Games
+              </button>
+              <button className={styles.exitBtn} onClick={handleBack}>
+                Back to Game Info
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <iframe 
+          src={iframeSrc} 
+          title={translatedTitle} 
+          className={styles.iframe}
+          allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
+          allowFullScreen
+          referrerPolicy="no-referrer"
+        />
+      )}
     </div>
   );
 }

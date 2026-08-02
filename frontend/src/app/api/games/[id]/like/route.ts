@@ -14,9 +14,29 @@ export async function POST(
 
   const params = await props.params;
   const gameId = params.id;
-  const userId = (session.user as any).id;
+  let userId = (session.user as any).id;
 
   try {
+    let validUser = false;
+    if (userId) {
+      const uRes = await query('SELECT id FROM users WHERE id = $1', [userId]);
+      if (uRes.rows.length > 0) {
+        validUser = true;
+      }
+    }
+
+    if (!validUser && session.user.email) {
+      const emailRes = await query('SELECT id FROM users WHERE email = $1', [session.user.email]);
+      if (emailRes.rows.length > 0) {
+        userId = emailRes.rows[0].id;
+        validUser = true;
+      }
+    }
+
+    if (!validUser) {
+      return NextResponse.json({ error: 'User account not found' }, { status: 401 });
+    }
+
     const likeCheck = await query(
       'SELECT 1 FROM likes WHERE "userId" = $1 AND "gameId" = $2',
       [userId, gameId]

@@ -22,14 +22,23 @@ export default function Sidebar() {
   const { isSidebarOpen, isMenuIconCross, openSidebar, closeSidebar } = useUiStore();
   const { t } = useTranslation();
 
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
   const handleMouseEnter = () => {
     if (typeof window !== 'undefined' && window.innerWidth > 768) {
-      openSidebar();
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = setTimeout(() => {
+        openSidebar();
+      }, 250);
     }
   };
 
   const handleMouseLeave = () => {
     if (typeof window !== 'undefined' && window.innerWidth > 768) {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = null;
+      }
       closeSidebar();
     }
   };
