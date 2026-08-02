@@ -215,6 +215,8 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
         slug: row.slug,
         category: row.category,
         thumbnailUrl: row.thumbnail_url,
+        gameUrl: row.game_url,
+        game_url: row.game_url,
         playCount: parseInt(row.play_count),
         likesCount: parseInt(row.likes_count),
         avgDuration: Math.round(parseFloat(row.avg_duration)),
