@@ -368,12 +368,63 @@ const CustomCategorySelect = ({
   );
 };
 
+const uploadFormWithProgress = (
+  url: string,
+  method: 'POST' | 'PUT',
+  formData: FormData,
+  authToken: string,
+  onProgress: (percent: number, loadedText: string) => void
+): Promise<{ ok: boolean; status: number; data: any }> => {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    if (authToken) {
+      xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
+    }
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && e.total > 0) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
+        const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+        if (percent >= 100) {
+          onProgress(100, `100% — Server is processing & unzipping build...`);
+        } else {
+          onProgress(percent, `Uploading... ${percent}% (${loadedMB} MB / ${totalMB} MB)`);
+        }
+      }
+    };
+
+    xhr.onload = () => {
+      let json = {};
+      try {
+        json = JSON.parse(xhr.responseText);
+      } catch {
+        json = {};
+      }
+      resolve({ ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status, data: json });
+    };
+
+    xhr.onerror = () => {
+      resolve({ ok: false, status: xhr.status || 500, data: { error: 'Network upload error occurred.' } });
+    };
+
+    xhr.send(formData);
+  });
+};
+
 export default function AdminGamesManager() {
   const { token, globalSearchQuery, setGlobalSearchQuery } = useAdminStore();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Upload Progress States
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgressText, setUploadProgressText] = useState('');
+  const [editUploadProgress, setEditUploadProgress] = useState(0);
+  const [editUploadProgressText, setEditUploadProgressText] = useState('');
 
   // Sorting & Filtering states
   const [sortField, setSortField] = useState<'title' | 'likesCount' | 'playCount' | 'status' | 'createdAt' | 'updatedAt' | null>(null);
@@ -834,6 +885,8 @@ export default function AdminGamesManager() {
     }
 
     setSubmitting(true);
+    setUploadProgress(0);
+    setUploadProgressText('Preparing upload...');
     setMessage({ text: '', type: '' });
 
     try {
@@ -864,15 +917,19 @@ export default function AdminGamesManager() {
       formData.append('likesCount', likesCount.toString());
       formData.append('playCount', playCount.toString());
 
-      const res = await fetch(`${backendUrl}/api/games`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData,
-      });
+      const res = await uploadFormWithProgress(
+        `${backendUrl}/api/games`,
+        'POST',
+        formData,
+        token || '',
+        (percent, text) => {
+          setUploadProgress(percent);
+          setUploadProgressText(text);
+        }
+      );
 
       if (res.ok) {
+        setUploadProgress(100);
         setMessage({ text: 'Game uploaded and published successfully!', type: 'success' });
         fetchGamesData();
         setUploadModalOpen(false);
@@ -897,17 +954,18 @@ export default function AdminGamesManager() {
         setCreatedAt(new Date().toISOString().slice(0, 16));
         showToast('Game uploaded and published successfully!', 'success', 'Success');
       } else {
-        const err = await res.json();
+        const err = res.data;
         const errorMsg = err.error || 'Failed to upload game';
         showToast(errorMsg, 'error', 'Upload Failed');
         setMessage({ text: errorMsg, type: 'error' });
       }
     } catch (err) {
       console.error(err);
-      showToast('Error uploading game. Connection to backend failed.', 'error', 'Upload Error');
       setMessage({ text: 'Error uploading game. Check server logs.', type: 'error' });
     } finally {
       setSubmitting(false);
+      setUploadProgress(0);
+      setUploadProgressText('');
     }
   };
 
@@ -1031,6 +1089,8 @@ export default function AdminGamesManager() {
     }
 
     setEditSubmitting(true);
+    setEditUploadProgress(0);
+    setEditUploadProgressText('Preparing upload...');
     setEditMessage({ text: '', type: '' });
 
     try {
@@ -1065,21 +1125,25 @@ export default function AdminGamesManager() {
       formData.append('likesCount', editLikesCount.toString());
       formData.append('playCount', editPlayCount.toString());
 
-      const res = await fetch(`${backendUrl}/api/games/${editGameId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData,
-      });
+      const res = await uploadFormWithProgress(
+        `${backendUrl}/api/games/${editGameId}`,
+        'PUT',
+        formData,
+        token || '',
+        (percent, text) => {
+          setEditUploadProgress(percent);
+          setEditUploadProgressText(text);
+        }
+      );
 
       if (res.ok) {
+        setEditUploadProgress(100);
         setEditMessage({ text: 'Game updated successfully!', type: 'success' });
         fetchGamesData();
         setEditModalOpen(false);
         showToast('Game updated successfully!', 'success');
       } else {
-        const err = await res.json();
+        const err = res.data;
         setEditMessage({ text: err.error || 'Failed to update game', type: 'error' });
       }
     } catch (err) {
@@ -1087,6 +1151,8 @@ export default function AdminGamesManager() {
       setEditMessage({ text: 'Error updating game. Check server logs.', type: 'error' });
     } finally {
       setEditSubmitting(false);
+      setEditUploadProgress(0);
+      setEditUploadProgressText('');
     }
   };
 
@@ -2555,6 +2621,46 @@ export default function AdminGamesManager() {
                 </div>
               </div>
 
+              {/* Progressive Filler Bar */}
+              {submitting && (
+                <div style={{ width: '100%', marginBottom: '16px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(20, 184, 166, 0.3)', borderRadius: '12px', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#14b8a6', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: '#14b8a6',
+                        boxShadow: '0 0 10px #14b8a6'
+                      }} />
+                      {uploadProgressText || `Uploading... ${uploadProgress}%`}
+                    </span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ffffff' }}>
+                      {uploadProgress}%
+                    </span>
+                  </div>
+                  <div style={{
+                    width: '100%',
+                    height: '10px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '20px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(20, 184, 166, 0.25)',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      width: `${uploadProgress}%`,
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #06b6d4 0%, #14b8a6 50%, #3b82f6 100%)',
+                      borderRadius: '20px',
+                      transition: 'width 0.2s ease-out',
+                      boxShadow: '0 0 14px rgba(20, 184, 166, 0.7)'
+                    }} />
+                  </div>
+                </div>
+              )}
+
               {/* Actions */}
               <div className={styles.modalActionsRow}>
                 <button 
@@ -3209,6 +3315,46 @@ export default function AdminGamesManager() {
                   </div>
                 </div>
               </div>
+
+              {/* Progressive Filler Bar */}
+              {editSubmitting && (
+                <div style={{ width: '100%', marginBottom: '16px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(20, 184, 166, 0.3)', borderRadius: '12px', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#14b8a6', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: '#14b8a6',
+                        boxShadow: '0 0 10px #14b8a6'
+                      }} />
+                      {editUploadProgressText || `Uploading... ${editUploadProgress}%`}
+                    </span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ffffff' }}>
+                      {editUploadProgress}%
+                    </span>
+                  </div>
+                  <div style={{
+                    width: '100%',
+                    height: '10px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '20px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(20, 184, 166, 0.25)',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      width: `${editUploadProgress}%`,
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #06b6d4 0%, #14b8a6 50%, #3b82f6 100%)',
+                      borderRadius: '20px',
+                      transition: 'width 0.2s ease-out',
+                      boxShadow: '0 0 14px rgba(20, 184, 166, 0.7)'
+                    }} />
+                  </div>
+                </div>
+              )}
 
               {/* Actions */}
               <div className={styles.modalActionsRow}>
