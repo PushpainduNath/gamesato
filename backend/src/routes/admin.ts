@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, requireAdmin, requireSuperAdmin, AuthenticatedRequest } from '../middleware/auth';
 import { pool } from '../config/db';
-import { cleanOrphanedDirectories } from '../utils/fileManager';
+import { cleanOrphanedDirectories, hasGameBuildFiles } from '../utils/fileManager';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import redis from '../config/redis';
@@ -217,6 +217,7 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
         thumbnailUrl: row.thumbnail_url,
         gameUrl: row.game_url,
         game_url: row.game_url,
+        hasBuild: hasGameBuildFiles(row.slug),
         playCount: parseInt(row.play_count),
         likesCount: parseInt(row.likes_count),
         avgDuration: Math.round(parseFloat(row.avg_duration)),

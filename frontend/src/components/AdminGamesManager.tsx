@@ -1952,6 +1952,7 @@ export default function AdminGamesManager() {
                               <span>{game.title}</span>
                               {(() => {
                                 const url = (game.gameUrl || (game as any).game_url || '').trim();
+                                const hasBuild = (game as any).hasBuild;
                                 if (!url || url === '#') {
                                   return (
                                     <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700 }}>
@@ -1966,9 +1967,16 @@ export default function AdminGamesManager() {
                                     </span>
                                   );
                                 }
+                                if (hasBuild !== false) {
+                                  return (
+                                    <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700 }}>
+                                      BUILD
+                                    </span>
+                                  );
+                                }
                                 return (
-                                  <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(20, 184, 166, 0.2)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.4)', fontWeight: 700 }}>
-                                    BUILD
+                                  <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', fontWeight: 700 }}>
+                                    EMPTY
                                   </span>
                                 );
                               })()}

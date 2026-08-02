@@ -314,3 +314,14 @@ export async function getGameFilesInfo(slug: string): Promise<GameFilesInfo> {
     files: fileEntries
   };
 }
+
+/**
+ * Quick sync check to verify if physical game build (index.html or folder) exists on disk
+ */
+export function hasGameBuildFiles(slug: string): boolean {
+  if (!slug) return false;
+  const destDir = path.join(GAMES_DIR, slug);
+  if (!fsSync.existsSync(destDir)) return false;
+  const indexHtmlPath = path.join(destDir, 'index.html');
+  return fsSync.existsSync(indexHtmlPath);
+}
