@@ -9,6 +9,7 @@ import categoriesRouter from './routes/categories';
 import { startAnalyticsWorker, stopAnalyticsWorker } from './workers/analyticsWorker';
 
 dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 3102;
