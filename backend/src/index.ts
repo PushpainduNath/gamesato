@@ -11,16 +11,15 @@ import { startAnalyticsWorker, stopAnalyticsWorker } from './workers/analyticsWo
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3102;
 const GAMES_DIR = process.env.GAMES_DIR || path.join(__dirname, '../../gb-games');
 
 // CORS configuration to support credentialed requests (cookies) from Next.js
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'https://gamesato.com',
-  'https://gamesato.pushpaindunath.cloud',
-  'https://games.hypertechgames.com',
-  'https://games.metaplaystudios.com',
+  'https://www.gamesato.com',
+  'http://localhost:3101',
   'http://localhost:3021',
   'http://localhost:3000'
 ].filter(Boolean) as string[];

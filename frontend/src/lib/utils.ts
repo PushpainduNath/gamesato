@@ -18,7 +18,7 @@ export function getBackendUrl(): string {
   if (typeof window !== 'undefined') {
     return process.env.NEXT_PUBLIC_BACKEND_URL || '';
   }
-  return process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:3022';
+  return process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:3102';
 }
 
 export function getImageUrl(url: string | null | undefined): string {
