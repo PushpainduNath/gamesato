@@ -101,7 +101,7 @@ export default function GamePlayerCard({
 
     async function sendEvent(type: 'play' | 'heartbeat') {
       try {
-        await fetch(eventUrl, {
+        const res = await fetch(eventUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -113,15 +113,24 @@ export default function GamePlayerCard({
           }),
           credentials: 'include',
         });
+        if (res.status === 404) {
+          console.warn('Game no longer exists on server, stopping analytics heartbeat.');
+          return false;
+        }
+        return true;
       } catch (err) {
         console.error(`Failed to send analytics ${type} event:`, err);
+        return true;
       }
     }
 
     sendEvent('play');
 
-    const interval = setInterval(() => {
-      sendEvent('heartbeat');
+    const interval = setInterval(async () => {
+      const ok = await sendEvent('heartbeat');
+      if (ok === false) {
+        clearInterval(interval);
+      }
     }, 30000);
 
     return () => {

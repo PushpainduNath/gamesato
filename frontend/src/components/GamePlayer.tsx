@@ -83,7 +83,11 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
         
         if (res.ok && type === 'play') {
           setIsConnected(true);
+        } else if (res.status === 404) {
+          console.warn('Game no longer exists on server, stopping analytics heartbeat.');
+          return false;
         }
+        return true;
       } catch (err) {
         console.error(`Failed to send analytics ${type} event:`, err);
       }
@@ -93,8 +97,11 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
     sendEvent('play');
 
     // 2. Schedule heartbeat event every 30 seconds
-    const interval = setInterval(() => {
-      sendEvent('heartbeat');
+    const interval = setInterval(async () => {
+      const ok = await sendEvent('heartbeat');
+      if (ok === false) {
+        clearInterval(interval);
+      }
     }, 30000);
 
     return () => {

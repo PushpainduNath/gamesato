@@ -5,6 +5,30 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: '/:path*.framework.js.br',
+        headers: [
+          { key: 'Content-Encoding', value: 'br' },
+          { key: 'Content-Type', value: 'application/javascript' },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/:path*.wasm.br',
+        headers: [
+          { key: 'Content-Encoding', value: 'br' },
+          { key: 'Content-Type', value: 'application/wasm' },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/:path*.data.br',
+        headers: [
+          { key: 'Content-Encoding', value: 'br' },
+          { key: 'Content-Type', value: 'application/octet-stream' },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
         source: '/:all*(webp|png|jpg|jpeg|svg|ico)',
         headers: [
           {

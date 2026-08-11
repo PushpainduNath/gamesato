@@ -4,6 +4,7 @@ import { pool } from '../config/db';
 const QUEUE_KEY = 'gamesato:analytics:queue';
 const BATCH_SIZE = 100;
 const TICK_INTERVAL = 10000; // 10 seconds
+const MAX_RETRIES = 3;
 
 export async function processAnalyticsBatch(): Promise<number> {
   try {
@@ -23,33 +24,58 @@ export async function processAnalyticsBatch(): Promise<number> {
     const results = await pipeline.exec();
     if (!results) return 0;
 
-    const events: any[] = [];
+    const rawEvents: any[] = [];
     for (const result of results) {
       const [err, val] = result;
       if (!err && typeof val === 'string') {
         try {
-          events.push(JSON.parse(val));
+          rawEvents.push(JSON.parse(val));
         } catch (parseErr) {
-          console.error('Failed to parse analytics event:', val, parseErr);
+          console.error('Failed to parse analytics event JSON:', val);
         }
       }
     }
 
-    if (events.length === 0) {
+    if (rawEvents.length === 0) {
       return 0;
     }
 
-    // Insert events in batch
+    // 1. Extract unique gameIds and validate against database games table
+    const uniqueGameIds = Array.from(new Set(rawEvents.map(e => e.gameId).filter(Boolean)));
+    
+    let validGameIdsSet = new Set<string>();
+    if (uniqueGameIds.length > 0) {
+      try {
+        const dbCheckRes = await pool.query(
+          'SELECT id FROM games WHERE id = ANY($1::uuid[])',
+          [uniqueGameIds]
+        );
+        validGameIdsSet = new Set(dbCheckRes.rows.map(r => r.id));
+      } catch (checkErr) {
+        console.error('Error checking valid gameIds in analytics worker:', checkErr);
+      }
+    }
+
+    // Filter out any events with invalid/deleted gameIds
+    const validEvents = rawEvents.filter(e => e.gameId && validGameIdsSet.has(e.gameId));
+    const droppedCount = rawEvents.length - validEvents.length;
+    if (droppedCount > 0) {
+      console.warn(`[Analytics Worker] Filtered out and dropped ${droppedCount} events with non-existent gameId(s).`);
+    }
+
+    if (validEvents.length === 0) {
+      return rawEvents.length;
+    }
+
+    // 2. Bulk Insert valid events into database
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      // 1. Bulk Insert into analytics_events
-      // SQL: INSERT INTO analytics_events ("gameId", "userId", event_type, session_id, ip_address, user_agent, created_at) VALUES ($1, $2, ...)
       const values: any[] = [];
       const placeholders: string[] = [];
       
-      events.forEach((event, index) => {
+      validEvents.forEach((event, index) => {
         const offset = index * 7;
         placeholders.push(`($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, $${offset + 6}, $${offset + 7})`);
         
@@ -70,10 +96,9 @@ export async function processAnalyticsBatch(): Promise<number> {
       `;
       await client.query(insertQuery, values);
 
-      // 2. Increment play counts in games table for 'play' events
-      const playEvents = events.filter(e => e.eventType === 'play');
+      // Increment play counts in games table for 'play' events
+      const playEvents = validEvents.filter(e => e.eventType === 'play');
       if (playEvents.length > 0) {
-        // Group by gameId and increment
         const playCountsByGame: { [gameId: string]: number } = {};
         playEvents.forEach(e => {
           playCountsByGame[e.gameId] = (playCountsByGame[e.gameId] || 0) + 1;
@@ -88,23 +113,34 @@ export async function processAnalyticsBatch(): Promise<number> {
       }
 
       await client.query('COMMIT');
-      console.log(`Successfully processed ${events.length} analytics events from Redis buffer.`);
+      console.log(`[Analytics Worker] Successfully processed ${validEvents.length} valid events.`);
     } catch (dbErr) {
       await client.query('ROLLBACK');
-      console.error('Error executing database batch transaction in analytics worker:', dbErr);
+      console.error('[Analytics Worker] Error executing database batch transaction:', dbErr);
       
-      // Re-queue events back to Redis to prevent loss
-      console.log(`Re-queuing ${events.length} events back to Redis...`);
-      const reQueuePipeline = redis.pipeline();
-      events.forEach(event => {
-        reQueuePipeline.rpush(QUEUE_KEY, JSON.stringify(event));
-      });
-      await reQueuePipeline.exec();
+      // Re-queue events back to Redis with retry limit
+      const retryableEvents = validEvents.map(e => ({
+        ...e,
+        retryCount: (e.retryCount || 0) + 1
+      })).filter(e => e.retryCount <= MAX_RETRIES);
+
+      const expiredCount = validEvents.length - retryableEvents.length;
+      if (expiredCount > 0) {
+        console.warn(`[Analytics Worker] Permanently dropped ${expiredCount} events exceeding max retries (${MAX_RETRIES}).`);
+      }
+
+      if (retryableEvents.length > 0) {
+        const reQueuePipeline = redis.pipeline();
+        retryableEvents.forEach(event => {
+          reQueuePipeline.rpush(QUEUE_KEY, JSON.stringify(event));
+        });
+        await reQueuePipeline.exec();
+      }
     } finally {
       client.release();
     }
 
-    return events.length;
+    return rawEvents.length;
   } catch (err) {
     console.error('Error in analytics background worker batch loop:', err);
     return 0;
