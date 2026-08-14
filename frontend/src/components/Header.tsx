@@ -517,56 +517,6 @@ function HeaderContent() {
           >
             <img src="/search-icon.svg" alt="Search" className={styles.mobileActionIcon} />
           </button>
-          {/* Mobile Globe Language button (only shows on mobile) */}
-          <button 
-            className={`${styles.mobileLangBtn} ${styles.mobileOnlyAction}`}
-            title="Language"
-            onClick={() => router.push('/language')}
-          >
-            <img src="/globe-icon.svg" alt="Language" className={styles.mobileActionIcon} />
-          </button>
-
-          {/* Language selector capsule (desktop first) */}
-          <div className={`${styles.langSelectorContainer} ${styles.desktopOnlyAction}`} ref={langDropdownRef}>
-            <div 
-              className={styles.langSelector}
-              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              style={{ cursor: 'pointer' }}
-            >
-              {/* flag image using standard img */}
-              <img 
-                src={langInfo.flag} 
-                alt={`${langInfo.label} Flag`} 
-                className={styles.flag}
-              />
-              <span>{langInfo.label}</span>
-              <ChevronDown size={14} />
-            </div>
-
-            {langDropdownOpen && (
-              <div className={styles.langDropdown}>
-                {dropdownLanguages.map((lang) => {
-                  const isSelected = language === lang.code;
-                  const isDisabled = lang.code !== 'en';
-                  return (
-                    <button
-                      key={lang.code}
-                      disabled={isDisabled}
-                      className={`${styles.langDropdownItem} ${isSelected ? styles.langDropdownItemActive : ''} ${isDisabled ? styles.langDropdownItemDisabled : ''}`}
-                      onClick={() => {
-                        if (!isDisabled) {
-                          setLanguage(lang.code);
-                          setLangDropdownOpen(false);
-                        }
-                      }}
-                    >
-                      {lang.label}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
 
           {/* User profile avatar / Login button */}
           <div className={styles.profileArea} ref={dropdownRef}>
