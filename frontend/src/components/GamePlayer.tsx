@@ -154,6 +154,9 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle, orien
           onForceRotate={() => {
             setIsForceRotated(true);
             try {
+              if (document.documentElement && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+              }
               if (screen.orientation && (screen.orientation as any).lock) {
                 (screen.orientation as any).lock(targetOrientation.toLowerCase()).catch(() => {});
               }

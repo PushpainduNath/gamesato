@@ -273,6 +273,9 @@ export default function GamePlayerCard({
           onForceRotate={() => {
             setIsForceRotated(true);
             try {
+              if (cardRef.current && cardRef.current.requestFullscreen) {
+                cardRef.current.requestFullscreen().catch(() => {});
+              }
               if (screen.orientation && (screen.orientation as any).lock) {
                 (screen.orientation as any).lock(targetOrientation.toLowerCase()).catch(() => {});
               }
