@@ -33,7 +33,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
   const [isListening, setIsListening] = useState(false);
+  const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const [recognition, setRecognition] = useState<any>(null);
+  const feedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -45,14 +47,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         rec.interimResults = false;
         rec.lang = 'en-US';
 
-        rec.onstart = () => setIsListening(true);
+        rec.onstart = () => {
+          setIsListening(true);
+          setVoiceFeedback('Listening... Speak now 🎙️');
+        };
+
         rec.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           if (transcript) {
             setGlobalSearchQuery(transcript);
+            setVoiceFeedback(`Search: "${transcript}"`);
+            if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+            feedbackTimeoutRef.current = setTimeout(() => {
+              setVoiceFeedback(null);
+            }, 4000);
           }
         };
-        rec.onend = () => setIsListening(false);
+
+        rec.onerror = () => {
+          setIsListening(false);
+          setVoiceFeedback('Voice search failed');
+          setTimeout(() => setVoiceFeedback(null), 3000);
+        };
+
+        rec.onend = () => {
+          setIsListening(false);
+        };
+
         setRecognition(rec);
       }
     }
@@ -253,10 +274,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Search size={16} className={styles.headerSearchIcon} />
             <input 
               type="text" 
-              placeholder="Search..." 
+              placeholder={voiceFeedback ? voiceFeedback : isListening ? "Listening... Speak now 🎙️" : "Search..."} 
               className={styles.headerSearchInput} 
               value={globalSearchQuery}
               onChange={(e) => setGlobalSearchQuery(e.target.value)}
+              suppressHydrationWarning
             />
             {globalSearchQuery && (
               <button
