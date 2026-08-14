@@ -470,12 +470,12 @@ button {
 }
 
 /* Global Form Input Control Styles matching Tealish Theme */
-input[type="text"]:not([class*="searchInput"]),
-input[type="email"]:not([class*="searchInput"]),
-input[type="password"]:not([class*="searchInput"]),
-input[type="search"]:not([class*="searchInput"]),
-input[type="number"]:not([class*="searchInput"]),
-input[type="url"]:not([class*="searchInput"]),
+input[type="text"]:not([class*="Search"]):not([class*="search"]),
+input[type="email"]:not([class*="Search"]):not([class*="search"]),
+input[type="password"]:not([class*="Search"]):not([class*="search"]),
+input[type="search"]:not([class*="Search"]):not([class*="search"]),
+input[type="number"]:not([class*="Search"]):not([class*="search"]),
+input[type="url"]:not([class*="Search"]):not([class*="search"]),
 textarea,
 select {
   background-color: #051817 !important;
@@ -484,17 +484,48 @@ select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-input[type="text"]:not([class*="searchInput"]):focus,
-input[type="email"]:not([class*="searchInput"]):focus,
-input[type="password"]:not([class*="searchInput"]):focus,
-input[type="search"]:not([class*="searchInput"]):focus,
-input[type="number"]:not([class*="searchInput"]):focus,
-input[type="url"]:not([class*="searchInput"]):focus,
+input[type="text"]:not([class*="Search"]):not([class*="search"]):focus,
+input[type="email"]:not([class*="Search"]):not([class*="search"]):focus,
+input[type="password"]:not([class*="Search"]):not([class*="search"]):focus,
+input[type="search"]:not([class*="Search"]):not([class*="search"]):focus,
+input[type="number"]:not([class*="Search"]):not([class*="search"]):focus,
+input[type="url"]:not([class*="Search"]):not([class*="search"]):focus,
 textarea:focus,
 select:focus {
   border-color: #14b8a6 !important;
   box-shadow: 0 0 12px rgba(20, 184, 166, 0.3) !important;
   outline: none !important;
+}
+
+/* Universal Fix: Strip inner border/outline/box-shadow from all search input fields */
+.searchContainer input,
+.searchForm input,
+.searchInputWrapper input,
+.headerSearch input,
+input[class*="Search"],
+input[class*="search"] {
+  border: none !important;
+  border-style: none !important;
+  border-width: 0 !important;
+  outline: none !important;
+  outline-style: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.searchContainer input:focus,
+.searchForm input:focus,
+.searchInputWrapper input:focus,
+.headerSearch input:focus,
+input[class*="Search"]:focus,
+input[class*="search"]:focus {
+  border: none !important;
+  border-style: none !important;
+  border-width: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 /* Glassmorphism Containers - Premium Subtle Card Styling */
