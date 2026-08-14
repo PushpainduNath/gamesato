@@ -167,6 +167,7 @@ export default async function GameDetailPage(props: {
               imageUrl={gameImageUrl}
               gameUrl={game.game_url}
               initialLikes={likesCount}
+              orientation={(game as any).orientation || 'AUTO'}
             />
           </div>
 

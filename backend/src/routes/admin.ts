@@ -137,7 +137,7 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
 
     // List of games with metrics including average duration per game
     const gamesStatsQuery = `
-       SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.game_url, g.status, g.description, g.how_to_play, g.is_featured,
+       SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.game_url, g.orientation, g.status, g.description, g.how_to_play, g.is_featured,
               g.featured_desktop_url, g.featured_mobile_url, g.new_game_both_url, g.game_page_both_url,
               g.is_popular, g.is_new, g.meta_title, g.meta_description, g.meta_tags,
               g.created_at, g.updated_at,
@@ -217,6 +217,7 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
         thumbnailUrl: row.thumbnail_url,
         gameUrl: row.game_url,
         game_url: row.game_url,
+        orientation: row.orientation || 'AUTO',
         hasBuild: hasGameBuildFiles(row.slug),
         playCount: parseInt(row.play_count),
         likesCount: parseInt(row.likes_count),

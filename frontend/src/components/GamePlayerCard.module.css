@@ -10,6 +10,25 @@
   background: #000000;
 }
 
+.portraitCard {
+  aspect-ratio: 9 / 16 !important;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.forceRotated {
+  transform: rotate(90deg);
+  transform-origin: center center;
+  width: 100vh !important;
+  height: 100vw !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  margin-top: -50vw !important;
+  margin-left: -50vh !important;
+  z-index: 99999 !important;
+}
+
 .thumbnail {
   position: absolute;
   top: 0;

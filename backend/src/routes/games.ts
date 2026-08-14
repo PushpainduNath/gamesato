@@ -268,12 +268,13 @@ router.post(
       const createdAt = req.body.createdAt ? req.body.createdAt : new Date();
       const likesCount = req.body.likesCount !== undefined ? parseInt(req.body.likesCount, 10) : (req.body.likes_count !== undefined ? parseInt(req.body.likes_count, 10) : 0);
       const playCount = req.body.playCount !== undefined ? parseInt(req.body.playCount, 10) : (req.body.play_count !== undefined ? parseInt(req.body.play_count, 10) : 0);
+      const orientation = (req.body.orientation || 'AUTO').toUpperCase();
 
       const result = await pool.query(
-        `INSERT INTO games (title, slug, description, category, thumbnail_url, game_url, status, is_featured, featured_desktop_url, featured_mobile_url, new_game_both_url, game_page_both_url, is_popular, is_new, meta_title, meta_description, meta_tags, how_to_play, created_at, likes_count, play_count)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+        `INSERT INTO games (title, slug, description, category, thumbnail_url, game_url, status, is_featured, featured_desktop_url, featured_mobile_url, new_game_both_url, game_page_both_url, is_popular, is_new, meta_title, meta_description, meta_tags, how_to_play, created_at, likes_count, play_count, orientation)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
          RETURNING *`,
-        [title, slug, description || '', category, thumbnailUrl, gameUrl, status || 'published', isFeatured, featuredDesktopUrl, featuredMobileUrl, newGameBothUrl, gamePageBothUrl, isPopular, isNew, metaTitle, metaDescription, metaTags, howToPlay, createdAt, likesCount, playCount]
+        [title, slug, description || '', category, thumbnailUrl, gameUrl, status || 'published', isFeatured, featuredDesktopUrl, featuredMobileUrl, newGameBothUrl, gamePageBothUrl, isPopular, isNew, metaTitle, metaDescription, metaTags, howToPlay, createdAt, likesCount, playCount, orientation]
       );
 
       await invalidateGameCache(slug);
@@ -468,13 +469,14 @@ router.put(
       const createdAt = req.body.createdAt !== undefined ? req.body.createdAt : existingGame.created_at;
       const likesCount = req.body.likesCount !== undefined ? parseInt(req.body.likesCount, 10) : (req.body.likes_count !== undefined ? parseInt(req.body.likes_count, 10) : existingGame.likes_count);
       const playCount = req.body.playCount !== undefined ? parseInt(req.body.playCount, 10) : (req.body.play_count !== undefined ? parseInt(req.body.play_count, 10) : existingGame.play_count);
+      const orientation = req.body.orientation !== undefined ? (req.body.orientation || 'AUTO').toUpperCase() : (existingGame.orientation || 'AUTO');
 
       const result = await pool.query(
         `UPDATE games 
-         SET title = $1, slug = $2, description = $3, category = $4, thumbnail_url = $5, game_url = $6, status = $7, is_featured = $8, featured_desktop_url = $9, featured_mobile_url = $10, new_game_both_url = $11, game_page_both_url = $12, is_popular = $13, is_new = $14, meta_title = $15, meta_description = $16, meta_tags = $17, how_to_play = $18, created_at = $19, likes_count = $20, play_count = $21, updated_at = CURRENT_TIMESTAMP
-         WHERE id = $22
+         SET title = $1, slug = $2, description = $3, category = $4, thumbnail_url = $5, game_url = $6, status = $7, is_featured = $8, featured_desktop_url = $9, featured_mobile_url = $10, new_game_both_url = $11, game_page_both_url = $12, is_popular = $13, is_new = $14, meta_title = $15, meta_description = $16, meta_tags = $17, how_to_play = $18, created_at = $19, likes_count = $20, play_count = $21, orientation = $22, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $23
          RETURNING *`,
-        [title || existingGame.title, targetSlug, description ?? existingGame.description, category || existingGame.category, thumbnailUrl, gameUrl, status || existingGame.status, isFeatured, featuredDesktopUrl, featuredMobileUrl, newGameBothUrl, gamePageBothUrl, isPopular, isNew, metaTitle, metaDescription, metaTags, howToPlay, createdAt, likesCount, playCount, id]
+        [title || existingGame.title, targetSlug, description ?? existingGame.description, category || existingGame.category, thumbnailUrl, gameUrl, status || existingGame.status, isFeatured, featuredDesktopUrl, featuredMobileUrl, newGameBothUrl, gamePageBothUrl, isPopular, isNew, metaTitle, metaDescription, metaTags, howToPlay, createdAt, likesCount, playCount, orientation, id]
       );
 
       await invalidateGameCache(existingGame.slug);

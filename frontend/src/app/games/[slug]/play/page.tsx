@@ -33,7 +33,7 @@ export default async function PlayPage(props: PlayPageProps) {
 
   try {
     const res = await query(
-      'SELECT id, title, slug, game_url FROM games WHERE slug = $1 AND status = \'published\'',
+      'SELECT id, title, slug, game_url, orientation FROM games WHERE slug = $1 AND status = \'published\'',
       [slug]
     );
     if (res.rows.length > 0) {
@@ -53,6 +53,7 @@ export default async function PlayPage(props: PlayPageProps) {
       gameSlug={game.slug} 
       gameUrl={game.game_url} 
       gameTitle={game.title} 
+      orientation={game.orientation || 'AUTO'}
     />
   );
 }

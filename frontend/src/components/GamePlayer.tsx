@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Wrench } from 'lucide-react';
 import { useTranslation } from '@/store/useLanguageStore';
+import OrientationRotateOverlay from './OrientationRotateOverlay';
 import styles from './GamePlayer.module.css';
 
 interface GamePlayerProps {
@@ -11,18 +12,39 @@ interface GamePlayerProps {
   gameSlug: string;
   gameUrl: string;
   gameTitle: string;
+  orientation?: 'LANDSCAPE' | 'PORTRAIT' | 'AUTO' | string;
 }
 
-export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: GamePlayerProps) {
+export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle, orientation = 'AUTO' }: GamePlayerProps) {
   const router = useRouter();
   const [sessionId, setSessionId] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [deviceOrientation, setDeviceOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [isForceRotated, setIsForceRotated] = useState(false);
   const { t } = useTranslation();
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
   const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
   const iframeSrc = isExternalEmbed ? gameUrl : `${backendUrl}${gameUrl}`;
+
+  // Monitor screen dimensions and device orientation
+  useEffect(() => {
+    const handleScreenCheck = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setIsMobile(w <= 768);
+      setDeviceOrientation(h > w ? 'portrait' : 'landscape');
+    };
+    handleScreenCheck();
+    window.addEventListener('resize', handleScreenCheck);
+    window.addEventListener('orientationchange', handleScreenCheck);
+    return () => {
+      window.removeEventListener('resize', handleScreenCheck);
+      window.removeEventListener('orientationchange', handleScreenCheck);
+    };
+  }, []);
 
   // Check if game files exist
   useEffect(() => {
@@ -114,12 +136,31 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle }: Gam
   };
 
   const translatedTitle = t(`game_${gameSlug}_title` as any) || gameTitle;
+  const targetOrientation = (orientation || 'AUTO').toUpperCase();
+  const isMismatch = isMobile && !isForceRotated && (
+    (targetOrientation === 'LANDSCAPE' && deviceOrientation === 'portrait') ||
+    (targetOrientation === 'PORTRAIT' && deviceOrientation === 'landscape')
+  );
 
   return (
     <div className={styles.playerContainer}>
       <button className={styles.backBtn} onClick={handleBack} aria-label="Exit Game" title="Exit Game">
         <ArrowLeft size={18} />
       </button>
+
+      {isMismatch && (
+        <OrientationRotateOverlay
+          requiredOrientation={targetOrientation as any}
+          onForceRotate={() => {
+            setIsForceRotated(true);
+            try {
+              if (screen.orientation && (screen.orientation as any).lock) {
+                (screen.orientation as any).lock(targetOrientation.toLowerCase()).catch(() => {});
+              }
+            } catch (e) {}
+          }}
+        />
+      )}
 
       {isMaintenance ? (
         <div className={styles.maintenanceContainer}>

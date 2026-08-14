@@ -1,0 +1,111 @@
+.overlayContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: rgba(10, 15, 29, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: #ffffff;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.iconWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.phoneIcon {
+  width: 56px;
+  height: 96px;
+  border: 3px solid #14b8a6;
+  border-radius: 12px;
+  position: relative;
+  background: rgba(20, 184, 166, 0.1);
+  box-shadow: 0 0 24px rgba(20, 184, 166, 0.3);
+  animation: rotatePhone 2.5s ease-in-out infinite;
+}
+
+.phoneScreen {
+  position: absolute;
+  top: 6px;
+  left: 4px;
+  right: 4px;
+  bottom: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  35% { transform: rotate(90deg); }
+  65% { transform: rotate(90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  max-width: 320px;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.actionsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.forceRotateBtn {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(20, 184, 166, 0.5);
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4);
+  transition: transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.forceRotateBtn:active {
+  transform: scale(0.97);
+}

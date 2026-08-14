@@ -39,6 +39,7 @@ interface Game {
   featuredMobileUrl?: string | null;
   newGameBothUrl?: string | null;
   gamePageBothUrl?: string | null;
+  orientation?: 'LANDSCAPE' | 'PORTRAIT' | 'AUTO' | string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -500,6 +501,7 @@ export default function AdminGamesManager() {
   const [metaTags, setMetaTags] = useState('');
   const [howToPlay, setHowToPlay] = useState('');
   const [createdAt, setCreatedAt] = useState(new Date().toISOString().slice(0, 16));
+  const [orientation, setOrientation] = useState<'AUTO' | 'LANDSCAPE' | 'PORTRAIT'>('AUTO');
 
   const resetUploadForm = () => {
     setTitle('');
@@ -511,6 +513,7 @@ export default function AdminGamesManager() {
     setSourceType('zip');
     setEmbedFormat('url');
     setEmbedUrl('');
+    setOrientation('AUTO');
     setZipFile(null);
     setThumbnailFile(null);
     setFeaturedDesktopFile(null);
@@ -534,6 +537,7 @@ export default function AdminGamesManager() {
   const [editSourceType, setEditSourceType] = useState<'zip' | 'embed'>('zip');
   const [editEmbedFormat, setEditEmbedFormat] = useState<'url' | 'iframe'>('url');
   const [editEmbedUrl, setEditEmbedUrl] = useState('');
+  const [editOrientation, setEditOrientation] = useState<'AUTO' | 'LANDSCAPE' | 'PORTRAIT'>('AUTO');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editGameId, setEditGameId] = useState('');
   const [editTitle, setEditTitle] = useState('');
@@ -916,6 +920,7 @@ export default function AdminGamesManager() {
       formData.append('createdAt', createdAt);
       formData.append('likesCount', likesCount.toString());
       formData.append('playCount', playCount.toString());
+      formData.append('orientation', orientation);
 
       const res = await uploadFormWithProgress(
         `${backendUrl}/api/games`,
@@ -978,6 +983,7 @@ export default function AdminGamesManager() {
     setEditDescription(game.description || '');
     setEditHowToPlay(game.howToPlay || game.how_to_play || '');
     setEditStatus(game.status || 'published');
+    setEditOrientation(((game.orientation || (game as any).orientation || 'AUTO').toUpperCase()) as any);
     const initialUrl = game.gameUrl || game.game_url || '';
     const isExt = initialUrl.startsWith('http://') || initialUrl.startsWith('https://') || initialUrl.startsWith('//');
     setEditSourceType(isExt ? 'embed' : 'zip');
@@ -1124,6 +1130,7 @@ export default function AdminGamesManager() {
       formData.append('createdAt', editCreatedAt);
       formData.append('likesCount', editLikesCount.toString());
       formData.append('playCount', editPlayCount.toString());
+      formData.append('orientation', editOrientation);
 
       const res = await uploadFormWithProgress(
         `${backendUrl}/api/games/${editGameId}`,
@@ -2428,8 +2435,78 @@ export default function AdminGamesManager() {
                   </div>
                 </div>
 
-                {/* Empty block to align grid */}
-                <div className={styles.figmaFormGroup}></div>
+                {/* Game Frame Orientation Control */}
+                <div className={styles.figmaFormGroupFull}>
+                  <label className={styles.figmaLabel}>Game Frame Orientation</label>
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setOrientation('LANDSCAPE')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: orientation === 'LANDSCAPE' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: orientation === 'LANDSCAPE' ? 'rgba(20, 184, 166, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🖥️ Landscape (16:9)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOrientation('PORTRAIT')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: orientation === 'PORTRAIT' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: orientation === 'PORTRAIT' ? 'rgba(20, 184, 166, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      📱 Portrait (9:16)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOrientation('AUTO')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: orientation === 'AUTO' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: orientation === 'AUTO' ? 'rgba(20, 184, 166, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🔄 Auto / Any
+                    </button>
+                  </div>
+                </div>
 
                 {/* Game Source Type Selector */}
                 <div className={styles.figmaFormGroupFull}>
@@ -3092,8 +3169,78 @@ export default function AdminGamesManager() {
                   </div>
                 </div>
 
-                {/* Empty block to align grid */}
-                <div className={styles.figmaFormGroup}></div>
+                {/* Game Frame Orientation Control */}
+                <div className={styles.figmaFormGroupFull}>
+                  <label className={styles.figmaLabel}>Game Frame Orientation</label>
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setEditOrientation('LANDSCAPE')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: editOrientation === 'LANDSCAPE' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: editOrientation === 'LANDSCAPE' ? 'rgba(20, 184, 166, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🖥️ Landscape (16:9)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditOrientation('PORTRAIT')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: editOrientation === 'PORTRAIT' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: editOrientation === 'PORTRAIT' ? 'rgba(20, 184, 166, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      📱 Portrait (9:16)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditOrientation('AUTO')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: editOrientation === 'AUTO' ? '2px solid #14b8a6' : '1px solid rgba(255,255,255,0.15)',
+                        background: editOrientation === 'AUTO' ? 'rgba(20, 184, 166, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🔄 Auto / Any
+                    </button>
+                  </div>
+                </div>
 
                 {/* Game Source Type Selector */}
                 <div className={styles.figmaFormGroupFull}>

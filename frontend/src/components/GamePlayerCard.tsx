@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Play, Heart, Share2, ThumbsUp, Maximize, Minimize, X, Wrench } from 'lucide-react';
+import OrientationRotateOverlay from './OrientationRotateOverlay';
 import styles from './GamePlayerCard.module.css';
 
 interface GamePlayerCardProps {
@@ -13,6 +14,7 @@ interface GamePlayerCardProps {
   imageUrl: string;
   gameUrl: string;
   initialLikes: number;
+  orientation?: 'LANDSCAPE' | 'PORTRAIT' | 'AUTO' | string;
 }
 
 export default function GamePlayerCard({
@@ -22,6 +24,7 @@ export default function GamePlayerCard({
   imageUrl,
   gameUrl,
   initialLikes,
+  orientation = 'AUTO',
 }: GamePlayerCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -32,17 +35,37 @@ export default function GamePlayerCard({
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
 
-  // Playing, Fullscreen, and Maintenance States
+  // Playing, Fullscreen, Maintenance, and Orientation States
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [sessionId, setSessionId] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const [deviceOrientation, setDeviceOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [isForceRotated, setIsForceRotated] = useState(false);
   
   const cardRef = useRef<HTMLDivElement>(null);
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
   const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
   const iframeSrc = isExternalEmbed ? gameUrl : `${backendUrl}${gameUrl}`;
+
+  // Monitor screen dimensions and device orientation
+  useEffect(() => {
+    const handleScreenCheck = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setIsMobile(w <= 768);
+      setDeviceOrientation(h > w ? 'portrait' : 'landscape');
+    };
+    handleScreenCheck();
+    window.addEventListener('resize', handleScreenCheck);
+    window.addEventListener('orientationchange', handleScreenCheck);
+    return () => {
+      window.removeEventListener('resize', handleScreenCheck);
+      window.removeEventListener('orientationchange', handleScreenCheck);
+    };
+  }, []);
 
   // Sync likes and check if user has liked this game
   useEffect(() => {
@@ -227,8 +250,29 @@ export default function GamePlayerCard({
     }
   };
 
+  const targetOrientation = (orientation || 'AUTO').toUpperCase();
+  const isPortraitGame = targetOrientation === 'PORTRAIT';
+  const isMismatch = isMobile && !isForceRotated && (
+    (targetOrientation === 'LANDSCAPE' && deviceOrientation === 'portrait') ||
+    (targetOrientation === 'PORTRAIT' && deviceOrientation === 'landscape')
+  );
+
   return (
-    <div className={styles.playerCard} ref={cardRef}>
+    <div className={`${styles.playerCard} ${isPortraitGame ? styles.portraitCard : ''} ${isForceRotated ? styles.forceRotated : ''}`} ref={cardRef}>
+      {isPlaying && isMismatch && (
+        <OrientationRotateOverlay
+          requiredOrientation={targetOrientation as any}
+          onForceRotate={() => {
+            setIsForceRotated(true);
+            try {
+              if (screen.orientation && (screen.orientation as any).lock) {
+                (screen.orientation as any).lock(targetOrientation.toLowerCase()).catch(() => {});
+              }
+            } catch (e) {}
+          }}
+        />
+      )}
+
       {isPlaying ? (
         <div className={styles.iframeContainer}>
           {isMaintenance ? (
