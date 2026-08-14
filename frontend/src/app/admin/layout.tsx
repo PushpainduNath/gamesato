@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Gamepad2, Users, ShieldCheck, 
   RotateCcw, LogOut, Layers, Search, Palette, Check, ChevronDown, FileText,
-  Sun, Moon, X
+  Sun, Moon, X, Mic
 } from 'lucide-react';
 import styles from './layout.module.css';
 
@@ -32,10 +32,47 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [dialogState, setDialogState] = useState<DialogState>({ isOpen: false });
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const rec = new SpeechRecognition();
+        rec.continuous = false;
+        rec.interimResults = false;
+        rec.lang = 'en-US';
+
+        rec.onstart = () => setIsListening(true);
+        rec.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            setGlobalSearchQuery(transcript);
+          }
+        };
+        rec.onend = () => setIsListening(false);
+        setRecognition(rec);
+      }
+    }
+  }, [setGlobalSearchQuery]);
+
+  const startVoiceSearch = () => {
+    if (!recognition) {
+      alert('Speech recognition is not supported in this browser. Please try Chrome, Edge, or Safari.');
+      return;
+    }
+    if (isListening) {
+      recognition.stop();
+    } else {
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
   // Isolate Admin panel from portal light-theme pollution
   useEffect(() => {
@@ -234,7 +271,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '4px',
-                  marginRight: '4px',
+                  marginRight: '2px',
                   borderRadius: '50%',
                   transition: 'color 0.2s ease',
                 }}
@@ -243,6 +280,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <X size={14} />
               </button>
             )}
+            <button
+              type="button"
+              onClick={startVoiceSearch}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: isListening ? '#14b8a6' : 'var(--adm-text-secondary, #94a3b8)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '4px',
+                borderRadius: '50%',
+                transition: 'color 0.2s ease',
+              }}
+              title={isListening ? "Listening..." : "Voice Search"}
+            >
+              <Mic size={16} />
+            </button>
           </div>
           <div className={styles.headerRight}>
             {/* Theme Toggle Button hidden until enabled by management */}

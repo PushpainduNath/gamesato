@@ -618,6 +618,15 @@ function HeaderContent() {
                     <X size={16} />
                   </button>
                 )}
+                <button
+                  type="button"
+                  onClick={startVoiceSearch}
+                  className={`${styles.micBtn} ${isListening ? styles.micBtnListening : ''}`}
+                  title={isListening ? "Listening..." : "Voice Search"}
+                  style={{ marginRight: '4px' }}
+                >
+                  <Mic size={18} className={styles.micIconInner} />
+                </button>
               </form>
             </div>
 
