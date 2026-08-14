@@ -257,8 +257,16 @@ export default function GamePlayerCard({
     (targetOrientation === 'PORTRAIT' && deviceOrientation === 'landscape')
   );
 
+  const applyMobilePortraitCard = isPortraitGame && isMobile;
+  const isDesktopPortrait = isPortraitGame && !isMobile;
+
   return (
-    <div className={`${styles.playerCard} ${isPortraitGame ? styles.portraitCard : ''} ${isForceRotated ? styles.forceRotated : ''}`} ref={cardRef}>
+    <div className={`${styles.playerCard} ${applyMobilePortraitCard ? styles.portraitCard : ''} ${isForceRotated ? styles.forceRotated : ''}`} ref={cardRef}>
+      {/* Ambient Blurred Artwork Backdrop for Desktop Portrait Games */}
+      {isDesktopPortrait && (
+        <img src={imageUrl} alt="" className={styles.ambientBackdrop} aria-hidden="true" />
+      )}
+
       {isPlaying && isMismatch && (
         <OrientationRotateOverlay
           requiredOrientation={targetOrientation as any}
@@ -295,6 +303,17 @@ export default function GamePlayerCard({
                 </div>
               </div>
             </div>
+          ) : isDesktopPortrait ? (
+            <div className={styles.portraitWrapper}>
+              <iframe
+                src={iframeSrc}
+                title={gameTitle}
+                className={styles.iframe}
+                allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
+                allowFullScreen
+                referrerPolicy="no-referrer"
+              />
+            </div>
           ) : (
             <iframe
               src={iframeSrc}
@@ -324,8 +343,13 @@ export default function GamePlayerCard({
         </div>
       ) : (
         <div className={styles.previewContainer} onClick={handlePlayClick}>
-          {/* Thumbnail Image */}
-          <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
+          {isDesktopPortrait ? (
+            <div className={styles.portraitWrapper}>
+              <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
+            </div>
+          ) : (
+            <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
+          )}
           
           {/* Dark tint overlay */}
           <div className={styles.darkOverlay} />
