@@ -41,6 +41,7 @@ async function run() {
       ALTER TABLE games ADD COLUMN IF NOT EXISTS meta_description TEXT;
       ALTER TABLE games ADD COLUMN IF NOT EXISTS meta_tags TEXT;
       ALTER TABLE games ADD COLUMN IF NOT EXISTS how_to_play TEXT;
+      ALTER TABLE games ADD COLUMN IF NOT EXISTS orientation VARCHAR(20) DEFAULT 'AUTO';
 
       -- Auto-unmark featured games that do not have a featured image
       UPDATE games 
