@@ -263,7 +263,7 @@ export default function GamePlayerCard({
   return (
     <div className={`${styles.playerCard} ${applyMobilePortraitCard ? styles.portraitCard : ''} ${isForceRotated ? styles.forceRotated : ''}`} ref={cardRef}>
       {/* Ambient Blurred Artwork Backdrop for Desktop Portrait Games */}
-      {isDesktopPortrait && (
+      {isDesktopPortrait && isPlaying && (
         <img src={imageUrl} alt="" className={styles.ambientBackdrop} aria-hidden="true" />
       )}
 
@@ -343,13 +343,8 @@ export default function GamePlayerCard({
         </div>
       ) : (
         <div className={styles.previewContainer} onClick={handlePlayClick}>
-          {isDesktopPortrait ? (
-            <div className={styles.portraitWrapper}>
-              <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
-            </div>
-          ) : (
-            <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
-          )}
+          {/* Thumbnail Image - Full 16:9 unzoomed view like landscape games */}
+          <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
           
           {/* Dark tint overlay */}
           <div className={styles.darkOverlay} />
