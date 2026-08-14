@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import Providers from '@/components/Providers';
 import PortalLayoutWrapper from '@/components/PortalLayoutWrapper';
@@ -71,6 +72,19 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-B3F3Z0WNME"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-B3F3Z0WNME');
+          `}
+        </Script>
         <Providers>
           <PortalLayoutWrapper>{children}</PortalLayoutWrapper>
         </Providers>
