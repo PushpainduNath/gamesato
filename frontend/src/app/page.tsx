@@ -270,14 +270,14 @@ export default async function HomePage(props: {
           ) : (
             <section className={`${styles.seoSection} glass`}>
               <h2 className={styles.seoTitle}>
-                <Translate textKey="seoTitle" fallback="Game Bite: Your Instant Gaming Hub" />
+                <Translate textKey="seoTitle" fallback="Gamesato: Your Instant Gaming Hub" />
               </h2>
               <p className={styles.seoText}>
                 <Translate textKey="seoText1" fallback="Experience the next generation of web-based gaming with Gamesato. We provide a curated selection of high-quality, free-to-play games run directly in your browser without any downloads or installations. Our platform is designed for clarity, allowing you to jump straight into the action across various genres." />
               </p>
               
               <h3 className={styles.seoSubTitle}>
-                <Translate textKey="seoWhyChooseTitle" fallback="Why Choose Game Bite?" />
+                <Translate textKey="seoWhyChooseTitle" fallback="Why Choose Gamesato?" />
               </h3>
               <ul className={styles.seoList}>
                 <li><Translate textKey="seoWhyChoose1" fallback="✓ Instant access to 1000+ premium games" /></li>

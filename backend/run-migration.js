@@ -52,6 +52,21 @@ async function run() {
     `);
     console.log('Games table upgraded successfully (featured layout urls, how_to_play & featured auto-unmark checked).');
 
+    // Auto-update site settings & static pages branding from Gamebite to Gamesato
+    await client.query(`
+      UPDATE site_settings SET value = 'support@gamesato.com' WHERE key = 'support_email' AND (value LIKE '%gamebite%' OR value IS NULL);
+      UPDATE site_settings SET value = 'Gamesato Portal' WHERE key = 'site_name' AND (value LIKE '%Gamebite%' OR value IS NULL);
+      
+      UPDATE static_pages SET 
+        content = REPLACE(REPLACE(content, 'Gamebite', 'Gamesato'), 'gamebite', 'gamesato'),
+        title = REPLACE(REPLACE(title, 'Gamebite', 'Gamesato'), 'gamebite', 'gamesato'),
+        meta_title = REPLACE(REPLACE(meta_title, 'Gamebite', 'Gamesato'), 'gamebite', 'gamesato'),
+        meta_description = REPLACE(REPLACE(meta_description, 'Gamebite', 'Gamesato'), 'gamebite', 'gamesato'),
+        meta_tags = REPLACE(REPLACE(meta_tags, 'Gamebite', 'Gamesato'), 'gamebite', 'gamesato')
+      WHERE content LIKE '%gamebite%' OR content LIKE '%Gamebite%' OR meta_title LIKE '%Gamebite%';
+    `);
+    console.log('Site settings and static pages updated from Gamebite to Gamesato.');
+
     // 3. Create admin_users table schema
     await client.query(`
       CREATE TABLE IF NOT EXISTS admin_users (
