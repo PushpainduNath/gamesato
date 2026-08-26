@@ -1,9 +1,7 @@
 import React from 'react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Calendar, User, Clock } from 'lucide-react';
 import { getImageUrl } from '@/lib/utils';
-import styles from './page.module.css';
+import BlogClientView from './BlogClientView';
 
 interface Blog {
   id: string;
@@ -49,23 +47,37 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   }
 }
 
-async function getBlog(slug: string): Promise<Blog | null> {
+async function getBlogData(slug: string): Promise<{ blog: Blog | null; relatedBlogs: Blog[] }> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:3102';
   try {
     const res = await fetch(`${backendUrl}/api/blogs/${slug}`, { cache: 'no-store' });
-    if (!res.ok) return null;
+    if (!res.ok) return { blog: null, relatedBlogs: [] };
     const data = await res.json();
-    return data.blog || null;
+    const blog: Blog = data.blog || null;
+
+    let related: Blog[] = [];
+    try {
+      const listRes = await fetch(`${backendUrl}/api/blogs`, { cache: 'no-store' });
+      if (listRes.ok) {
+        const listData = await listRes.json();
+        const allBlogs: Blog[] = listData.blogs || [];
+        related = allBlogs.filter((b) => b.slug !== slug);
+      }
+    } catch (e) {
+      console.error('Error fetching related blogs:', e);
+    }
+
+    return { blog, relatedBlogs: related };
   } catch (err) {
-    console.error('Error fetching blog:', err);
-    return null;
+    console.error('Error fetching blog data:', err);
+    return { blog: null, relatedBlogs: [] };
   }
 }
 
 export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   const { slug } = params;
-  const blog = await getBlog(slug);
+  const { blog, relatedBlogs } = await getBlogData(slug);
 
   if (!blog) {
     notFound();
@@ -136,45 +148,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <article className={styles.postContainer}>
-        <Link href="/blog" className={styles.backBtn}>
-          <ArrowLeft size={16} /> Back to Blog
-        </Link>
-
-        <div>
-          <span className={styles.categoryBadge}>{blog.category}</span>
-          <h1 className={styles.postTitle}>{blog.title}</h1>
-
-          <div className={styles.postMeta}>
-            <span className={styles.metaItem}>
-              <User size={15} /> {blog.author}
-            </span>
-            <span className={styles.metaItem}>
-              <Calendar size={15} />
-              {new Date(blog.published_at).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </span>
-          </div>
-        </div>
-
-        {blog.cover_image && (
-          <div className={styles.coverImageWrapper}>
-            <img
-              src={getImageUrl(blog.cover_image)}
-              alt={blog.title}
-              className={styles.coverImage}
-            />
-          </div>
-        )}
-
-        <div
-          className={styles.postBody}
-          dangerouslySetInnerHTML={{ __html: blog.content }}
-        />
-      </article>
+      <BlogClientView blog={blog} relatedBlogs={relatedBlogs} siteUrl={siteUrl} />
     </>
   );
 }
