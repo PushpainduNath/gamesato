@@ -34,10 +34,16 @@ export async function generateMetadata(): Promise<Metadata> {
       title: data.meta_title || data.title,
       description: data.meta_description || undefined,
       keywords: data.meta_tags || undefined,
+      alternates: {
+        canonical: '/privacy',
+      },
     };
   }
   return {
     title: 'Privacy Policy | Gamesato',
+    alternates: {
+      canonical: '/privacy',
+    },
   };
 }
 
