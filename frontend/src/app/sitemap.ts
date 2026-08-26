@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next';
+import { query } from '@/lib/db';
 
 export const revalidate = 3600; // Revalidate sitemap every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:3102';
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -47,28 +47,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let gamePages: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${backendUrl}/api/games`, { next: { revalidate: 3600 } });
-    if (res.ok) {
-      const data = await res.json();
-      const games = data.games || [];
-      gamePages = games.map((game: any) => ({
+    const res = await query(
+      "SELECT slug, updated_at, created_at FROM games WHERE status = 'published' ORDER BY created_at DESC"
+    );
+    if (res.rows && res.rows.length > 0) {
+      gamePages = res.rows.map((game: any) => ({
         url: `${baseUrl}/games/${game.slug}`,
-        lastModified: game.updated_at ? new Date(game.updated_at) : new Date(),
+        lastModified: game.updated_at ? new Date(game.updated_at) : new Date(game.created_at || Date.now()),
         changeFrequency: 'weekly',
         priority: 0.9,
       }));
     }
   } catch (err) {
-    console.error('Failed to fetch games for sitemap:', err);
+    console.error('Failed to query games for sitemap:', err);
   }
 
   let categoryPages: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${backendUrl}/api/categories`, { next: { revalidate: 3600 } });
-    if (res.ok) {
-      const data = await res.json();
-      const categories = Array.isArray(data) ? data : data.categories || [];
-      categoryPages = categories.map((cat: any) => ({
+    const res = await query("SELECT slug FROM categories");
+    if (res.rows && res.rows.length > 0) {
+      categoryPages = res.rows.map((cat: any) => ({
         url: `${baseUrl}/category/${cat.slug}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
@@ -76,24 +74,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }));
     }
   } catch (err) {
-    console.error('Failed to fetch categories for sitemap:', err);
+    console.error('Failed to query categories for sitemap:', err);
   }
 
   let blogPages: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${backendUrl}/api/blogs`, { next: { revalidate: 3600 } });
-    if (res.ok) {
-      const data = await res.json();
-      const blogs = data.blogs || [];
-      blogPages = blogs.map((blog: any) => ({
+    const res = await query("SELECT slug, updated_at, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC");
+    if (res.rows && res.rows.length > 0) {
+      blogPages = res.rows.map((blog: any) => ({
         url: `${baseUrl}/blog/${blog.slug}`,
-        lastModified: blog.updated_at ? new Date(blog.updated_at) : new Date(),
+        lastModified: blog.updated_at ? new Date(blog.updated_at) : new Date(blog.created_at || Date.now()),
         changeFrequency: 'weekly',
         priority: 0.7,
       }));
     }
   } catch (err) {
-    console.error('Failed to fetch blogs for sitemap:', err);
+    console.error('Failed to query blogs for sitemap:', err);
   }
 
   return [...staticPages, ...categoryPages, ...gamePages, ...blogPages];
