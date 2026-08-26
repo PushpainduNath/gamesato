@@ -11,7 +11,7 @@ interface Blog {
   title: string;
   slug: string;
   excerpt: string;
-  content: string;
+  content?: string;
   cover_image: string;
   category: string;
   author: string;
@@ -24,10 +24,11 @@ interface BlogClientViewProps {
   siteUrl: string;
 }
 
-function calculateReadingTime(text: string): number {
+function calculateReadingTime(text?: string): number {
+  if (!text) return 3;
   const cleanText = text.replace(/<[^>]+>/g, '');
   const words = cleanText.trim().split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 200));
+  return Math.max(1, Math.ceil((words * 12) / 200));
 }
 
 export default function BlogClientView({ blog, relatedBlogs, siteUrl }: BlogClientViewProps) {
@@ -49,7 +50,7 @@ export default function BlogClientView({ blog, relatedBlogs, siteUrl }: BlogClie
     return { processedContent: updatedHtml, tocHeadings: headings };
   }, [blog.content]);
 
-  const readingTime = calculateReadingTime(blog.content);
+  const readingTime = calculateReadingTime(blog.content || blog.excerpt);
 
   const scrollToHeading = (id: string) => {
     const el = document.getElementById(id);
@@ -176,7 +177,7 @@ export default function BlogClientView({ blog, relatedBlogs, siteUrl }: BlogClie
                           Read More
                         </Link>
                         <span className={styles.readTimeText}>
-                          {calculateReadingTime(item.content)} Min Read
+                          {calculateReadingTime(item.excerpt || item.title)} Min Read
                         </span>
                       </div>
                     </div>
