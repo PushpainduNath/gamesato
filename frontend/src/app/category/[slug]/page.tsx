@@ -270,9 +270,34 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   };
 
   const translatedCategory = t(categoryInfo.key as any) || categoryInfo.name;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: categoryInfo.name,
+        item: `${siteUrl}/category/${slug}`,
+      },
+    ],
+  };
 
   return (
-    <div className={styles.contentArea}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className={styles.contentArea}>
       
       {/* Breadcrumbs Navigation */}
       <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
@@ -381,5 +406,6 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
       )}
 
     </div>
+    </>
   );
 }

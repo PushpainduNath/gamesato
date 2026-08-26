@@ -235,6 +235,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span>Content Management</span>
           </Link>
 
+          <Link 
+            href="/admin/blogs" 
+            className={`${styles.menuItem} ${pathname.startsWith('/admin/blogs') ? styles.activeItem : ''}`}
+          >
+            <FileText size={18} className={styles.menuLucideIcon} />
+            <span>Blog Management</span>
+          </Link>
+
           {isSuperAdmin && (
             <Link 
               href="/admin/admins" 

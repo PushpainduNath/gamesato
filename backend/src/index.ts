@@ -6,6 +6,7 @@ import gamesRouter from './routes/games';
 import adminRouter from './routes/admin';
 import analyticsRouter from './routes/analytics';
 import categoriesRouter from './routes/categories';
+import blogsRouter from './routes/blogs';
 import { startAnalyticsWorker, stopAnalyticsWorker } from './workers/analyticsWorker';
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use('/api/games', gamesRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/categories', categoriesRouter);
+app.use('/api/blogs', blogsRouter);
 
 // Basic health check
 app.get('/health', (req, res) => {

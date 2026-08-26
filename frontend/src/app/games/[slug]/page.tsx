@@ -65,16 +65,22 @@ export async function generateMetadata(props: {
     return {
       title: `${game.title} - Play Free H5 Game Online`,
       description: game.description || `Play ${game.title} instantly in your web browser. A high-performance H5 web game on Gamesato.`,
+      alternates: {
+        canonical: `/games/${slug}`,
+      },
       openGraph: {
         title: `${game.title} | Gamesato`,
         description: game.description,
-        images: [game.thumbnail_url],
+        images: [getImageUrl(game.thumbnail_url)],
       },
     };
   } catch (err) {
     console.error('Error generating metadata for game page:', err);
     return {
       title: 'Gamesato Portal',
+      alternates: {
+        canonical: `/games/${slug}`,
+      },
     };
   }
 }
@@ -125,8 +131,62 @@ export default async function GameDetailPage(props: {
     game.thumbnail_url
   );
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
+
+  const videoGameSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    name: game.title,
+    description: game.description,
+    image: getImageUrl(game.thumbnail_url),
+    url: `${siteUrl}/games/${game.slug}`,
+    genre: game.category,
+    playMode: 'SinglePlayer',
+    applicationCategory: 'Game',
+    gamePlatform: 'Web Browser',
+    operatingSystem: 'Any',
+    author: {
+      '@type': 'Organization',
+      name: 'Gamesato',
+    },
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: game.category || 'Games',
+        item: `${siteUrl}/category/${(game.category || 'all').toLowerCase().replace(/\s+/g, '-')}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: game.title,
+        item: `${siteUrl}/games/${game.slug}`,
+      },
+    ],
+  };
+
   return (
-    <div className={styles.container}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className={styles.container}>
       {/* ----------------- MOBILE LAYOUT (Screenshot layout matching) ----------------- */}
       <div className={styles.mobileLayout}>
         <MobileGameDetails
@@ -243,5 +303,6 @@ export default async function GameDetailPage(props: {
 
       </div>
     </div>
+    </>
   );
 }

@@ -45,6 +45,37 @@ const CATEGORIES = [
 export const dynamic = 'force-dynamic'; // Ensure Server-Side Rendering (SSR) on every request
 export const revalidate = 0; // Disable caching on homepage
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best free games on Gamesato?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We recommend starting with our Featured section. All games on Gamesato are free to play with no downloads required.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I play free games without installing anything?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, all games on Gamesato are instant-play HTML5 games. They run directly in your web browser.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is Gamesato free to play on mobile and desktop?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes! Gamesato is fully optimized for mobile devices, tablets, and desktop computers.',
+      },
+    },
+  ],
+};
+
 export default async function HomePage(props: {
   searchParams: Promise<{ category?: string; search?: string }>;
 }) {
@@ -207,7 +238,12 @@ export default async function HomePage(props: {
     console.error('Failed to query featured games from database:', err);
   }
   return (
-    <div className="pageWrapper">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <div className="pageWrapper">
       <div className={styles.container}>
         {/* Featured Games Section */}
       {featuredGames.length > 0 && (
@@ -351,6 +387,7 @@ export default async function HomePage(props: {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
@@ -362,7 +399,10 @@ export async function generateMetadata() {
       return {
         title: page.meta_title || 'Gamesato - Play Free Online HTML5 Games',
         description: page.meta_description || 'Play the best free online HTML5 games on Gamesato.',
-        keywords: page.meta_tags || 'free online games, play html5 games'
+        keywords: page.meta_tags || 'free online games, play html5 games',
+        alternates: {
+          canonical: '/',
+        },
       };
     }
   } catch (err) {
@@ -370,6 +410,9 @@ export async function generateMetadata() {
   }
   return {
     title: 'Gamesato - Play Free Online HTML5 Games',
-    description: 'Play the best free online HTML5 games on Gamesato.'
+    description: 'Play the best free online HTML5 games on Gamesato.',
+    alternates: {
+      canonical: '/',
+    },
   };
 }

@@ -83,6 +83,27 @@ async function run() {
     `);
     console.log('Admin users table created/verified successfully.');
 
+    // 3b. Create blogs table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS blogs (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          title VARCHAR(255) NOT NULL,
+          slug VARCHAR(255) UNIQUE NOT NULL,
+          excerpt TEXT,
+          content TEXT NOT NULL,
+          cover_image VARCHAR(500),
+          category VARCHAR(100) DEFAULT 'General',
+          author VARCHAR(100) DEFAULT 'Gamesato Team',
+          status VARCHAR(20) DEFAULT 'published',
+          meta_title VARCHAR(255),
+          meta_description TEXT,
+          published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('Blogs table created/verified successfully.');
+
     // 4. Create categories table
     await client.query(`
       CREATE TABLE IF NOT EXISTS categories (

@@ -7,6 +7,9 @@ import React from 'react';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com'),
+  alternates: {
+    canonical: '/',
+  },
   title: {
     default: 'Gamesato | Free Online Web Games',
     template: '%s | Gamesato',
@@ -50,6 +53,25 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Gamesato',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com',
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com'}/logo.png`,
+  sameAs: [
+    'https://twitter.com',
+    'https://facebook.com',
+    'https://youtube.com',
+    'https://instagram.com',
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'support@gamesato.com',
+    contactType: 'customer support',
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -58,6 +80,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

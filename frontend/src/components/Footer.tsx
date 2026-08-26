@@ -121,6 +121,9 @@ export default function Footer() {
             <h4 className={styles.colTitle}>Platform</h4>
             <ul className={styles.linksList}>
               <li>
+                <Link href="/blog">Blog</Link>
+              </li>
+              <li>
                 <Link href="/about">About Us</Link>
               </li>
               <li>
@@ -209,6 +212,8 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className={styles.mobileQuickLinks}>
+            <Link href="/blog">Blog</Link>
+            <span className={styles.linkSeparator}>|</span>
             <Link href="/about">About Us</Link>
             <span className={styles.linkSeparator}>|</span>
             <Link href="/privacy">Privacy Policy</Link>
