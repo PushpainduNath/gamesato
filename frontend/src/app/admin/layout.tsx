@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Gamepad2, Users, ShieldCheck, 
   RotateCcw, LogOut, Layers, Search, Palette, Check, ChevronDown, FileText,
-  Sun, Moon, X, Mic
+  Sun, Moon, X, Mic, ImageIcon
 } from 'lucide-react';
 import styles from './layout.module.css';
 
@@ -241,6 +241,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <FileText size={18} className={styles.menuLucideIcon} />
             <span>Blog Management</span>
+          </Link>
+
+          <Link 
+            href="/admin/media" 
+            className={`${styles.menuItem} ${pathname.startsWith('/admin/media') ? styles.activeItem : ''}`}
+          >
+            <ImageIcon size={18} className={styles.menuLucideIcon} />
+            <span>Media Library</span>
           </Link>
 
           {isSuperAdmin && (

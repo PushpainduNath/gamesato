@@ -1,4 +1,7 @@
 import { Router, Request, Response } from 'express';
+import path from 'path';
+import fs from 'fs';
+import multer from 'multer';
 import { authenticate, requireAdmin, requireSuperAdmin, AuthenticatedRequest } from '../middleware/auth';
 import { pool } from '../config/db';
 import { cleanOrphanedDirectories, hasGameBuildFiles } from '../utils/fileManager';
@@ -679,4 +682,137 @@ router.put('/settings', authenticate, requireAdmin, async (req: AuthenticatedReq
   }
 });
 
+// Configure multer storage for media uploads
+const mediaDir = path.join(__dirname, '../../uploads/media');
+if (!fs.existsSync(mediaDir)) {
+  fs.mkdirSync(mediaDir, { recursive: true });
+}
+
+const mediaStorage = multer.diskStorage({
+  destination: (req: any, file: any, cb: any) => {
+    cb(null, mediaDir);
+  },
+  filename: (req: any, file: any, cb: any) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const cleanName = path.basename(file.originalname, ext).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const uniqueSuffix = Date.now();
+    cb(null, `${cleanName || 'image'}-${uniqueSuffix}${ext}`);
+  },
+});
+
+const uploadMedia = multer({
+  storage: mediaStorage,
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB max
+  fileFilter: (req: any, file: any, cb: any) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  },
+});
+
+/**
+ * GET /api/admin/media - List all uploaded media images
+ */
+router.get('/media', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const uploadsBase = path.join(__dirname, '../../uploads');
+    
+    function getAllFiles(dirPath: string, arrayOfFiles: string[] = []): string[] {
+      if (!fs.existsSync(dirPath)) return arrayOfFiles;
+      const files = fs.readdirSync(dirPath);
+
+      files.forEach((file) => {
+        const fullPath = path.join(dirPath, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+          if (file !== 'temp') {
+            getAllFiles(fullPath, arrayOfFiles);
+          }
+        } else {
+          const ext = path.extname(file).toLowerCase();
+          if (['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.ico'].includes(ext)) {
+            arrayOfFiles.push(fullPath);
+          }
+        }
+      });
+
+      return arrayOfFiles;
+    }
+
+    const allFilePaths = getAllFiles(uploadsBase);
+    
+    const mediaFiles = allFilePaths.map((filePath) => {
+      const relativePath = path.relative(uploadsBase, filePath).replace(/\\/g, '/');
+      const stats = fs.statSync(filePath);
+      return {
+        name: path.basename(filePath),
+        relativePath: `/uploads/${relativePath}`,
+        url: `/uploads/${relativePath}`,
+        size: stats.size,
+        mtime: stats.mtime,
+      };
+    }).sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
+
+    res.json({ success: true, files: mediaFiles });
+  } catch (err) {
+    console.error('Error fetching media files:', err);
+    res.status(500).json({ error: 'Failed to fetch media files' });
+  }
+});
+
+/**
+ * POST /api/admin/media/upload - Upload new image file
+ */
+router.post('/media/upload', authenticate, requireAdmin, uploadMedia.single('file'), async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const fileUrl = `/uploads/media/${req.file.filename}`;
+    res.json({
+      success: true,
+      message: 'File uploaded successfully',
+      url: fileUrl,
+      filename: req.file.filename,
+      size: req.file.size,
+    });
+  } catch (err: any) {
+    console.error('Error uploading media file:', err);
+    res.status(500).json({ error: err.message || 'Failed to upload media file' });
+  }
+});
+
+/**
+ * DELETE /api/admin/media - Delete uploaded media image
+ */
+router.delete('/media', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { relativePath } = req.body;
+    if (!relativePath || !relativePath.startsWith('/uploads/')) {
+      return res.status(400).json({ error: 'Invalid file path' });
+    }
+
+    const cleanRelative = relativePath.replace(/^\/uploads\//, '');
+    const uploadsBase = path.join(__dirname, '../../uploads');
+    const targetPath = path.resolve(uploadsBase, cleanRelative);
+
+    if (!targetPath.startsWith(uploadsBase)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    if (fs.existsSync(targetPath)) {
+      fs.unlinkSync(targetPath);
+      res.json({ success: true, message: 'Media file deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'File not found' });
+    }
+  } catch (err) {
+    console.error('Error deleting media file:', err);
+    res.status(500).json({ error: 'Failed to delete media file' });
+  }
+});
+
 export default router;
+
