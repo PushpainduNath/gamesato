@@ -80,6 +80,7 @@ async function run() {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+      ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS plain_password VARCHAR(255);
     `);
     console.log('Admin users table created/verified successfully.');
 

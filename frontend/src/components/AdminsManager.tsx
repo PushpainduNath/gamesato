@@ -547,23 +547,40 @@ export default function AdminsManager() {
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <code style={{ background: 'rgba(255,255,255,0.08)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.82rem', color: '#fbbf24', letterSpacing: showPasswords[account.id] ? 'normal' : '1px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <code style={{ 
+                          background: 'rgba(255, 255, 255, 0.06)', 
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          padding: '0.25rem 0.65rem', 
+                          borderRadius: '6px', 
+                          fontSize: '0.82rem', 
+                          color: '#f59e0b', 
+                          fontFamily: 'monospace',
+                          letterSpacing: showPasswords[account.id] ? '0.5px' : '2px' 
+                        }}>
                           {showPasswords[account.id] 
-                            ? (account.plain_password || '—') 
-                            : (account.plain_password ? '••••••••' : '—')
+                            ? (account.plain_password || 'Not Stored') 
+                            : '••••••••'
                           }
                         </code>
-                        {account.plain_password && (
-                          <button
-                            type="button"
-                            onClick={() => togglePasswordVisibility(account.id)}
-                            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
-                            title={showPasswords[account.id] ? 'Hide Password' : 'Show Password'}
-                          >
-                            {showPasswords[account.id] ? <EyeOff size={14} /> : <Eye size={14} />}
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => togglePasswordVisibility(account.id)}
+                          style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            color: showPasswords[account.id] ? '#14b8a6' : 'var(--text-secondary, #94a3b8)', 
+                            cursor: 'pointer', 
+                            padding: '4px', 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            borderRadius: '4px',
+                            transition: 'color 0.2s ease'
+                          }}
+                          title={showPasswords[account.id] ? 'Hide Password' : 'Show Password'}
+                        >
+                          {showPasswords[account.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
                       </div>
                     </td>
                     
