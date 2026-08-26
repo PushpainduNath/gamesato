@@ -1,5 +1,6 @@
 const { Client } = require('pg');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const connectionString = process.env.DATABASE_URL;
@@ -82,7 +83,24 @@ async function run() {
       );
       ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS plain_password VARCHAR(255);
     `);
-    console.log('Admin users table created/verified successfully.');
+
+    // Update passwords with bcrypt hash
+    const superAdminHash = bcrypt.hashSync('admin123', 10);
+    const pushpainduHash = bcrypt.hashSync('gsShan97@nath', 10);
+
+    await client.query(`
+      UPDATE admin_users 
+      SET password_hash = $1, plain_password = 'admin123' 
+      WHERE role = 'SUPER_ADMIN' OR email LIKE '%admin%';
+    `, [superAdminHash]);
+
+    await client.query(`
+      UPDATE admin_users 
+      SET password_hash = $1, plain_password = 'gsShan97@nath' 
+      WHERE email LIKE '%pushpaindu%';
+    `, [pushpainduHash]);
+
+    console.log('Admin users table created/verified & passwords hashed successfully.');
 
     // 3b. Create blogs table
     await client.query(`
