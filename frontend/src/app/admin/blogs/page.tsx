@@ -25,10 +25,9 @@ interface Blog {
 }
 
 export default function AdminBlogsPage() {
-  const { token } = useAdminStore();
+  const { token, globalSearchQuery, setGlobalSearchQuery } = useAdminStore();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [dialogState, setDialogState] = useState<DialogState>({ isOpen: false });
 
   // Modal State
@@ -191,22 +190,22 @@ export default function AdminBlogsPage() {
   };
 
   const filteredBlogs = blogs.filter((b) =>
-    b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.category.toLowerCase().includes(searchQuery.toLowerCase())
+    b.title.toLowerCase().includes(globalSearchQuery.toLowerCase()) ||
+    b.category.toLowerCase().includes(globalSearchQuery.toLowerCase())
   );
 
   return (
-    <div style={{ padding: '1.5rem', color: 'white' }}>
+    <div style={{ padding: '0 0 1.5rem 0', color: 'white' }}>
       <CustomDialogModal {...dialogState} onClose={() => setDialogState({ isOpen: false })} />
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <FileText color="#14b8a6" size={28} /> Blog Manager
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.65rem', margin: 0 }}>
+            <FileText color="#14b8a6" size={24} /> Blog Management
           </h1>
-          <p style={{ color: 'var(--text-secondary, #94a3b8)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-            Create, edit, publish, and manage Gamesato blog articles and guides.
+          <p style={{ color: 'var(--text-secondary, #94a3b8)', fontSize: '0.85rem', marginTop: '0.15rem', margin: 0 }}>
+            Create, edit, publish, and delete blog posts for Gamesato.
           </p>
         </div>
 
@@ -216,39 +215,41 @@ export default function AdminBlogsPage() {
             background: 'linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%)',
             color: '#051817',
             border: 'none',
-            padding: '0.65rem 1.25rem',
-            borderRadius: '12px',
+            padding: '0.5rem 1.1rem',
+            borderRadius: '8px',
             fontWeight: '700',
-            fontSize: '0.9rem',
+            fontSize: '0.85rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.4rem',
             boxShadow: '0 4px 14px rgba(20, 184, 166, 0.3)',
           }}
         >
-          <Plus size={18} /> Add New Article
+          <Plus size={16} /> Create New Post
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div style={{ marginBottom: '1.5rem', maxWidth: '360px', position: 'relative' }}>
-        <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-        <input
-          type="text"
-          placeholder="Search articles..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '0.55rem 0.75rem 0.55rem 2.25rem',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '10px',
-            color: 'white',
-            fontSize: '0.85rem',
-          }}
-        />
+      {/* Search & Stats Filter */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ position: 'relative', width: '300px' }}>
+          <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+          <input
+            type="text"
+            placeholder="Search blogs by title or category..."
+            value={globalSearchQuery}
+            onChange={(e) => setGlobalSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '0.45rem 0.75rem 0.45rem 2.1rem',
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '8px',
+              color: 'white',
+              fontSize: '0.82rem',
+            }}
+          />
+        </div>
       </div>
 
       {/* Blogs Table */}

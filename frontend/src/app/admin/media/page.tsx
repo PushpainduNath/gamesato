@@ -26,11 +26,10 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 export default function AdminMediaPage() {
-  const { token } = useAdminStore();
+  const { token, globalSearchQuery, setGlobalSearchQuery } = useAdminStore();
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
   const [dialogState, setDialogState] = useState<DialogState>({ isOpen: false });
 
@@ -154,15 +153,15 @@ export default function AdminMediaPage() {
   };
 
   const filteredFiles = files.filter((f) =>
-    f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    f.relativePath.toLowerCase().includes(searchQuery.toLowerCase())
+    f.name.toLowerCase().includes(globalSearchQuery.toLowerCase()) ||
+    f.relativePath.toLowerCase().includes(globalSearchQuery.toLowerCase())
   );
 
   return (
     <div style={{ 
-      padding: '1.25rem 1.5rem', 
+      padding: '0 0 1rem 0', 
       color: 'white',
-      height: 'calc(100vh - 70px)',
+      height: '100%',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
@@ -171,12 +170,12 @@ export default function AdminMediaPage() {
       <CustomDialogModal {...dialogState} onClose={() => setDialogState({ isOpen: false })} />
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem', flexShrink: 0 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.75rem', flexShrink: 0 }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.65rem', margin: 0 }}>
             <ImageIcon color="#14b8a6" size={24} /> Media & Image Library
           </h1>
-          <p style={{ color: 'var(--text-secondary, #94a3b8)', fontSize: '0.85rem', marginTop: '0.15rem' }}>
+          <p style={{ color: 'var(--text-secondary, #94a3b8)', fontSize: '0.82rem', marginTop: '0.15rem', margin: 0 }}>
             Upload, manage, and copy image links for blogs, games, banners, and static pages.
           </p>
         </div>
@@ -188,10 +187,10 @@ export default function AdminMediaPage() {
               background: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               color: 'white',
-              padding: '0.5rem 0.85rem',
-              borderRadius: '10px',
+              padding: '0.45rem 0.85rem',
+              borderRadius: '8px',
               fontWeight: '600',
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -220,10 +219,10 @@ export default function AdminMediaPage() {
               background: 'linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%)',
               color: '#051817',
               border: 'none',
-              padding: '0.5rem 1.1rem',
-              borderRadius: '10px',
+              padding: '0.45rem 1rem',
+              borderRadius: '8px',
               fontWeight: '700',
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -249,41 +248,41 @@ export default function AdminMediaPage() {
         style={{
           border: '1.5px dashed rgba(20, 184, 166, 0.4)',
           borderRadius: '12px',
-          padding: '1rem 1.25rem',
+          padding: '0.85rem 1.25rem',
           textAlign: 'center',
           background: 'rgba(20, 184, 166, 0.03)',
           cursor: 'pointer',
-          marginBottom: '1rem',
+          marginBottom: '0.85rem',
           flexShrink: 0,
           transition: 'all 0.2s ease',
         }}
       >
-        <UploadCloud size={24} color="#14b8a6" style={{ marginBottom: '0.35rem' }} />
-        <h3 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '0.15rem' }}>
+        <UploadCloud size={22} color="#14b8a6" style={{ marginBottom: '0.25rem' }} />
+        <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '0.1rem', margin: 0 }}>
           Drag & Drop images here or <span style={{ color: '#2dd4bf', textDecoration: 'underline' }}>Browse File</span>
         </h3>
-        <p style={{ color: '#94a3b8', fontSize: '0.78rem' }}>
+        <p style={{ color: '#94a3b8', fontSize: '0.75rem', margin: 0 }}>
           Supports PNG, JPG, WEBP, GIF, SVG (Up to 25MB)
         </p>
       </div>
 
       {/* Search & Stats Filter */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.75rem', flexShrink: 0 }}>
-        <div style={{ position: 'relative', width: '300px' }}>
-          <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.75rem', flexShrink: 0 }}>
+        <div style={{ position: 'relative', width: '280px' }}>
+          <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           <input
             type="text"
             placeholder="Search by filename..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={globalSearchQuery}
+            onChange={(e) => setGlobalSearchQuery(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.45rem 0.75rem 0.45rem 2.1rem',
+              padding: '0.4rem 0.75rem 0.4rem 2rem',
               background: 'rgba(255, 255, 255, 0.03)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '8px',
               color: 'white',
-              fontSize: '0.82rem',
+              fontSize: '0.8rem',
             }}
           />
         </div>

@@ -102,7 +102,7 @@ const adminSortOptions: FilterSelectOption[] = [
 ];
 
 export default function AdminsManager() {
-  const { admin, token } = useAdminStore();
+  const { admin, token, globalSearchQuery, setGlobalSearchQuery } = useAdminStore();
   const [users, setUsers] = useState<UserAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -134,7 +134,6 @@ export default function AdminsManager() {
   };
 
   // Search, Filters & Sorting
-  const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
   const [sortBy, setSortBy] = useState('role_desc');
@@ -149,8 +148,8 @@ export default function AdminsManager() {
     let result = [...users];
 
     // Search
-    if (searchTerm.trim()) {
-      const query = searchTerm.toLowerCase();
+    if (globalSearchQuery.trim()) {
+      const query = globalSearchQuery.toLowerCase();
       result = result.filter(u => 
         (u.name && u.name.toLowerCase().includes(query)) ||
         u.email.toLowerCase().includes(query)
@@ -199,7 +198,7 @@ export default function AdminsManager() {
     });
 
     return result;
-  }, [users, searchTerm, statusFilter, roleFilter, sortBy]);
+  }, [users, globalSearchQuery, statusFilter, roleFilter, sortBy]);
 
   // Paginated slice
   const paginatedUsers = React.useMemo(() => {
@@ -246,7 +245,7 @@ export default function AdminsManager() {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, roleFilter, sortBy, paginationEnabled]);
+  }, [globalSearchQuery, statusFilter, roleFilter, sortBy, paginationEnabled]);
 
   const currentUserRole = admin?.role || 'USER';
   const isSuperAdmin = currentUserRole === 'SUPER_ADMIN';
@@ -471,8 +470,8 @@ export default function AdminsManager() {
               <input
                 type="text"
                 placeholder="Search name or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={globalSearchQuery}
+                onChange={(e) => setGlobalSearchQuery(e.target.value)}
                 className={styles.tableSearchInput}
               />
             </div>
