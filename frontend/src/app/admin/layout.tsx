@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Gamepad2, Users, ShieldCheck, 
   RotateCcw, LogOut, Layers, Search, Palette, Check, ChevronDown, FileText,
-  Sun, Moon, X, Mic, ImageIcon
+  Sun, Moon, X, Mic, ImageIcon, Server
 } from 'lucide-react';
 import styles from './layout.module.css';
 
@@ -249,6 +249,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <ImageIcon size={18} className={styles.menuLucideIcon} />
             <span>Media Library</span>
+          </Link>
+
+          <Link 
+            href="/admin/server" 
+            className={`${styles.menuItem} ${pathname.startsWith('/admin/server') ? styles.activeItem : ''}`}
+          >
+            <Server size={18} className={styles.menuLucideIcon} />
+            <span>Server Details</span>
           </Link>
 
           {isSuperAdmin && (

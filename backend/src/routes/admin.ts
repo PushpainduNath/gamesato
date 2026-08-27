@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import multer from 'multer';
 import { authenticate, requireAdmin, requireSuperAdmin, AuthenticatedRequest } from '../middleware/auth';
 import { pool } from '../config/db';
@@ -814,5 +815,251 @@ router.delete('/media', authenticate, requireAdmin, async (req: AuthenticatedReq
   }
 });
 
+function formatBytes(bytes: number, decimals = 2): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+function getCpuUsage(): Promise<number> {
+  return new Promise((resolve) => {
+    const startCpus = os.cpus();
+    setTimeout(() => {
+      const endCpus = os.cpus();
+      let idleDiff = 0;
+      let totalDiff = 0;
+
+      for (let i = 0; i < startCpus.length; i++) {
+        const start = startCpus[i].times;
+        const end = endCpus[i].times;
+
+        const startIdle = start.idle;
+        const endIdle = end.idle;
+
+        const startTotal = start.user + start.nice + start.sys + start.idle + start.irq;
+        const endTotal = end.user + end.nice + end.sys + end.idle + end.irq;
+
+        idleDiff += (endIdle - startIdle);
+        totalDiff += (endTotal - startTotal);
+      }
+
+      const cpuUsage = totalDiff === 0 ? 0 : Math.round((1 - idleDiff / totalDiff) * 100);
+      resolve(Math.min(100, Math.max(0, cpuUsage)));
+    }, 100);
+  });
+}
+
+function getDirStats(dirPath: string): { totalSize: number; totalFiles: number; totalFolders: number } {
+  let totalSize = 0;
+  let totalFiles = 0;
+  let totalFolders = 0;
+
+  try {
+    const items = fs.readdirSync(dirPath, { withFileTypes: true });
+    for (const item of items) {
+      const fullPath = path.join(dirPath, item.name);
+      if (item.isDirectory()) {
+        totalFolders++;
+        const subStats = getDirStats(fullPath);
+        totalSize += subStats.totalSize;
+        totalFiles += subStats.totalFiles;
+        totalFolders += subStats.totalFolders;
+      } else if (item.isFile()) {
+        totalFiles++;
+        try {
+          const stat = fs.statSync(fullPath);
+          totalSize += stat.size;
+        } catch (_) {}
+      }
+    }
+  } catch (_) {}
+
+  return { totalSize, totalFiles, totalFolders };
+}
+
+/**
+ * GET /api/admin/server-details - Fetch live server storage, CPU, RAM, and gb-games files (View-Only)
+ */
+router.get('/server-details', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const subPath = (req.query.subPath as string) || '';
+    const GAMES_DIR = process.env.GAMES_DIR || path.resolve(process.cwd(), 'gb-games');
+
+    if (!fs.existsSync(GAMES_DIR)) {
+      fs.mkdirSync(GAMES_DIR, { recursive: true });
+    }
+
+    const safeSubPath = subPath.replace(/^(\.\.[\/\\])+/, '');
+    const targetDir = path.resolve(GAMES_DIR, safeSubPath);
+
+    if (!targetDir.startsWith(GAMES_DIR)) {
+      return res.status(403).json({ error: 'Access denied: Directory traversal forbidden' });
+    }
+
+    // 1. Live Memory Metrics
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const usedMem = totalMem - freeMem;
+    const memUsagePercent = Math.round((usedMem / totalMem) * 1000) / 10;
+
+    // 2. Live Disk Storage Metrics
+    let storage = {
+      totalBytes: 0,
+      usedBytes: 0,
+      freeBytes: 0,
+      usagePercent: 0,
+      totalFormatted: '0 GB',
+      usedFormatted: '0 GB',
+      freeFormatted: '0 GB'
+    };
+
+    try {
+      const rootPath = path.parse(process.cwd()).root || '/';
+      const stat = fs.statfsSync(rootPath);
+      const totalDisk = stat.bsize * stat.blocks;
+      const freeDisk = stat.bsize * stat.bfree;
+      const usedDisk = totalDisk - freeDisk;
+      const usagePct = Math.round((usedDisk / totalDisk) * 1000) / 10;
+
+      storage = {
+        totalBytes: totalDisk,
+        usedBytes: usedDisk,
+        freeBytes: freeDisk,
+        usagePercent: usagePct,
+        totalFormatted: formatBytes(totalDisk),
+        usedFormatted: formatBytes(usedDisk),
+        freeFormatted: formatBytes(freeDisk)
+      };
+    } catch (e) {
+      console.error('Error fetching disk stats:', e);
+    }
+
+    // 3. Live CPU Usage & Core Info
+    const cpuUsagePercent = await getCpuUsage();
+    const cpus = os.cpus();
+    const cpuModel = cpus.length > 0 ? cpus[0].model : 'Unknown CPU';
+    const cpuCores = cpus.length;
+    const loadAvg = os.loadavg();
+
+    // 4. Process Memory Usage
+    const procMem = process.memoryUsage();
+
+    // 5. System OS & Uptime
+    const uptimeSeconds = Math.floor(os.uptime());
+    const osInfo = {
+      platform: os.platform(),
+      release: os.release(),
+      arch: os.arch(),
+      hostname: os.hostname(),
+      uptimeSeconds,
+      nodeVersion: process.version,
+    };
+
+    // 6. gb-games Files & Directories Inspector
+    let items: any[] = [];
+    let currentRelativePath = path.relative(GAMES_DIR, targetDir);
+
+    if (fs.existsSync(targetDir)) {
+      const entries = fs.readdirSync(targetDir, { withFileTypes: true });
+      for (const entry of entries) {
+        const itemFullPath = path.join(targetDir, entry.name);
+        const itemRelPath = path.relative(GAMES_DIR, itemFullPath);
+
+        try {
+          const stat = fs.statSync(itemFullPath);
+          if (entry.isDirectory()) {
+            const dirStats = getDirStats(itemFullPath);
+            items.push({
+              name: entry.name,
+              relativePath: itemRelPath,
+              isDir: true,
+              sizeBytes: dirStats.totalSize,
+              sizeFormatted: formatBytes(dirStats.totalSize),
+              modifiedAt: stat.mtime.toISOString(),
+              createdAt: stat.birthtime.toISOString(),
+              itemCount: dirStats.totalFiles,
+              subFolderCount: dirStats.totalFolders,
+              fileType: 'Directory'
+            });
+          } else if (entry.isFile()) {
+            const ext = path.extname(entry.name).toLowerCase();
+            let fileType = 'File';
+            if (['.html', '.htm'].includes(ext)) fileType = 'HTML Document';
+            else if (['.js', '.mjs', '.cjs'].includes(ext)) fileType = 'JavaScript';
+            else if (['.css'].includes(ext)) fileType = 'Stylesheet';
+            else if (['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico', '.avif'].includes(ext)) fileType = 'Image';
+            else if (['.json'].includes(ext)) fileType = 'JSON Data';
+            else if (['.zip'].includes(ext)) fileType = 'ZIP Archive';
+
+            items.push({
+              name: entry.name,
+              relativePath: itemRelPath,
+              isDir: false,
+              sizeBytes: stat.size,
+              sizeFormatted: formatBytes(stat.size),
+              modifiedAt: stat.mtime.toISOString(),
+              createdAt: stat.birthtime.toISOString(),
+              extension: ext,
+              fileType
+            });
+          }
+        } catch (_) {}
+      }
+    }
+
+    // Sort items: folders first, then files alphabetically
+    items.sort((a, b) => {
+      if (a.isDir && !b.isDir) return -1;
+      if (!a.isDir && b.isDir) return 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    const rootDirStats = getDirStats(GAMES_DIR);
+
+    res.json({
+      readOnly: true,
+      system: {
+        os: osInfo,
+        cpu: {
+          usagePercent: cpuUsagePercent,
+          model: cpuModel,
+          cores: cpuCores,
+          loadAvg
+        },
+        memory: {
+          totalBytes: totalMem,
+          usedBytes: usedMem,
+          freeBytes: freeMem,
+          usagePercent: memUsagePercent,
+          totalFormatted: formatBytes(totalMem),
+          usedFormatted: formatBytes(usedMem),
+          freeFormatted: formatBytes(freeMem)
+        },
+        storage,
+        processMemory: {
+          rss: formatBytes(procMem.rss),
+          heapTotal: formatBytes(procMem.heapTotal),
+          heapUsed: formatBytes(procMem.heapUsed)
+        }
+      },
+      gbGames: {
+        rootDirectory: 'gb-games',
+        currentPath: currentRelativePath || '/',
+        totalSizeFormatted: formatBytes(rootDirStats.totalSize),
+        totalFilesCount: rootDirStats.totalFiles,
+        totalFoldersCount: rootDirStats.totalFolders,
+        items
+      }
+    });
+  } catch (err: any) {
+    console.error('Error fetching server details:', err);
+    res.status(500).json({ error: err.message || 'Failed to fetch server details' });
+  }
+});
+
 export default router;
+
 
