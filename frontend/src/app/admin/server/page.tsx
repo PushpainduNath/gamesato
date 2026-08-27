@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useAdminStore } from '@/store/useAdminStore';
 import { 
   Server, HardDrive, Cpu, Activity, Folder, FileCode, FileText, Image as ImageIcon, 
-  Archive, File, RefreshCw, Lock, ChevronRight, Search, Clock, CheckCircle2,
-  ChevronDown, ChevronUp, Maximize2, Minimize2
+  Archive, File, RefreshCw, Lock, ChevronRight, Search, Clock,
+  Maximize2, Minimize2
 } from 'lucide-react';
 import styles from '../layout.module.css';
 
@@ -121,7 +121,7 @@ export default function AdminServerDetailsPage() {
   const [autoRefreshSec, setAutoRefreshSec] = useState<number>(10);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [localSearch, setLocalSearch] = useState<string>('');
-  const [compactMetrics, setCompactMetrics] = useState<boolean>(true);
+  const [compactMetrics, setCompactMetrics] = useState<boolean>(false); // EXPANDED BY DEFAULT per user request
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3102';
 
@@ -188,7 +188,7 @@ export default function AdminServerDetailsPage() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', color: '#e2e8f0', height: 'calc(100vh - 110px)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', color: '#e2e8f0', paddingBottom: '2rem' }}>
       
       {/* Top Bar: Title & Actions */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', flexShrink: 0 }}>
@@ -222,19 +222,19 @@ export default function AdminServerDetailsPage() {
               alignItems: 'center',
               gap: '0.4rem',
               padding: '0.35rem 0.75rem',
-              background: compactMetrics ? 'rgba(56, 189, 248, 0.12)' : '#1e293b',
-              border: compactMetrics ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid rgba(255,255,255,0.1)',
+              background: !compactMetrics ? 'rgba(56, 189, 248, 0.12)' : '#1e293b',
+              border: !compactMetrics ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid rgba(255,255,255,0.1)',
               borderRadius: '8px',
-              color: compactMetrics ? '#38bdf8' : '#f8fafc',
+              color: !compactMetrics ? '#38bdf8' : '#f8fafc',
               fontSize: '0.8rem',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
             }}
-            title={compactMetrics ? "Expand detailed server cards" : "Collapse to compact 1-line bar for max space"}
+            title={compactMetrics ? "Expand detailed server cards" : "Collapse to compact 1-line bar"}
           >
-            {compactMetrics ? <Maximize2 size={13} /> : <Minimize2 size={13} />}
-            <span>{compactMetrics ? 'Compact Bar' : 'Expanded Cards'}</span>
+            {!compactMetrics ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+            <span>{!compactMetrics ? 'Expanded Mode (Active)' : 'Compact Mode'}</span>
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.35rem 0.65rem', fontSize: '0.775rem', color: '#94a3b8' }}>
@@ -276,9 +276,137 @@ export default function AdminServerDetailsPage() {
         </div>
       </div>
 
-      {/* Metrics Section: Compact Bar vs Full Grid */}
-      {compactMetrics ? (
-        /* ULTRA-SLEEK COMPACT HORIZONTAL BAR (Height ~60px) */
+      {/* Metrics Section: Expanded Cards (Default) vs Compact Bar */}
+      {!compactMetrics ? (
+        /* EXPANDED FULL CARDS GRID (DEFAULT) */
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', flexShrink: 0 }}>
+          
+          {/* 1. Storage Metric Card */}
+          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.15rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Server Storage (Disk)</span>
+              <HardDrive size={18} style={{ color: '#38bdf8' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '1.85rem', fontWeight: 800, color: '#f8fafc' }}>
+                {data?.system.storage.usagePercent ?? 0}%
+              </span>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Capacity Used</span>
+            </div>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0.85rem' }}>
+              <div style={{ width: `${data?.system.storage.usagePercent ?? 0}%`, height: '100%', background: getUsageColor(data?.system.storage.usagePercent ?? 0) }} />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Total Storage:</span>
+                <strong style={{ color: '#f8fafc' }}>{data?.system.storage.totalFormatted ?? '-'}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Used Storage:</span>
+                <strong style={{ color: getUsageColor(data?.system.storage.usagePercent ?? 0), fontWeight: 700 }}>
+                  {data?.system.storage.usedFormatted ?? '-'}
+                </strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Available Free:</span>
+                <strong style={{ color: '#10b981' }}>{data?.system.storage.freeFormatted ?? '-'}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. CPU Metric Card */}
+          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.15rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Live CPU Usage</span>
+              <Cpu size={18} style={{ color: '#a855f7' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '1.85rem', fontWeight: 800, color: '#f8fafc' }}>
+                {data?.system.cpu.usagePercent ?? 0}%
+              </span>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Load Active</span>
+            </div>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0.85rem' }}>
+              <div style={{ width: `${data?.system.cpu.usagePercent ?? 0}%`, height: '100%', background: getUsageColor(data?.system.cpu.usagePercent ?? 0) }} />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>CPU Cores:</span>
+                <strong style={{ color: '#f8fafc' }}>{data?.system.cpu.cores ?? 0} Cores</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Load Average (1m):</span>
+                <strong style={{ color: '#38bdf8' }}>{data?.system.cpu.loadAvg ? data.system.cpu.loadAvg[0].toFixed(2) : '-'}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Architecture:</span>
+                <strong style={{ color: '#cbd5e1' }}>{data?.system.os.arch ?? '-'}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. RAM / Memory Metric Card */}
+          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.15rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>RAM / Memory</span>
+              <Activity size={18} style={{ color: '#10b981' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '1.85rem', fontWeight: 800, color: '#f8fafc' }}>
+                {data?.system.memory.usagePercent ?? 0}%
+              </span>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Allocated</span>
+            </div>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0.85rem' }}>
+              <div style={{ width: `${data?.system.memory.usagePercent ?? 0}%`, height: '100%', background: getUsageColor(data?.system.memory.usagePercent ?? 0) }} />
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Total RAM:</span>
+                <strong style={{ color: '#f8fafc' }}>{data?.system.memory.totalFormatted ?? '-'}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Used RAM:</span>
+                <strong style={{ color: getUsageColor(data?.system.memory.usagePercent ?? 0), fontWeight: 700 }}>
+                  {data?.system.memory.usedFormatted ?? '-'}
+                </strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Available Free:</span>
+                <strong style={{ color: '#10b981' }}>{data?.system.memory.freeFormatted ?? '-'}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. OS & System Uptime Metric Card */}
+          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.15rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>OS Environment & Uptime</span>
+              <Server size={18} style={{ color: '#f59e0b' }} />
+            </div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
+              {data ? formatUptime(data.system.os.uptimeSeconds) : '-'}
+            </div>
+            <div style={{ height: '6px', marginBottom: '0.85rem' }} />
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Platform / OS:</span>
+                <strong style={{ color: '#f8fafc' }}>{data?.system.os.platform ?? '-'} ({data?.system.os.arch ?? '-'})</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Node.js Runtime:</span>
+                <strong style={{ color: '#10b981' }}>{data?.system.os.nodeVersion ?? '-'}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#94a3b8' }}>Process RSS:</span>
+                <strong style={{ color: '#38bdf8' }}>{data?.system.processMemory.rss ?? '-'}</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      ) : (
+        /* COMPACT HORIZONTAL BAR (WHEN TOGGLED) */
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
@@ -292,7 +420,7 @@ export default function AdminServerDetailsPage() {
               <div>
                 <div style={{ fontSize: '0.725rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600 }}>Storage (Disk)</div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
-                  {data?.system.storage.usagePercent ?? 0}% <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>({data?.system.storage.usedFormatted ?? '-'})</span>
+                  {data?.system.storage.usagePercent ?? 0}% <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>(Used: {data?.system.storage.usedFormatted ?? '-'})</span>
                 </div>
               </div>
             </div>
@@ -324,7 +452,7 @@ export default function AdminServerDetailsPage() {
               <div>
                 <div style={{ fontSize: '0.725rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600 }}>RAM / Memory</div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
-                  {data?.system.memory.usagePercent ?? 0}% <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>({data?.system.memory.usedFormatted ?? '-'})</span>
+                  {data?.system.memory.usagePercent ?? 0}% <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>(Used: {data?.system.memory.usedFormatted ?? '-'})</span>
                 </div>
               </div>
             </div>
@@ -346,97 +474,18 @@ export default function AdminServerDetailsPage() {
             </div>
           </div>
         </div>
-      ) : (
-        /* EXPANDED FULL CARDS GRID */
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', flexShrink: 0 }}>
-          
-          {/* Storage */}
-          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>Server Storage</span>
-              <HardDrive size={18} style={{ color: '#38bdf8' }} />
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
-              {data?.system.storage.usagePercent ?? 0}%
-            </div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0.75rem' }}>
-              <div style={{ width: `${data?.system.storage.usagePercent ?? 0}%`, height: '100%', background: getUsageColor(data?.system.storage.usagePercent ?? 0) }} />
-            </div>
-            <div style={{ fontSize: '0.775rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div>Total: <strong>{data?.system.storage.totalFormatted ?? '-'}</strong></div>
-              <div>Free: <strong style={{ color: '#10b981' }}>{data?.system.storage.freeFormatted ?? '-'}</strong></div>
-            </div>
-          </div>
-
-          {/* CPU */}
-          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>Live CPU Usage</span>
-              <Cpu size={18} style={{ color: '#a855f7' }} />
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
-              {data?.system.cpu.usagePercent ?? 0}%
-            </div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0.75rem' }}>
-              <div style={{ width: `${data?.system.cpu.usagePercent ?? 0}%`, height: '100%', background: getUsageColor(data?.system.cpu.usagePercent ?? 0) }} />
-            </div>
-            <div style={{ fontSize: '0.775rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div>Cores: <strong>{data?.system.cpu.cores ?? 0} Cores</strong></div>
-              <div>Load (1m): <strong>{data?.system.cpu.loadAvg ? data.system.cpu.loadAvg[0].toFixed(2) : '-'}</strong></div>
-            </div>
-          </div>
-
-          {/* Memory */}
-          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>RAM / Memory</span>
-              <Activity size={18} style={{ color: '#10b981' }} />
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
-              {data?.system.memory.usagePercent ?? 0}%
-            </div>
-            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden', marginBottom: '0.75rem' }}>
-              <div style={{ width: `${data?.system.memory.usagePercent ?? 0}%`, height: '100%', background: getUsageColor(data?.system.memory.usagePercent ?? 0) }} />
-            </div>
-            <div style={{ fontSize: '0.775rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div>Total: <strong>{data?.system.memory.totalFormatted ?? '-'}</strong></div>
-              <div>Process RSS: <strong style={{ color: '#38bdf8' }}>{data?.system.processMemory.rss ?? '-'}</strong></div>
-            </div>
-          </div>
-
-          {/* OS */}
-          <div style={{ background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>OS & Uptime</span>
-              <Server size={18} style={{ color: '#f59e0b' }} />
-            </div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.35rem' }}>
-              {data ? formatUptime(data.system.os.uptimeSeconds) : '-'}
-            </div>
-            <div style={{ height: '6px', marginBottom: '0.75rem' }} />
-            <div style={{ fontSize: '0.775rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-              <div>OS: <strong>{data?.system.os.platform ?? '-'} ({data?.system.os.arch ?? '-'})</strong></div>
-              <div>Node: <strong style={{ color: '#10b981' }}>{data?.system.os.nodeVersion ?? '-'}</strong></div>
-            </div>
-          </div>
-
-        </div>
       )}
 
-      {/* gb-games Directory Inspector Container (Fills Maximum Viewport Height!) */}
+      {/* gb-games Directory Inspector Container */}
       <div style={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column', 
         background: '#0f172a', 
         border: '1px solid rgba(255, 255, 255, 0.08)', 
         borderRadius: '14px', 
         padding: '1.25rem',
-        minHeight: 0,
-        overflow: 'hidden'
+        marginTop: '0.25rem'
       }}>
         {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem', flexShrink: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Folder size={20} style={{ color: '#38bdf8' }} />
             <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
@@ -468,8 +517,7 @@ export default function AdminServerDetailsPage() {
           padding: '0.6rem 0.85rem', 
           borderRadius: '8px', 
           marginBottom: '0.75rem',
-          border: '1px solid rgba(255,255,255,0.06)',
-          flexShrink: 0
+          border: '1px solid rgba(255,255,255,0.06)'
         }}>
           {/* Breadcrumb Path Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.825rem', flexWrap: 'wrap' }}>
@@ -527,7 +575,7 @@ export default function AdminServerDetailsPage() {
         </div>
 
         {/* Scrollable File Table with STICKY Headers */}
-        <div style={{ flex: 1, overflowY: 'auto', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ maxHeight: '550px', overflowY: 'auto', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.825rem', textAlign: 'left' }}>
             <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#0b1324', boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
               <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
