@@ -886,13 +886,13 @@ function getDirStats(dirPath: string): { totalSize: number; totalFiles: number; 
 router.get('/server-details', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const subPath = (req.query.subPath as string) || '';
-    const GAMES_DIR = process.env.GAMES_DIR || path.resolve(process.cwd(), 'gb-games');
+    const GAMES_DIR = path.resolve(process.cwd(), process.env.GAMES_DIR || 'gb-games');
 
     if (!fs.existsSync(GAMES_DIR)) {
       fs.mkdirSync(GAMES_DIR, { recursive: true });
     }
 
-    const safeSubPath = subPath.replace(/^(\.\.[\/\\])+/, '');
+    const safeSubPath = subPath.replace(/^(\.\.[\/\\])+/, '').replace(/^[\\\/]+/, '');
     const targetDir = path.resolve(GAMES_DIR, safeSubPath);
 
     if (!targetDir.startsWith(GAMES_DIR)) {
