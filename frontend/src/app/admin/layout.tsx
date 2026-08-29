@@ -170,24 +170,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/admin/login');
-  };
-
-  if (!mounted) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: '#06080e' }}>
-        Loading Admin Interface...
-      </div>
-    );
-  }
-
-  // Render children directly on login page or if not logged in
-  if (pathname === '/admin/login' || !token) {
-    return <>{children}</>;
-  }
-
   const isSuperAdmin = admin?.role === 'SUPER_ADMIN';
   const userPermissions = admin?.permissions || ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server'];
   const hasPermission = (module: string) => isSuperAdmin || userPermissions.includes(module);
@@ -219,6 +201,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
     }
   }, [mounted, token, pathname, isSuperAdmin, userPermissions, router]);
+
+  const handleLogout = () => {
+    logout();
+    router.push('/admin/login');
+  };
+
+  if (!mounted) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: '#06080e' }}>
+        Loading Admin Interface...
+      </div>
+    );
+  }
+
+  // Render children directly on login page or if not logged in
+  if (pathname === '/admin/login' || !token) {
+    return <>{children}</>;
+  }
 
   return (
     <div className={styles.adminContainer} data-admin-theme={theme || 'default'}>
