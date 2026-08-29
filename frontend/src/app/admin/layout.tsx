@@ -226,10 +226,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className={styles.sidebar}>
         <Link href="/" className={styles.logoArea} title="Gamesato">
           <img 
-            src="/logo-dark-theme.webp" 
+            src="/logo-full.png" 
             alt="Gamesato" 
             className={styles.logoImg}
-            onError={(e) => { e.currentTarget.src = '/logo-dark-theme.png'; }}
+            onError={(e) => { e.currentTarget.src = '/logo-full.webp'; }}
           />
         </Link>
 

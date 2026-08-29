@@ -241,10 +241,10 @@ export default function Sidebar() {
         <div className={styles.sidebarHeader}>
           <Link href="/" className={styles.sidebarLogoArea} onClick={() => handleLinkClick('/')}>
             <img 
-              src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
+              src="/logo-full.png" 
               alt="Gamesato Logo" 
               className={styles.sidebarLogo} 
-              onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
+              onError={(e) => { e.currentTarget.src = '/logo-full.webp'; }}
             />
           </Link>
           <button 

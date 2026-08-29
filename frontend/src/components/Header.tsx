@@ -372,10 +372,10 @@ function HeaderContent() {
           {/* Left Logo */}
           <Link href="/" className={styles.logoArea} title="Gamesato" aria-label="Gamesato">
             <img 
-              src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
+              src="/logo-full.png" 
               alt="Gamesato" 
               className={styles.logo} 
-              onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
+              onError={(e) => { e.currentTarget.src = '/logo-full.webp'; }}
             />
           </Link>
         </div>

@@ -103,10 +103,10 @@ export default function SignupPage() {
       <div className={styles.card}>
         <div className={styles.logoArea}>
           <img 
-            src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
+            src="/logo-full.png" 
             alt="Gamesato Logo" 
-            className={styles.logo}
-            onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
+            className={styles.logo} 
+            onError={(e) => { e.currentTarget.src = '/logo-full.webp'; }}
           />
         </div>
         <h2 className={styles.title}>
