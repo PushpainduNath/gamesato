@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { authenticate, requireAdmin, AuthenticatedRequest } from '../middleware/auth';
+import { authenticate, requireAdmin, requirePermission, AuthenticatedRequest } from '../middleware/auth';
 import { pool } from '../config/db';
 import redis from '../config/redis';
 import { promises as fsPromises } from 'fs';
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
 /**
  * POST /api/categories - Create a new category
  */
-router.post('/', authenticate, requireAdmin, upload.single('icon'), async (req: AuthenticatedRequest, res: Response) => {
+router.post('/', authenticate, requirePermission('categories'), upload.single('icon'), async (req: AuthenticatedRequest, res: Response) => {
   const { name } = req.body;
   let { slug, icon } = req.body;
 
@@ -91,7 +91,7 @@ router.post('/', authenticate, requireAdmin, upload.single('icon'), async (req: 
 /**
  * PUT /api/categories/:id - Update category details
  */
-router.put('/:id', authenticate, requireAdmin, upload.single('icon'), async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id', authenticate, requirePermission('categories'), upload.single('icon'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { name } = req.body;
   let { slug, icon } = req.body;
@@ -180,7 +180,7 @@ router.put('/:id', authenticate, requireAdmin, upload.single('icon'), async (req
 /**
  * DELETE /api/categories/:id - Delete category and reassign its games to a target category
  */
-router.delete('/:id', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', authenticate, requirePermission('categories'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { targetCategoryId, targetCategoryName } = req.body || {};
 
@@ -255,7 +255,7 @@ router.delete('/:id', authenticate, requireAdmin, async (req: AuthenticatedReque
 /**
  * POST /api/categories/:id/games - Bulk assign games to a category
  */
-router.post('/:id/games', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:id/games', authenticate, requirePermission('categories'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { gameIds } = req.body;
 
@@ -286,7 +286,7 @@ router.post('/:id/games', authenticate, requireAdmin, async (req: AuthenticatedR
 /**
  * DELETE /api/categories/:id/games - Bulk move games from one category to another
  */
-router.delete('/:id/games', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id/games', authenticate, requirePermission('categories'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { gameIds, targetCategoryId, targetCategoryName } = req.body;
 

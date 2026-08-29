@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { authenticate, requireAdmin, AuthenticatedRequest } from '../middleware/auth';
+import { authenticate, requireAdmin, requirePermission, AuthenticatedRequest } from '../middleware/auth';
 import { pool } from '../config/db';
 
 const router = Router();
@@ -59,7 +59,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 /**
  * GET /api/blogs/admin/list - Admin: List all blogs
  */
-router.get('/admin/list', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/admin/list', authenticate, requirePermission('blogs'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT * FROM blogs ORDER BY created_at DESC`
@@ -97,7 +97,7 @@ router.get('/:slug', async (req: AuthenticatedRequest, res: Response) => {
 /**
  * POST /api/blogs/admin/create - Admin: Create new blog post
  */
-router.post('/admin/create', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/admin/create', authenticate, requirePermission('blogs'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const {
       title,
@@ -152,7 +152,7 @@ router.post('/admin/create', authenticate, requireAdmin, async (req: Authenticat
 /**
  * PUT /api/blogs/admin/:id - Admin: Update blog post
  */
-router.put('/admin/:id', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/admin/:id', authenticate, requirePermission('blogs'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const {
@@ -214,7 +214,7 @@ router.put('/admin/:id', authenticate, requireAdmin, async (req: AuthenticatedRe
 /**
  * DELETE /api/blogs/admin/:id - Admin: Delete blog post
  */
-router.delete('/admin/:id', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/admin/:id', authenticate, requirePermission('blogs'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const result = await pool.query(`DELETE FROM blogs WHERE id = $1 RETURNING *`, [id]);

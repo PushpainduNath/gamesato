@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { authenticate, optionalAuthenticate, requireAdmin, AuthenticatedRequest } from '../middleware/auth';
+import { authenticate, optionalAuthenticate, requireAdmin, requirePermission, AuthenticatedRequest } from '../middleware/auth';
 import { upload, extractGameBuild, saveThumbnail, deleteGameFiles, deleteLocalImage, getGameFilesInfo } from '../utils/fileManager';
 import { pool } from '../config/db';
 import redis from '../config/redis';
@@ -169,7 +169,7 @@ function parseEmbedUrl(input: string): string {
 router.post(
   '/',
   authenticate,
-  requireAdmin,
+  requirePermission('games'),
   upload.fields([
     { name: 'zip', maxCount: 1 },
     { name: 'thumbnail', maxCount: 1 },
@@ -325,7 +325,7 @@ router.get('/:id', async (req: any, res: Response) => {
 router.put(
   '/:id',
   authenticate,
-  requireAdmin,
+  requirePermission('games'),
   upload.fields([
     { name: 'zip', maxCount: 1 },
     { name: 'thumbnail', maxCount: 1 },
@@ -500,7 +500,7 @@ router.put(
 /**
  * DELETE /api/games/:id - Admin delete a game permanently
  */
-router.delete('/:id', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', authenticate, requirePermission('games'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -586,7 +586,7 @@ router.post('/:id/like', authenticate, async (req: AuthenticatedRequest, res: Re
 /**
  * GET /api/games/:id/files - Admin inspect build files & size
  */
-router.get('/:id/files', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/:id/files', authenticate, requirePermission('games'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   try {
     const gameResult = await pool.query('SELECT * FROM games WHERE id = $1', [id]);
@@ -605,7 +605,7 @@ router.get('/:id/files', authenticate, requireAdmin, async (req: AuthenticatedRe
 /**
  * POST /api/games/:id/clear-files - Admin clear game build files & auto deactivate
  */
-router.post('/:id/clear-files', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:id/clear-files', authenticate, requirePermission('games'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   try {
     const gameResult = await pool.query('SELECT * FROM games WHERE id = $1', [id]);

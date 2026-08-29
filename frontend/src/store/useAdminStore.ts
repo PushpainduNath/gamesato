@@ -6,6 +6,7 @@ interface AdminUser {
   name: string | null;
   email: string;
   role: 'ADMIN' | 'SUPER_ADMIN';
+  permissions?: string[];
 }
 
 export type AdminTheme = 'default' | 'cyberwhite' | 'creamy' | 'forest' | 'ocean';

@@ -189,7 +189,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const isSuperAdmin = admin?.role === 'SUPER_ADMIN';
+  const userPermissions = admin?.permissions || ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server'];
+  const hasPermission = (module: string) => isSuperAdmin || userPermissions.includes(module);
   const currentThemeObj = THEME_OPTIONS.find(t => t.id === (theme || 'default')) || THEME_OPTIONS[0];
+
+  // Route permission protection for sub-admins
+  useEffect(() => {
+    if (!mounted || !token || pathname === '/admin/login') return;
+
+    if (isSuperAdmin) return;
+
+    let requiredPerm: string | null = null;
+    if (pathname.startsWith('/admin/games')) requiredPerm = 'games';
+    else if (pathname.startsWith('/admin/categories')) requiredPerm = 'categories';
+    else if (pathname.startsWith('/admin/users')) requiredPerm = 'users';
+    else if (pathname.startsWith('/admin/content')) requiredPerm = 'content';
+    else if (pathname.startsWith('/admin/blogs')) requiredPerm = 'blogs';
+    else if (pathname.startsWith('/admin/media')) requiredPerm = 'media';
+    else if (pathname.startsWith('/admin/server')) requiredPerm = 'server';
+    else if (pathname.startsWith('/admin/admins')) requiredPerm = 'admins';
+
+    if (requiredPerm && (requiredPerm === 'admins' || !userPermissions.includes(requiredPerm))) {
+      const order = ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server'];
+      const firstAllowed = order.find(p => userPermissions.includes(p));
+      if (firstAllowed) {
+        router.replace(`/admin/${firstAllowed}`);
+      } else {
+        router.replace('/admin/login');
+      }
+    }
+  }, [mounted, token, pathname, isSuperAdmin, userPermissions, router]);
 
   return (
     <div className={styles.adminContainer} data-admin-theme={theme || 'default'}>
@@ -205,61 +234,75 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </Link>
 
         <nav className={styles.menu}>
-          <Link 
-            href="/admin/games" 
-            className={`${styles.menuItem} ${pathname === '/admin/games' ? styles.activeItem : ''}`}
-          >
-            <Gamepad2 size={18} className={styles.menuLucideIcon} />
-            <span>Game Management</span>
-          </Link>
+          {hasPermission('games') && (
+            <Link 
+              href="/admin/games" 
+              className={`${styles.menuItem} ${pathname === '/admin/games' ? styles.activeItem : ''}`}
+            >
+              <Gamepad2 size={18} className={styles.menuLucideIcon} />
+              <span>Game Management</span>
+            </Link>
+          )}
 
-          <Link 
-            href="/admin/categories" 
-            className={`${styles.menuItem} ${pathname === '/admin/categories' ? styles.activeItem : ''}`}
-          >
-            <Layers size={18} className={styles.menuLucideIcon} />
-            <span>Category Management</span>
-          </Link>
+          {hasPermission('categories') && (
+            <Link 
+              href="/admin/categories" 
+              className={`${styles.menuItem} ${pathname === '/admin/categories' ? styles.activeItem : ''}`}
+            >
+              <Layers size={18} className={styles.menuLucideIcon} />
+              <span>Category Management</span>
+            </Link>
+          )}
 
-          <Link 
-            href="/admin/users" 
-            className={`${styles.menuItem} ${pathname === '/admin/users' ? styles.activeItem : ''}`}
-          >
-            <Users size={18} className={styles.menuLucideIcon} />
-            <span>User Management</span>
-          </Link>
+          {hasPermission('users') && (
+            <Link 
+              href="/admin/users" 
+              className={`${styles.menuItem} ${pathname === '/admin/users' ? styles.activeItem : ''}`}
+            >
+              <Users size={18} className={styles.menuLucideIcon} />
+              <span>User Management</span>
+            </Link>
+          )}
 
-          <Link 
-            href="/admin/content" 
-            className={`${styles.menuItem} ${pathname === '/admin/content' ? styles.activeItem : ''}`}
-          >
-            <FileText size={18} className={styles.menuLucideIcon} />
-            <span>Content Management</span>
-          </Link>
+          {hasPermission('content') && (
+            <Link 
+              href="/admin/content" 
+              className={`${styles.menuItem} ${pathname === '/admin/content' ? styles.activeItem : ''}`}
+            >
+              <FileText size={18} className={styles.menuLucideIcon} />
+              <span>Content Management</span>
+            </Link>
+          )}
 
-          <Link 
-            href="/admin/blogs" 
-            className={`${styles.menuItem} ${pathname.startsWith('/admin/blogs') ? styles.activeItem : ''}`}
-          >
-            <FileText size={18} className={styles.menuLucideIcon} />
-            <span>Blog Management</span>
-          </Link>
+          {hasPermission('blogs') && (
+            <Link 
+              href="/admin/blogs" 
+              className={`${styles.menuItem} ${pathname.startsWith('/admin/blogs') ? styles.activeItem : ''}`}
+            >
+              <FileText size={18} className={styles.menuLucideIcon} />
+              <span>Blog Management</span>
+            </Link>
+          )}
 
-          <Link 
-            href="/admin/media" 
-            className={`${styles.menuItem} ${pathname.startsWith('/admin/media') ? styles.activeItem : ''}`}
-          >
-            <ImageIcon size={18} className={styles.menuLucideIcon} />
-            <span>Media Library</span>
-          </Link>
+          {hasPermission('media') && (
+            <Link 
+              href="/admin/media" 
+              className={`${styles.menuItem} ${pathname.startsWith('/admin/media') ? styles.activeItem : ''}`}
+            >
+              <ImageIcon size={18} className={styles.menuLucideIcon} />
+              <span>Media Library</span>
+            </Link>
+          )}
 
-          <Link 
-            href="/admin/server" 
-            className={`${styles.menuItem} ${pathname.startsWith('/admin/server') ? styles.activeItem : ''}`}
-          >
-            <Server size={18} className={styles.menuLucideIcon} />
-            <span>Server Details</span>
-          </Link>
+          {hasPermission('server') && (
+            <Link 
+              href="/admin/server" 
+              className={`${styles.menuItem} ${pathname.startsWith('/admin/server') ? styles.activeItem : ''}`}
+            >
+              <Server size={18} className={styles.menuLucideIcon} />
+              <span>Server Details</span>
+            </Link>
+          )}
 
           {isSuperAdmin && (
             <Link 

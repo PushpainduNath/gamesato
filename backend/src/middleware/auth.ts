@@ -8,6 +8,7 @@ export interface AuthenticatedRequest extends Request {
     email: string;
     image: string | null;
     role: string;
+    permissions?: string[];
   };
 }
 
@@ -36,7 +37,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
       try {
         const decoded = jwt.verify(token, JWT_SECRET) as any;
         const userResult = await pool.query(
-          'SELECT id, name, email, role, is_blocked FROM admin_users WHERE id = $1',
+          'SELECT id, name, email, role, permissions, is_blocked FROM admin_users WHERE id = $1',
           [decoded.id]
         );
         if (userResult.rows.length > 0) {
@@ -49,7 +50,8 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
             name: user.name,
             email: user.email,
             image: null,
-            role: user.role
+            role: user.role,
+            permissions: user.permissions || ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server']
           };
           return next();
         }
@@ -125,6 +127,26 @@ export function requireSuperAdmin(req: AuthenticatedRequest, res: Response, next
     return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
   }
   next();
+}
+
+/**
+ * Middleware to enforce module-level permissions for sub-admins
+ */
+export function requirePermission(permission: string) {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (!req.user || (req.user.role !== 'ADMIN' && req.user.role !== 'SUPER_ADMIN')) {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+    // Super admin has unrestricted access to all modules
+    if (req.user.role === 'SUPER_ADMIN') {
+      return next();
+    }
+    const permissions = req.user.permissions || [];
+    if (!permissions.includes(permission)) {
+      return res.status(403).json({ error: `Forbidden: You do not have permission to access the '${permission}' module.` });
+    }
+    next();
+  };
 }
 
 /**

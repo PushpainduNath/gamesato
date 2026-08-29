@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import multer from 'multer';
-import { authenticate, requireAdmin, requireSuperAdmin, AuthenticatedRequest } from '../middleware/auth';
+import { authenticate, requireAdmin, requireSuperAdmin, requirePermission, AuthenticatedRequest } from '../middleware/auth';
 import { pool } from '../config/db';
 import { cleanOrphanedDirectories, hasGameBuildFiles } from '../utils/fileManager';
 import bcrypt from 'bcryptjs';
@@ -26,7 +26,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT id, name, email, role, password_hash, is_blocked FROM admin_users WHERE email = $1',
+      'SELECT id, name, email, role, permissions, password_hash, is_blocked FROM admin_users WHERE email = $1',
       [username]
     );
 
@@ -51,9 +51,11 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
+    const permissions = admin.permissions || ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server'];
+
     // Generate JWT token
     const token = jwt.sign(
-      { id: admin.id, name: admin.name, email: admin.email, role: admin.role },
+      { id: admin.id, name: admin.name, email: admin.email, role: admin.role, permissions },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -65,6 +67,7 @@ router.post('/login', async (req, res) => {
         name: admin.name,
         email: admin.email,
         role: admin.role,
+        permissions,
       }
     });
   } catch (err) {
@@ -265,7 +268,7 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
 /**
  * GET /api/admin/users - Get registered gamer accounts (Admin only, paginated and searchable)
  */
-router.get('/users', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/users', authenticate, requirePermission('users'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || 20;
@@ -346,7 +349,7 @@ router.get('/users', authenticate, requireAdmin, async (req: AuthenticatedReques
 /**
  * PUT /api/admin/users/:id/block - Block or unblock a gamer (Admin only)
  */
-router.put('/users/:id/block', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/users/:id/block', authenticate, requirePermission('users'), async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { is_blocked } = req.body;
 
@@ -396,7 +399,7 @@ router.delete('/users/:id', authenticate, requireSuperAdmin, async (req: Authent
 router.get('/admins', authenticate, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, email, role, plain_password, is_blocked, created_at FROM admin_users ORDER BY role DESC, created_at DESC'
+      'SELECT id, name, email, role, permissions, plain_password, is_blocked, created_at FROM admin_users ORDER BY role DESC, created_at DESC'
     );
     res.json(result.rows);
   } catch (err) {
@@ -409,7 +412,7 @@ router.get('/admins', authenticate, requireSuperAdmin, async (req: Authenticated
  * POST /api/admin/admins - Create a new administrator account
  */
 router.post('/admins', authenticate, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
-  const { email, name, role, password } = req.body;
+  const { email, name, role, password, permissions } = req.body;
 
   if (!email || !role || !password) {
     return res.status(400).json({ error: 'Email, role, and password are required' });
@@ -423,6 +426,11 @@ router.post('/admins', authenticate, requireSuperAdmin, async (req: Authenticate
     return res.status(400).json({ error: 'Password must be at least 8 characters long' });
   }
 
+  const validModules = ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server'];
+  const userPermissions = Array.isArray(permissions) && permissions.length > 0
+    ? permissions.filter((p: string) => validModules.includes(p))
+    : validModules;
+
   try {
     const checkUser = await pool.query('SELECT id FROM admin_users WHERE email = $1', [email]);
     if (checkUser.rows.length > 0) {
@@ -431,16 +439,84 @@ router.post('/admins', authenticate, requireSuperAdmin, async (req: Authenticate
 
     const passwordHash = bcrypt.hashSync(password, 10);
     const result = await pool.query(
-      `INSERT INTO admin_users (email, name, role, password_hash, plain_password)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, name, email, role, plain_password, is_blocked, created_at`,
-      [email, name || null, role, passwordHash, password]
+      `INSERT INTO admin_users (email, name, role, permissions, password_hash, plain_password)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, name, email, role, permissions, plain_password, is_blocked, created_at`,
+      [email, name || null, role, userPermissions, passwordHash, password]
     );
 
     res.status(201).json(result.rows[0]);
   } catch (err: any) {
     console.error('Error creating admin user:', err);
     res.status(500).json({ error: err.message || 'Failed to create admin user' });
+  }
+});
+
+/**
+ * PUT /api/admin/admins/:id/permissions - Update permissions for an administrator
+ */
+router.put('/admins/:id/permissions', authenticate, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const { permissions } = req.body;
+
+  if (!Array.isArray(permissions)) {
+    return res.status(400).json({ error: 'Permissions must be an array of module names' });
+  }
+
+  const validModules = ['games', 'categories', 'users', 'content', 'blogs', 'media', 'server'];
+  const sanitizedPermissions = permissions.filter((p: string) => validModules.includes(p));
+
+  try {
+    const result = await pool.query(
+      'UPDATE admin_users SET permissions = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role, permissions, plain_password, is_blocked, created_at',
+      [sanitizedPermissions, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Admin user not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Admin permissions updated successfully',
+      admin: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error updating admin permissions:', err);
+    res.status(500).json({ error: 'Failed to update admin permissions' });
+  }
+});
+
+/**
+ * PUT /api/admin/admins/:id/password - Super Admin change sub-admin password
+ */
+router.put('/admins/:id/password', authenticate, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  if (!password || password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+  }
+
+  try {
+    const passwordHash = bcrypt.hashSync(password, 10);
+    const result = await pool.query(
+      'UPDATE admin_users SET password_hash = $1, plain_password = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING id, name, email, role, permissions, plain_password, is_blocked, created_at',
+      [passwordHash, password, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Admin user not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully',
+      admin: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error resetting admin password:', err);
+    res.status(500).json({ error: 'Failed to reset admin password' });
   }
 });
 
@@ -461,7 +537,7 @@ router.put('/admins/:id/role', authenticate, requireSuperAdmin, async (req: Auth
 
   try {
     const result = await pool.query(
-      'UPDATE admin_users SET role = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role, is_blocked',
+      'UPDATE admin_users SET role = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role, permissions, plain_password, is_blocked, created_at',
       [role, id]
     );
 
@@ -493,7 +569,7 @@ router.put('/admins/:id/block', authenticate, requireSuperAdmin, async (req: Aut
 
   try {
     const result = await pool.query(
-      'UPDATE admin_users SET is_blocked = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role, is_blocked',
+      'UPDATE admin_users SET is_blocked = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role, permissions, plain_password, is_blocked, created_at',
       [is_blocked, id]
     );
 
@@ -655,7 +731,7 @@ router.get('/settings', async (req: Request, res: Response) => {
 /**
  * PUT /api/admin/settings - Update global portal settings & social links
  */
-router.put('/settings', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/settings', authenticate, requirePermission('content'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const settings = req.body;
     await pool.query(`
@@ -716,7 +792,7 @@ const uploadMedia = multer({
 /**
  * GET /api/admin/media - List all uploaded media images
  */
-router.get('/media', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/media', authenticate, requirePermission('media'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const uploadsBase = path.join(__dirname, '../../uploads');
     
@@ -765,7 +841,7 @@ router.get('/media', authenticate, requireAdmin, async (req: AuthenticatedReques
 /**
  * POST /api/admin/media/upload - Upload new image file
  */
-router.post('/media/upload', authenticate, requireAdmin, uploadMedia.single('file'), async (req: AuthenticatedRequest, res: Response) => {
+router.post('/media/upload', authenticate, requirePermission('media'), uploadMedia.single('file'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -788,7 +864,7 @@ router.post('/media/upload', authenticate, requireAdmin, uploadMedia.single('fil
 /**
  * DELETE /api/admin/media - Delete uploaded media image
  */
-router.delete('/media', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/media', authenticate, requirePermission('media'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { relativePath } = req.body;
     if (!relativePath || !relativePath.startsWith('/uploads/')) {
@@ -883,7 +959,7 @@ function getDirStats(dirPath: string): { totalSize: number; totalFiles: number; 
 /**
  * GET /api/admin/server-details - Fetch live server storage, CPU, RAM, and gb-games files (View-Only)
  */
-router.get('/server-details', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/server-details', authenticate, requirePermission('server'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const subPath = (req.query.subPath as string) || '';
     const GAMES_DIR = path.resolve(process.cwd(), process.env.GAMES_DIR || 'gb-games');
