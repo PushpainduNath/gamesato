@@ -88,7 +88,7 @@ export default function LoginPage() {
       <div className={styles.card}>
         <div className={styles.logoArea}>
           <img 
-            src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
+            src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
             alt="Gamesato Logo" 
             className={styles.logo}
             onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
