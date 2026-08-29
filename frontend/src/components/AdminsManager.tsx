@@ -130,8 +130,8 @@ const adminSortOptions: FilterSelectOption[] = [
   { value: 'role_desc', label: 'Authority Rank' },
   { value: 'name_asc', label: 'Name (A-Z)' },
   { value: 'name_desc', label: 'Name (Z-A)' },
-  { value: 'email_asc', label: 'Email (A-Z)' },
-  { value: 'email_desc', label: 'Email (Z-A)' },
+  { value: 'email_asc', label: 'Email / Username (A-Z)' },
+  { value: 'email_desc', label: 'Email / Username (Z-A)' },
   { value: 'newest', label: 'Newest Registered' },
   { value: 'oldest', label: 'Oldest Registered' }
 ];
@@ -225,6 +225,10 @@ export default function AdminsManager() {
       prev.includes(permId) ? prev.filter(p => p !== permId) : [...prev, permId]
     );
   };
+
+  const currentUserRole = admin?.role || 'USER';
+  const isSuperAdmin = currentUserRole === 'SUPER_ADMIN';
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
 
   // Save updated permissions
   const handleSavePermissions = async () => {
@@ -398,10 +402,6 @@ export default function AdminsManager() {
     setCurrentPage(1);
   }, [globalSearchQuery, statusFilter, roleFilter, sortBy, paginationEnabled]);
 
-  const currentUserRole = admin?.role || 'USER';
-  const isSuperAdmin = currentUserRole === 'SUPER_ADMIN';
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
-
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -465,8 +465,8 @@ export default function AdminsManager() {
 
   const handleCreateAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newEmail || !newPassword) {
-      setCreateMessage({ text: 'Email and password are required!', type: 'error' });
+    if (!newEmail.trim() || !newPassword) {
+      setCreateMessage({ text: 'Username/Email and password are required!', type: 'error' });
       return;
     }
 
@@ -491,8 +491,8 @@ export default function AdminsManager() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          email: newEmail,
-          name: newName || null,
+          email: newEmail.trim(),
+          name: newName.trim() || null,
           role: 'ADMIN',
           password: newPassword,
           permissions: newPermissions
@@ -610,7 +610,7 @@ export default function AdminsManager() {
               <Search size={15} className={styles.tableSearchIcon} />
               <input
                 type="text"
-                placeholder="Search name or email..."
+                placeholder="Search name or username..."
                 value={globalSearchQuery}
                 onChange={(e) => setGlobalSearchQuery(e.target.value)}
                 className={styles.tableSearchInput}
@@ -653,7 +653,7 @@ export default function AdminsManager() {
               value={sortBy}
               onChange={setSortBy}
               options={adminSortOptions}
-              width="180px"
+              width="190px"
             />
           </div>
         </div>
@@ -663,7 +663,7 @@ export default function AdminsManager() {
             <thead>
               <tr>
                 <th style={{ paddingLeft: '34px' }}>Name</th>
-                <th>Email</th>
+                <th>Username / Email</th>
                 <th>Password</th>
                 <th>Module Access</th>
                 <th style={{ width: '130px', textAlign: 'center' }}>Status</th>
@@ -1217,7 +1217,7 @@ export default function AdminsManager() {
                   type="text" 
                   autoComplete="off"
                   name="create_admin_fullname"
-                  placeholder="e.g. John Doe"
+                  placeholder="e.g. Akshay Dalvi"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   className={styles.figmaInput}
@@ -1225,13 +1225,13 @@ export default function AdminsManager() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Email (Username)</label>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Username / Email</label>
                 <input 
-                  type="email" 
+                  type="text" 
                   required
-                  autoComplete="new-email"
-                  name="create_admin_email_field"
-                  placeholder="e.g. john@gamesato.com"
+                  autoComplete="off"
+                  name="create_admin_username_field"
+                  placeholder="e.g. akshay_dalvi or akshay@gamesato.com"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   className={styles.figmaInput}
