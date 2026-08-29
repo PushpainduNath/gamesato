@@ -64,11 +64,12 @@
 .logoArea {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  text-decoration: none;
 }
 
 .logo {
   height: 42px !important;
+  max-width: 185px;
   width: auto;
   object-fit: contain;
 }

@@ -100,16 +100,13 @@ export default function Footer() {
         <div className={`${styles.container} ${styles.desktopOnlyFooter}`}>
           {/* Brand Column */}
           <div className={styles.brandCol}>
-            <Link href="/" className={styles.logoArea}>
+            <Link href="/" className={styles.logoArea} title="Gamesato" aria-label="Gamesato">
               <img 
-                src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
-                alt="Gamesato Logo" 
+                src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
+                alt="Gamesato" 
                 className={styles.logo} 
                 onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
               />
-              <span className={styles.logoText}>
-                Game<span className={styles.logoTextSato}>sato</span>
-              </span>
             </Link>
             <p className={styles.tagline}>
               Your premier destination for instant browser-based gaming. Fast, fun, and free forever.
@@ -190,16 +187,13 @@ export default function Footer() {
         {/* Mobile Footer Layout (shown on mobile screens only) */}
         <div className={`${styles.mobileContainer} ${styles.mobileOnlyFooter}`}>
           {/* Logo */}
-          <Link href="/" className={styles.mobileLogoArea}>
+          <Link href="/" className={styles.mobileLogoArea} title="Gamesato" aria-label="Gamesato">
             <img 
-              src={theme === 'light' ? '/light_logo_withoutbg.png' : '/dark_logo_withoutbg.png'} 
-              alt="Gamesato Logo" 
+              src={theme === 'light' ? '/logo-light-theme.webp' : '/logo-dark-theme.webp'} 
+              alt="Gamesato" 
               className={styles.mobileLogo} 
               onError={(e) => { e.currentTarget.src = theme === 'light' ? '/logo-light-theme.png' : '/logo-dark-theme.png'; }}
             />
-            <span className={styles.logoText}>
-              Game<span className={styles.logoTextSato}>sato</span>
-            </span>
           </Link>
 
           {/* Tagline */}

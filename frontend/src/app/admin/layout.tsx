@@ -195,11 +195,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className={styles.adminContainer} data-admin-theme={theme || 'default'}>
       {/* Left Sidebar */}
       <aside className={styles.sidebar}>
-        <Link href="/" className={styles.logoArea}>
-          <img src="/dark_logo_withoutbg.png" alt="Gamesato" className={styles.logoImg} />
-          <span className={styles.logoText}>
-            Game<span className={styles.logoTextSato}>sato</span>
-          </span>
+        <Link href="/" className={styles.logoArea} title="Gamesato">
+          <img 
+            src="/logo-dark-theme.webp" 
+            alt="Gamesato" 
+            className={styles.logoImg}
+            onError={(e) => { e.currentTarget.src = '/logo-dark-theme.png'; }}
+          />
         </Link>
 
         <nav className={styles.menu}>
