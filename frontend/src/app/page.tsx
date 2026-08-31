@@ -168,14 +168,14 @@ export default async function HomePage(props: {
     gamesByCategory[game.category].push(game);
   });
 
-  // Create virtual "New" category using the latest 10 games based on created_at (creation time)
-  const newGames = games.slice(0, 10);
+  // Create virtual "New" category using the latest games based on created_at (creation time)
+  const newGames = games.slice(0, 50);
   if (newGames.length > 0) {
     gamesByCategory['New'] = newGames;
   }
 
-  // Create virtual "Popular" category using top 10 games by play_count
-  const popularGames = [...games].sort((a, b) => (b.play_count || 0) - (a.play_count || 0)).slice(0, 10);
+  // Create virtual "Popular" category using top games by play_count
+  const popularGames = [...games].sort((a, b) => (b.play_count || 0) - (a.play_count || 0)).slice(0, 50);
   if (popularGames.length > 0) {
     gamesByCategory['Popular'] = popularGames;
   }
@@ -271,7 +271,7 @@ export default async function HomePage(props: {
         {/* Category Sections */}
         {hasGamesToRender ? (
           categoriesToRender.map((catName) => {
-            const catGames = (gamesByCategory[catName] || []).slice(0, 8);
+            const catGames = gamesByCategory[catName] || [];
             return (
               <CategoryCarousel
                 key={catName}
