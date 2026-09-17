@@ -2040,20 +2040,10 @@ export default function AdminGamesManager() {
                     </div>
                   )}
                 </th>
-                <th style={{ width: '95px', cursor: 'pointer', userSelect: 'none', textAlign: 'center' }} onClick={() => handleSort('createdAt')}>
+                <th style={{ width: '135px', cursor: 'pointer', userSelect: 'none', textAlign: 'center' }} onClick={() => handleSort('createdAt')}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    <span>CREATED</span>
-                    {sortField === 'createdAt' ? (
-                      sortDirection === 'asc' ? <ArrowUp size={13} /> : <ArrowDown size={13} />
-                    ) : (
-                      <ArrowUpDown size={13} style={{ opacity: 0.4 }} />
-                    )}
-                  </div>
-                </th>
-                <th style={{ width: '95px', cursor: 'pointer', userSelect: 'none', textAlign: 'center' }} onClick={() => handleSort('updatedAt')}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    <span>UPDATED</span>
-                    {sortField === 'updatedAt' ? (
+                    <span>CREATED / UPDATED</span>
+                    {sortField === 'createdAt' || sortField === 'updatedAt' ? (
                       sortDirection === 'asc' ? <ArrowUp size={13} /> : <ArrowDown size={13} />
                     ) : (
                       <ArrowUpDown size={13} style={{ opacity: 0.4 }} />
@@ -2155,61 +2145,72 @@ export default function AdminGamesManager() {
                         </button>
                       </div>
                     </td>
-                    <td style={{ color: 'var(--adm-text-primary, #cbd5e1)', fontSize: '0.85rem', minWidth: '150px', textAlign: 'center' }}>
-                      {inlineEditingGameId === game.id ? (
-                        <input
-                          type="date"
-                          value={inlineTempCreatedAt}
-                          onChange={(e) => setInlineTempCreatedAt(e.target.value)}
-                          onBlur={() => handleSaveInlineDate(game.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveInlineDate(game.id);
-                            } else if (e.key === 'Escape') {
-                              setInlineEditingGameId(null);
-                            }
-                          }}
-                          ref={(input) => {
-                            if (input) {
-                              input.focus();
-                              try {
-                                if (typeof input.showPicker === 'function') {
-                                  input.showPicker();
-                                }
-                              } catch (err) {
-                                console.error('Error showing date picker:', err);
+                    <td style={{ color: 'var(--adm-text-primary, #cbd5e1)', fontSize: '0.85rem', minWidth: '135px', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        {/* Created Date (Inline Editable) */}
+                        {inlineEditingGameId === game.id ? (
+                          <input
+                            type="date"
+                            value={inlineTempCreatedAt}
+                            onChange={(e) => setInlineTempCreatedAt(e.target.value)}
+                            onBlur={() => handleSaveInlineDate(game.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveInlineDate(game.id);
+                              } else if (e.key === 'Escape') {
+                                setInlineEditingGameId(null);
                               }
-                            }
-                          }}
-                          style={{
-                            background: 'var(--adm-input-bg, #161b22)',
-                            border: '1px solid var(--adm-border, #334155)',
-                            borderRadius: '4px',
-                            color: 'var(--adm-text-primary, #ffffff)',
-                            padding: '3px 6px',
-                            fontFamily: 'inherit',
-                            fontSize: '0.8rem',
-                            width: '100%',
-                            boxSizing: 'border-box'
-                          }}
-                        />
-                      ) : (
-                        <div
-                          onClick={() => {
-                            setInlineEditingGameId(game.id);
-                            setInlineTempCreatedAt(game.createdAt ? new Date(game.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
-                          }}
-                          className={styles.editableDateCell}
-                          style={{ margin: '0 auto' }}
-                          title="Click to edit creation date"
-                        >
-                          <span>{game.createdAt ? new Date(game.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</span>
-                          <Calendar size={13} className={styles.editDateIcon} />
+                            }}
+                            ref={(input) => {
+                              if (input) {
+                                input.focus();
+                                try {
+                                  if (typeof input.showPicker === 'function') {
+                                    input.showPicker();
+                                  }
+                                } catch (err) {
+                                  console.error('Error showing date picker:', err);
+                                }
+                              }
+                            }}
+                            style={{
+                              background: 'var(--adm-input-bg, #161b22)',
+                              border: '1px solid var(--adm-border, #334155)',
+                              borderRadius: '4px',
+                              color: 'var(--adm-text-primary, #ffffff)',
+                              padding: '2px 4px',
+                              fontFamily: 'inherit',
+                              fontSize: '0.78rem',
+                              width: '100%',
+                              boxSizing: 'border-box'
+                            }}
+                          />
+                        ) : (
+                          <div
+                            onClick={() => {
+                              setInlineEditingGameId(game.id);
+                              setInlineTempCreatedAt(game.createdAt ? new Date(game.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+                            }}
+                            className={styles.editableDateCell}
+                            style={{ margin: '0 auto', fontSize: '0.82rem', padding: '1px 6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                            title="Click to edit creation date"
+                          >
+                            <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>C:</span>
+                            <span style={{ fontWeight: 600, color: 'var(--adm-text-primary, #f1f5f9)' }}>
+                              {game.createdAt ? new Date(game.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
+                            </span>
+                            <Calendar size={11} className={styles.editDateIcon} />
+                          </div>
+                        )}
+
+                        {/* Updated Date */}
+                        <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: '4px' }} title="Last updated date">
+                          <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>U:</span>
+                          <span>
+                            {game.updatedAt ? new Date(game.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
+                          </span>
                         </div>
-                      )}
-                    </td>
-                    <td style={{ color: 'var(--adm-text-primary, #cbd5e1)', fontSize: '0.85rem', textAlign: 'center' }}>
-                      {game.updatedAt ? new Date(game.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
+                      </div>
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div className={styles.actionCell} style={{ justifyContent: 'flex-end', gap: '0.5rem' }}>
@@ -2251,7 +2252,7 @@ export default function AdminGamesManager() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
                     {globalSearchQuery ? 'No games matching search term.' : 'No games uploaded yet. Click "Add Game" to add your first game.'}
                   </td>
                 </tr>
