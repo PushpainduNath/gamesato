@@ -168,8 +168,8 @@ export default async function HomePage(props: {
     gamesByCategory[game.category].push(game);
   });
 
-  // Create virtual "New" category using the latest 10 games based on created_at (creation time)
-  const newGames = games.slice(0, 10);
+  // Create virtual "New" category using the latest 20 games based on created_at (creation time)
+  const newGames = games.slice(0, 20);
   if (newGames.length > 0) {
     gamesByCategory['New'] = newGames;
   }
