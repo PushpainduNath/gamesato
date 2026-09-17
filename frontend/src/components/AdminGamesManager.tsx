@@ -1358,22 +1358,6 @@ export default function AdminGamesManager() {
       'Permanently Delete',
       'Cancel'
     );
-  };
-
-  if (loading && games.length === 0) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>Loading Game Catalogue...</div>;
-  }
-
-  if (error) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', gap: '1rem', color: 'var(--color-danger)' }}>
-        <AlertCircle size={40} />
-        <h2 style={{ color: 'white' }}>Error loading games</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>{error}</p>
-      </div>
-    );
-  }
-
   // Calculate dynamic stats for metrics cards (memoized)
   const totalGames = games.length;
   const totalPlays = useMemo(() => {
@@ -1500,6 +1484,20 @@ export default function AdminGamesManager() {
     }
     return null;
   };
+
+  if (loading && games.length === 0) {
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>Loading Game Catalogue...</div>;
+  }
+
+  if (error) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', gap: '1rem', color: 'var(--color-danger)' }}>
+        <AlertCircle size={40} />
+        <h2 style={{ color: 'white' }}>Error loading games</h2>
+        <p style={{ color: 'var(--text-secondary)' }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.dashboard}>
