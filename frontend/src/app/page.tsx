@@ -231,7 +231,7 @@ export default async function HomePage(props: {
        WHERE g.status = 'published' AND g.is_featured = TRUE
        GROUP BY g.id
        ORDER BY g.updated_at DESC
-       LIMIT 5`
+       LIMIT 10`
     );
     featuredGames = featuredRes.rows;
   } catch (err) {

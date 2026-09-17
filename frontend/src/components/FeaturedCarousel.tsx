@@ -46,7 +46,7 @@ export default function FeaturedCarousel({ featuredSlots: initialFeaturedSlots }
     let isMounted = true;
     const fetchLatestFeaturedOnLand = async () => {
       try {
-        const res = await fetch(`/api/games?featured=true&limit=8&t=${Date.now()}`, {
+        const res = await fetch(`/api/games?featured=true&limit=10&t=${Date.now()}`, {
           cache: 'no-store'
         });
         if (res.ok) {
