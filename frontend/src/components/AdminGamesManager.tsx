@@ -2145,8 +2145,8 @@ export default function AdminGamesManager() {
                         </button>
                       </div>
                     </td>
-                    <td style={{ color: 'var(--adm-text-primary, #cbd5e1)', fontSize: '0.85rem', minWidth: '135px', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                    <td style={{ color: 'var(--adm-text-primary, #cbd5e1)', minWidth: '135px', textAlign: 'center', padding: '6px 8px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '140px', margin: '0 auto' }}>
                         {/* Created Date (Inline Editable) */}
                         {inlineEditingGameId === game.id ? (
                           <input
@@ -2180,7 +2180,7 @@ export default function AdminGamesManager() {
                               color: 'var(--adm-text-primary, #ffffff)',
                               padding: '2px 4px',
                               fontFamily: 'inherit',
-                              fontSize: '0.78rem',
+                              fontSize: '0.82rem',
                               width: '100%',
                               boxSizing: 'border-box'
                             }}
@@ -2192,21 +2192,24 @@ export default function AdminGamesManager() {
                               setInlineTempCreatedAt(game.createdAt ? new Date(game.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
                             }}
                             className={styles.editableDateCell}
-                            style={{ margin: '0 auto', fontSize: '0.82rem', padding: '1px 6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                            style={{ margin: '0 auto', fontSize: '0.82rem', padding: '1px 6px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                             title="Click to edit creation date"
                           >
-                            <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>C:</span>
-                            <span style={{ fontWeight: 600, color: 'var(--adm-text-primary, #f1f5f9)' }}>
+                            <span style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 600 }}>C:</span>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#ffffff' }}>
                               {game.createdAt ? new Date(game.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
                             </span>
-                            <Calendar size={11} className={styles.editDateIcon} />
+                            <Calendar size={12} className={styles.editDateIcon} style={{ opacity: 0.6 }} />
                           </div>
                         )}
 
+                        {/* Dashed Break Line */}
+                        <div style={{ width: '85%', borderTop: '1px dashed rgba(255, 255, 255, 0.15)', margin: '3px 0' }} />
+
                         {/* Updated Date */}
-                        <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: '4px' }} title="Last updated date">
-                          <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>U:</span>
-                          <span>
+                        <div style={{ fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px' }} title="Last updated date">
+                          <span style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>U:</span>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 500, color: '#94a3b8' }}>
                             {game.updatedAt ? new Date(game.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
                           </span>
                         </div>
