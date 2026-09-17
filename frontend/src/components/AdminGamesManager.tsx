@@ -1358,6 +1358,8 @@ export default function AdminGamesManager() {
       'Permanently Delete',
       'Cancel'
     );
+  };
+
   // Calculate dynamic stats for metrics cards (memoized)
   const totalGames = games.length;
   const totalPlays = useMemo(() => {
