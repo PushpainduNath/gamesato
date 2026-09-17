@@ -2042,7 +2042,7 @@ export default function AdminGamesManager() {
                 </th>
                 <th style={{ width: '135px', cursor: 'pointer', userSelect: 'none', textAlign: 'center' }} onClick={() => handleSort('createdAt')}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    <span>CREATED / UPDATED</span>
+                    <span>TIMELINE</span>
                     {sortField === 'createdAt' || sortField === 'updatedAt' ? (
                       sortDirection === 'asc' ? <ArrowUp size={13} /> : <ArrowDown size={13} />
                     ) : (
@@ -2050,7 +2050,7 @@ export default function AdminGamesManager() {
                     )}
                   </div>
                 </th>
-                <th style={{ width: '130px', textAlign: 'right', paddingRight: '12px' }}>ACTION</th>
+                <th style={{ width: '85px', textAlign: 'center' }}>ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -2212,39 +2212,56 @@ export default function AdminGamesManager() {
                         </div>
                       </div>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div className={styles.actionCell} style={{ justifyContent: 'flex-end', gap: '0.5rem' }}>
-                        <button 
-                          className={styles.actionBtn}
-                          onClick={() => handleOpenFilesModal(game)}
-                          title="Inspect Game Files & Storage Size"
-                        >
-                          <HardDrive size={15} />
-                        </button>
+                    <td style={{ textAlign: 'center', padding: '6px 8px' }}>
+                      <div style={{
+                        display: 'inline-grid',
+                        gridTemplateColumns: 'repeat(2, 28px)',
+                        gridTemplateRows: 'repeat(2, 28px)',
+                        gap: '4px',
+                        padding: '4px',
+                        background: 'rgba(15, 23, 42, 0.7)',
+                        border: '1px solid var(--adm-border, rgba(255, 255, 255, 0.1))',
+                        borderRadius: '8px',
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.25)'
+                      }}>
+                        {/* Top Row: Edit & Toggle */}
                         <button 
                           className={styles.actionBtn}
                           onClick={() => handleOpenEditModal(game)}
                           title="Edit Game"
+                          style={{ width: '28px', height: '28px', borderRadius: '5px' }}
                         >
-                          <Edit2 size={15} />
-                        </button>
-                        <button 
-                          className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                          onClick={() => handleDeleteGame(game.id, game.title)}
-                          title="Delete Game"
-                        >
-                          <Trash2 size={15} />
+                          <Edit2 size={13} />
                         </button>
                         <button 
                           className={styles.actionBtn}
                           onClick={() => handleToggleStatus(game.id, game.status)}
                           title={game.status === 'published' ? 'Active Game (Click to Deactivate)' : 'Inactive Game (Click to Activate)'}
+                          style={{ width: '28px', height: '28px', borderRadius: '5px' }}
                         >
                           {game.status === 'published' ? (
-                            <ToggleRight size={18} style={{ color: '#14b8a6' }} />
+                            <ToggleRight size={17} style={{ color: '#14b8a6' }} />
                           ) : (
-                            <ToggleLeft size={18} style={{ color: '#64748b' }} />
+                            <ToggleLeft size={17} style={{ color: '#64748b' }} />
                           )}
+                        </button>
+
+                        {/* Bottom Row: File & Delete */}
+                        <button 
+                          className={styles.actionBtn}
+                          onClick={() => handleOpenFilesModal(game)}
+                          title="Inspect Game Files & Storage Size"
+                          style={{ width: '28px', height: '28px', borderRadius: '5px' }}
+                        >
+                          <HardDrive size={13} />
+                        </button>
+                        <button 
+                          className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                          onClick={() => handleDeleteGame(game.id, game.title)}
+                          title="Delete Game"
+                          style={{ width: '28px', height: '28px', borderRadius: '5px' }}
+                        >
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </td>
