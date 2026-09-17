@@ -271,7 +271,7 @@ export default async function HomePage(props: {
         {/* Category Sections */}
         {hasGamesToRender ? (
           categoriesToRender.map((catName) => {
-            const catGames = gamesByCategory[catName] || [];
+            const catGames = (gamesByCategory[catName] || []).slice(0, 30);
             return (
               <CategoryCarousel
                 key={catName}

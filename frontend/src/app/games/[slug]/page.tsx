@@ -28,10 +28,12 @@ interface Game {
 
 
 // Dynamic routes pre-generation
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   try {
     const res = await query(
-      "SELECT slug FROM games WHERE status = 'published' ORDER BY created_at DESC"
+      "SELECT slug FROM games WHERE status = 'published' ORDER BY created_at DESC LIMIT 50"
     );
     return res.rows.map((row: { slug: string }) => ({
       slug: row.slug,
