@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useAdminStore } from '@/store/useAdminStore';
 import { 
   Gamepad2, Upload, Plus, Edit2, Pencil, Check,
@@ -578,6 +578,13 @@ export default function AdminGamesManager() {
   const [inlineTempCreatedAt, setInlineTempCreatedAt] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationEnabled, setPaginationEnabled] = useState(true);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const itemsPerPageOptions: FilterSelectOption[] = [
+    { value: '10', label: '10 / page' },
+    { value: '25', label: '25 / page' },
+    { value: '50', label: '50 / page' },
+    { value: '100', label: '100 / page' },
+  ];
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
   const [dbCategories, setDbCategories] = useState<string[]>([]);
@@ -736,15 +743,16 @@ export default function AdminGamesManager() {
   const fetchGamesData = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${backendUrl}/api/admin/dashboard?t=${Date.now()}`, {
+      const res = await fetch(`${backendUrl}/api/admin/games?t=${Date.now()}`, {
         cache: 'no-store',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       if (res.ok) {
-        const json: DashboardData = await res.json();
-        const sanitizedGames = (json.games || []).map((g: any) => ({
+        const json = await res.json();
+        const rawGames = json.games || (Array.isArray(json) ? json : []);
+        const sanitizedGames = rawGames.map((g: any) => ({
           ...g,
           gameUrl: g.game_url || g.gameUrl || '',
           game_url: g.game_url || g.gameUrl || '',
@@ -1169,6 +1177,12 @@ export default function AdminGamesManager() {
       return;
     }
 
+    const originalGame = games.find(g => g.id === gameId);
+    const originalCreatedAt = originalGame?.createdAt;
+
+    // Optimistically update local state immediately
+    setGames(prev => prev.map(g => g.id === gameId ? { ...g, createdAt: inlineTempCreatedAt } : g));
+
     try {
       const res = await fetch(`${backendUrl}/api/games/${gameId}`, {
         method: 'PUT',
@@ -1180,13 +1194,19 @@ export default function AdminGamesManager() {
       });
 
       if (res.ok) {
-        fetchGamesData();
         showToast('Game creation date updated successfully!', 'success');
       } else {
+        // Rollback on failure
+        if (originalCreatedAt !== undefined) {
+          setGames(prev => prev.map(g => g.id === gameId ? { ...g, createdAt: originalCreatedAt } : g));
+        }
         const err = await res.json();
         showToast(err.error || 'Failed to update game creation date', 'error');
       }
     } catch (err) {
+      if (originalCreatedAt !== undefined) {
+        setGames(prev => prev.map(g => g.id === gameId ? { ...g, createdAt: originalCreatedAt } : g));
+      }
       console.error(err);
       showToast('Failed to connect to backend.', 'error');
     } finally {
@@ -1219,6 +1239,9 @@ export default function AdminGamesManager() {
       }
     }
 
+    // Optimistically update local state immediately
+    setGames(prev => prev.map(g => g.id === gameId ? { ...g, status: newStatus as any } : g));
+
     try {
       const res = await fetch(`${backendUrl}/api/games/${gameId}`, {
         method: 'PUT',
@@ -1230,13 +1253,15 @@ export default function AdminGamesManager() {
       });
 
       if (res.ok) {
-        fetchGamesData();
         showToast(`Game status changed to ${newStatus === 'published' ? 'Active' : 'Inactive'}!`, 'success');
       } else {
+        // Rollback on failure
+        setGames(prev => prev.map(g => g.id === gameId ? { ...g, status: currentStatus as any } : g));
         const err = await res.json();
         showToast(err.error || 'Failed to update game status', 'error');
       }
     } catch (err) {
+      setGames(prev => prev.map(g => g.id === gameId ? { ...g, status: currentStatus as any } : g));
       console.error(err);
       showToast('Failed to connect to backend.', 'error');
     }
@@ -1260,6 +1285,9 @@ export default function AdminGamesManager() {
       }
     }
 
+    // Optimistically update local state immediately
+    setGames(prev => prev.map(g => g.id === gameId ? { ...g, isFeatured: newFeatured } : g));
+
     try {
       const res = await fetch(`${backendUrl}/api/games/${gameId}`, {
         method: 'PUT',
@@ -1270,13 +1298,14 @@ export default function AdminGamesManager() {
         body: JSON.stringify({ isFeatured: newFeatured }),
       });
 
-      if (res.ok) {
-        fetchGamesData();
-      } else {
+      if (!res.ok) {
+        // Rollback on failure
+        setGames(prev => prev.map(g => g.id === gameId ? { ...g, isFeatured: currentFeatured } : g));
         const err = await res.json();
         showAlertDialog('Error Updating Featured Status', err.error || 'Failed to update game featured status', 'danger');
       }
     } catch (err) {
+      setGames(prev => prev.map(g => g.id === gameId ? { ...g, isFeatured: currentFeatured } : g));
       console.error(err);
       showAlertDialog('Connection Error', 'Failed to connect to backend.', 'danger');
     }
@@ -1345,9 +1374,11 @@ export default function AdminGamesManager() {
     );
   }
 
-  // Calculate dynamic stats for metrics cards
+  // Calculate dynamic stats for metrics cards (memoized)
   const totalGames = games.length;
-  const totalPlays = games.reduce((sum, g) => sum + g.playCount, 0);
+  const totalPlays = useMemo(() => {
+    return games.reduce((sum, g) => sum + (g.playCount || 0), 0);
+  }, [games]);
 
   const formatPlays = (num: number) => {
     if (num >= 1000000) {
@@ -1359,58 +1390,72 @@ export default function AdminGamesManager() {
     return num.toString();
   };
 
-  const mostPlayedGame = games.length > 0 
-    ? [...games].sort((a, b) => b.playCount - a.playCount)[0]
-    : null;
+  const mostPlayedGame = useMemo(() => {
+    if (games.length === 0) return null;
+    return [...games].sort((a, b) => (b.playCount || 0) - (a.playCount || 0))[0];
+  }, [games]);
   const mostPlayedTitle = mostPlayedGame ? mostPlayedGame.title : 'None';
-  const totalCategories = new Set(games.map(g => g.category)).size;
+  
+  const totalCategories = useMemo(() => {
+    return new Set(games.map(g => g.category)).size;
+  }, [games]);
 
-  // Sort and filter games based on search term and selected columns
-  const sortedGames = [...games].sort((a, b) => {
-    if (!sortField) return 0;
-    
-    let aVal = a[sortField];
-    let bVal = b[sortField];
+  // Sort games based on selected columns (memoized)
+  const sortedGames = useMemo(() => {
+    if (!sortField) return games;
+    return [...games].sort((a, b) => {
+      let aVal = a[sortField];
+      let bVal = b[sortField];
 
-    if (typeof aVal === 'string' && typeof bVal === 'string') {
-      aVal = aVal.toLowerCase();
-      bVal = bVal.toLowerCase();
-    }
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        aVal = aVal.toLowerCase();
+        bVal = bVal.toLowerCase();
+      }
 
-    if (aVal === undefined || aVal === null) aVal = typeof bVal === 'number' ? 0 : '';
-    if (bVal === undefined || bVal === null) bVal = typeof aVal === 'number' ? 0 : '';
+      if (aVal === undefined || aVal === null) aVal = typeof bVal === 'number' ? 0 : '';
+      if (bVal === undefined || bVal === null) bVal = typeof aVal === 'number' ? 0 : '';
 
-    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
-    return 0;
-  });
+      if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [games, sortField, sortDirection]);
 
-  const filteredGames = sortedGames.filter(g => {
-    const matchesSearch = g.title.toLowerCase().includes(globalSearchQuery.toLowerCase()) ||
-                          g.category.toLowerCase().includes(globalSearchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' 
-      ? true 
-      : statusFilter === 'published' 
-        ? g.status === 'published' 
-        : g.status !== 'published';
-    const matchesCategory = categoryFilter === 'all'
-      ? true
-      : g.category.toLowerCase() === categoryFilter.toLowerCase();
-    const matchesFeatured = featuredFilter === 'all'
-      ? true
-      : featuredFilter === 'on'
-        ? g.isFeatured
-        : !g.isFeatured;
+  // Filter games based on search and selected filters (memoized)
+  const filteredGames = useMemo(() => {
+    const q = globalSearchQuery.trim().toLowerCase();
+    const cat = categoryFilter.toLowerCase();
+    return sortedGames.filter(g => {
+      const matchesSearch = !q ||
+                            g.title.toLowerCase().includes(q) ||
+                            g.category.toLowerCase().includes(q) ||
+                            g.slug.toLowerCase().includes(q);
+      const matchesStatus = statusFilter === 'all' 
+        ? true 
+        : statusFilter === 'published' 
+          ? g.status === 'published' 
+          : g.status !== 'published';
+      const matchesCategory = cat === 'all'
+        ? true
+        : g.category.toLowerCase() === cat;
+      const matchesFeatured = featuredFilter === 'all'
+        ? true
+        : featuredFilter === 'on'
+          ? g.isFeatured
+          : !g.isFeatured;
 
-    return matchesSearch && matchesStatus && matchesCategory && matchesFeatured;
-  });
+      return matchesSearch && matchesStatus && matchesCategory && matchesFeatured;
+    });
+  }, [sortedGames, globalSearchQuery, statusFilter, categoryFilter, featuredFilter]);
 
-  const itemsPerPage = 10;
   const totalItems = filteredGames.length;
-  const totalPages = paginationEnabled ? Math.ceil(totalItems / itemsPerPage) : 1;
-  const paginatedGames = paginationEnabled 
-    ? filteredGames.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    : filteredGames;
+  const totalPages = paginationEnabled ? Math.max(1, Math.ceil(totalItems / itemsPerPage)) : 1;
+  const paginatedGames = useMemo(() => {
+    if (!paginationEnabled) {
+      return filteredGames.slice(0, 100);
+    }
+    return filteredGames.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  }, [filteredGames, paginationEnabled, currentPage, itemsPerPage]);
 
   // Helper to generate visible page numbers with ellipsis matching User Management
   const getPageNumbers = () => {
@@ -1617,6 +1662,20 @@ export default function AdminGamesManager() {
                 Paginate
               </label>
             </div>
+
+            {paginationEnabled && (
+              <div style={{ marginRight: '8px' }}>
+                <CustomFilterSelect
+                  value={String(itemsPerPage)}
+                  onChange={(val) => {
+                    setItemsPerPage(Number(val));
+                    setCurrentPage(1);
+                  }}
+                  options={itemsPerPageOptions}
+                  width="115px"
+                />
+              </div>
+            )}
 
             {/* Status Filter Pills (All / Active / Inactive) */}
             <div style={{

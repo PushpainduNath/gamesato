@@ -18,6 +18,12 @@ async function invalidateGameCache(slug: string) {
     if (dashboardKeys.length > 0) {
       await redis.del(...dashboardKeys);
     }
+
+    // Invalidate all admin games cache keys
+    const adminGamesKeys = await redis.keys('admin:games*');
+    if (adminGamesKeys.length > 0) {
+      await redis.del(...adminGamesKeys);
+    }
   } catch (err) {
     console.error('Error invalidating Redis cache:', err);
   }
