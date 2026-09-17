@@ -7,7 +7,7 @@ import { Shield, Eye, EyeOff } from 'lucide-react';
 import styles from './page.module.css';
 
 export default function AdminLoginPage() {
-  const { admin, token, setAdmin } = useAdminStore();
+  const { admin, token, setAdmin, logout } = useAdminStore();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,10 +20,26 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (token && admin) {
-      router.push('/admin');
+    if (typeof window !== 'undefined' && window.location.search.includes('expired=1')) {
+      setError('Your 24-hour admin session has expired. Please sign in again.');
     }
-  }, [token, admin, router]);
+
+    if (token && admin) {
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]));
+          if (payload.exp && payload.exp * 1000 < Date.now()) {
+            logout();
+            return;
+          }
+        }
+        router.push('/admin');
+      } catch (e) {
+        logout();
+      }
+    }
+  }, [token, admin, router, logout]);
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

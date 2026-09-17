@@ -128,8 +128,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     if (!token) {
       router.push('/admin/login');
+      return;
     }
-  }, [mounted, token, pathname, router]);
+
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]));
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+          logout();
+          router.push('/admin/login?expired=1');
+          return;
+        }
+      }
+    } catch (e) {
+      logout();
+      router.push('/admin/login');
+    }
+  }, [mounted, token, pathname, router, logout]);
 
   const handleFlushCache = async () => {
     if (!token) return;
