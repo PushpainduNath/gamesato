@@ -117,10 +117,10 @@ export default function SignupPage() {
 
         {error && <div className={styles.errorMsg}>{error}</div>}
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form} suppressHydrationWarning>
           <div className={styles.inputGroup}>
             <label htmlFor="name" className={styles.label}>Name</label>
-            <div className={styles.inputWrapper}>
+            <div className={styles.inputWrapper} suppressHydrationWarning>
               <input
                 id="name"
                 type="text"
@@ -129,13 +129,14 @@ export default function SignupPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={styles.input}
+                suppressHydrationWarning
               />
             </div>
           </div>
 
           <div className={styles.inputGroup}>
             <label htmlFor="email" className={styles.label}>Email</label>
-            <div className={styles.inputWrapper}>
+            <div className={styles.inputWrapper} suppressHydrationWarning>
               <input
                 id="email"
                 type="email"
@@ -144,13 +145,14 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={styles.input}
+                suppressHydrationWarning
               />
             </div>
           </div>
 
           <div className={styles.inputGroup}>
             <label htmlFor="password" className={styles.label}>Password</label>
-            <div className={styles.inputWrapper}>
+            <div className={styles.inputWrapper} suppressHydrationWarning>
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -159,6 +161,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className={styles.input}
+                suppressHydrationWarning
               />
               <button
                 type="button"

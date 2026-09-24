@@ -80,16 +80,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <Script
+      <head>
+        <script
           id="organization-schema"
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <Script
+        <script
           id="theme-initializer"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               try {
@@ -99,6 +97,8 @@ export default function RootLayout({
             `,
           }}
         />
+      </head>
+      <body>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-B3F3Z0WNME"
           strategy="afterInteractive"
