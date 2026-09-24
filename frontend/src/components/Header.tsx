@@ -746,6 +746,7 @@ function HeaderContent() {
               >
                 {authMode === 'login' ? (t('loginWithGoogle' as any) || 'Log In with Google') : (t('signupWithGoogle' as any) || 'Sign Up with Google')}
               </button>
+              {/* Temporarily hidden: Facebook & Discord login
               <button 
                 className={styles.providerBtn}
                 onClick={() => handleProviderLogin('facebook')}
@@ -758,6 +759,7 @@ function HeaderContent() {
               >
                 {authMode === 'login' ? 'Log In with Discord' : 'Sign Up with Discord'}
               </button>
+              */}
             </div>
 
             <div className={styles.modalFooterText}>
