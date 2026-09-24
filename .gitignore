@@ -42,3 +42,4 @@ Thumbs.db
 .vscode/
 ignore_assets/
 scratch/
+backend/uploads/thumbnails/

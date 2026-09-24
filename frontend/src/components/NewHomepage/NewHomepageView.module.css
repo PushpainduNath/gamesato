@@ -1,0 +1,33 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0b0c10;
+  color: #ffffff;
+  position: relative;
+  overflow-x: clip;
+}
+
+.bodyWrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  position: relative;
+  min-width: 0;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.categorySectionsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}

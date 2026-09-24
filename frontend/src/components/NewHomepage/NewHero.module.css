@@ -1,0 +1,134 @@
+.hero {
+  padding: 4px 28px 10px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.titleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a78bfa;
+}
+
+.badgeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #8b5cf6;
+  box-shadow: 0 0 6px #8b5cf6;
+}
+
+.headingRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.titleSubtitle {
+  color: #8b8e9b;
+  font-weight: 700;
+}
+
+.gameCountBadge {
+  font-size: 0.78rem;
+  color: #8b8e9b;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.gameCountNumber {
+  color: #a78bfa;
+  font-weight: 700;
+}
+
+.filterScrollWrapper {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filterScrollWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: 9999px;
+  font-size: 0.80rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #14161f;
+  color: #9496a1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.pill:hover {
+  background: #1c1f2c;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.pillActive {
+  background: #8b5cf6 !important;
+  color: #ffffff !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+}
+
+.pillActive:hover {
+  background: #7c3aed !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .hero {
+    padding: 4px 14px 10px 14px;
+    gap: 8px;
+  }
+
+  .title {
+    font-size: 1.35rem;
+  }
+
+  .gameCountBadge {
+    display: none;
+  }
+
+  .pill {
+    padding: 5px 11px;
+    font-size: 0.76rem;
+  }
+}

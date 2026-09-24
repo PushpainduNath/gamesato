@@ -1,6 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { query } from '@/lib/db';
+import { getImageUrl } from '@/lib/utils';
 import GamePlayer from '@/components/GamePlayer';
 
 interface PlayPageProps {
@@ -33,7 +34,7 @@ export default async function PlayPage(props: PlayPageProps) {
 
   try {
     const res = await query(
-      'SELECT id, title, slug, game_url, orientation FROM games WHERE slug = $1 AND status = \'published\'',
+      'SELECT id, title, slug, game_url, orientation, thumbnail_url FROM games WHERE slug = $1 AND status = \'published\'',
       [slug]
     );
     if (res.rows.length > 0) {
@@ -53,6 +54,7 @@ export default async function PlayPage(props: PlayPageProps) {
       gameSlug={game.slug} 
       gameUrl={game.game_url} 
       gameTitle={game.title} 
+      imageUrl={getImageUrl(game.thumbnail_url)}
       orientation={game.orientation || 'AUTO'}
     />
   );

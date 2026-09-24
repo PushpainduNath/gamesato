@@ -24,26 +24,31 @@ export const dynamic = 'force-dynamic';
 export default async function FavoritesPage() {
   const session = await getServerSession(authOptions);
 
-  // Redirect to home if user is not logged in
-  if (!session) {
-    redirect('/');
-  }
-
   let favorites: Game[] = [];
 
-  try {
-    const res = await query(
-      `SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.play_count,
-              (SELECT COUNT(*)::int FROM likes WHERE "gameId" = g.id) as likes_count
-       FROM games g
-       JOIN likes l ON g.id = l."gameId"
-       WHERE l."userId" = $1 AND g.status = 'published'
-       ORDER BY l.created_at DESC`,
-      [session.user.id]
-    );
-    favorites = res.rows;
-  } catch (err) {
-    console.error('Failed to query user favorites:', err);
+  let userId = (session?.user as any)?.id;
+  if (!userId && session?.user?.email) {
+    try {
+      const uRes = await query('SELECT id FROM users WHERE email = $1', [session.user.email]);
+      if (uRes.rows.length > 0) userId = uRes.rows[0].id;
+    } catch (_) {}
+  }
+
+  if (userId) {
+    try {
+      const res = await query(
+        `SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.play_count,
+                (SELECT COUNT(*)::int FROM likes WHERE "gameId" = g.id) as likes_count
+         FROM games g
+         JOIN likes l ON g.id = l."gameId"
+         WHERE l."userId" = $1 AND g.status = 'published'
+         ORDER BY l.created_at DESC`,
+        [userId]
+      );
+      favorites = res.rows;
+    } catch (err) {
+      console.error('Failed to query user favorites:', err);
+    }
   }
 
   return (
@@ -92,13 +97,15 @@ export default async function FavoritesPage() {
         <div className={`${styles.emptyState} glass`}>
           <Heart size={48} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
           <h3>
-            <Translate textKey="emptyFavorites" fallback="Your list is empty" />
+            {!session ? 'Sign In to View Favorites' : <Translate textKey="emptyFavorites" fallback="Your list is empty" />}
           </h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-            <Translate textKey="emptyFavoritesDesc" fallback="Click the Heart icon on any game detail page to save it here." />
+            {!session 
+              ? 'Log in to your Gamesato account to view and save your favorite games.' 
+              : <Translate textKey="emptyFavoritesDesc" fallback="Click the Heart icon on any game detail page to save it here." />}
           </p>
-          <Link href="/" className={styles.exploreBtn}>
-            <Translate textKey="exploreGames" fallback="Explore Games" />
+          <Link href={!session ? "/login" : "/"} className={styles.exploreBtn}>
+            {!session ? 'Sign In' : <Translate textKey="exploreGames" fallback="Explore Games" />}
           </Link>
         </div>
       )}

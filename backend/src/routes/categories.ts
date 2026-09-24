@@ -35,10 +35,10 @@ async function invalidateCache() {
 router.get('/', async (req, res) => {
   try {
     const queryText = `
-      SELECT c.id, c.name, c.slug, c.icon, c.content, c.status, c.meta_title, c.meta_description, c.meta_tags, COUNT(g.id)::int as games_count
+      SELECT c.id, c.name, c.slug, c.icon, c.content, c.status, c.meta_title, c.meta_description, c.meta_tags, c.faq, COUNT(g.id)::int as games_count
       FROM categories c
       LEFT JOIN games g ON LOWER(g.category) = LOWER(c.name) AND g.status = 'published'
-      GROUP BY c.id, c.name, c.slug, c.icon, c.content, c.status, c.meta_title, c.meta_description, c.meta_tags
+      GROUP BY c.id, c.name, c.slug, c.icon, c.content, c.status, c.meta_title, c.meta_description, c.meta_tags, c.faq
       ORDER BY c.name ASC
     `;
     const result = await pool.query(queryText);
@@ -146,6 +146,7 @@ router.put('/:id', authenticate, requirePermission('categories'), upload.single(
     const newMetaTitle = req.body.meta_title !== undefined ? req.body.meta_title : currentCategory.meta_title;
     const newMetaDescription = req.body.meta_description !== undefined ? req.body.meta_description : currentCategory.meta_description;
     const newMetaTags = req.body.meta_tags !== undefined ? req.body.meta_tags : currentCategory.meta_tags;
+    const newFaq = req.body.faq !== undefined ? req.body.faq : currentCategory.faq;
 
     const client = await pool.connect();
     try {
@@ -154,9 +155,9 @@ router.put('/:id', authenticate, requirePermission('categories'), upload.single(
       const updateRes = await client.query(
         `UPDATE categories 
          SET name = $1, slug = $2, icon = $3, content = $4, status = $5, 
-             meta_title = $6, meta_description = $7, meta_tags = $8, updated_at = CURRENT_TIMESTAMP 
-         WHERE id = $9 RETURNING *`,
-        [name, slug, finalIconUrl, newContent, newStatus, newMetaTitle, newMetaDescription, newMetaTags, id]
+             meta_title = $6, meta_description = $7, meta_tags = $8, faq = $9, updated_at = CURRENT_TIMESTAMP 
+         WHERE id = $10 RETURNING *`,
+        [name, slug, finalIconUrl, newContent, newStatus, newMetaTitle, newMetaDescription, newMetaTags, newFaq, id]
       );
 
       await client.query(

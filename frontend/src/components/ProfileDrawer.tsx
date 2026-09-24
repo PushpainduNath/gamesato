@@ -4,11 +4,35 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { ArrowLeft, ChevronLeft, X, Pencil, Clock, ChevronRight, Mail, Trash2, Loader2, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import {
+  ArrowLeft,
+  ChevronLeft,
+  X,
+  Pencil,
+  Clock,
+  ChevronRight,
+  Mail,
+  Trash2,
+  Loader2,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Settings,
+  User,
+  LogOut,
+  Sparkles,
+  Heart,
+  ExternalLink,
+  Phone,
+  Upload,
+  Check,
+} from 'lucide-react';
 import { useTranslation } from '@/store/useLanguageStore';
 import Translate from '@/components/Translate';
 import { useUiStore } from '@/store/useUiStore';
 import styles from './ProfileDrawer.module.css';
+
+const AVATAR_PRESETS = Array.from({ length: 20 }, (_, i) => `/avatars/memo_${i + 1}.png`);
 
 interface FavoriteGame {
   id: string;
@@ -27,6 +51,8 @@ export default function ProfileDrawer() {
   const { isProfileDrawerOpen, closeProfileDrawer } = useUiStore();
   const [favorites, setFavorites] = useState<FavoriteGame[]>([]);
   const [customAvatar, setCustomAvatar] = useState<string | null>(null);
+  const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
+  const [isAvatarSaving, setIsAvatarSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const favoritesCarouselRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +87,8 @@ export default function ProfileDrawer() {
     if (!isProfileDrawerOpen) {
       setCurrentView('profile');
       setEmailModalOpen(false);
+      setIsAvatarPickerOpen(false);
+      setIsAvatarSaving(false);
       setNewEmail('');
       setConfirmPassword('');
       setIsAgreed(false);
@@ -69,19 +97,61 @@ export default function ProfileDrawer() {
     }
   }, [isProfileDrawerOpen]);
 
-  // Fetch favorites
+  // Fetch & sync favorites (local likes + database likes)
   useEffect(() => {
-    if (session && isProfileDrawerOpen) {
-      fetch('/api/users/favorites')
-        .then((res) => res.json())
+    if (isProfileDrawerOpen) {
+      let localLikedIds: string[] = [];
+      try {
+        const raw = localStorage.getItem('gamesato_liked_games');
+        if (raw) localLikedIds = JSON.parse(raw);
+      } catch (_) {}
+
+      fetch('/api/users/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ localLikedIds }),
+      })
+        .then((res) => (res.ok ? res.json() : { favorites: [] }))
         .then((data) => {
-          if (data.favorites) {
+          if (Array.isArray(data.favorites)) {
             setFavorites(data.favorites);
           }
         })
-        .catch((err) => console.error('Failed to fetch favorites:', err));
+        .catch(() => {
+          fetch('/api/users/favorites')
+            .then((res) => res.json())
+            .then((data) => {
+              if (Array.isArray(data.favorites)) setFavorites(data.favorites);
+            })
+            .catch((err) => console.error('Failed to fetch favorites:', err));
+        });
     }
   }, [session, isProfileDrawerOpen]);
+
+  // Sync favorites dynamically when reactions are updated
+  useEffect(() => {
+    const handleReactionsUpdated = () => {
+      let localLikedIds: string[] = [];
+      try {
+        const raw = localStorage.getItem('gamesato_liked_games');
+        if (raw) localLikedIds = JSON.parse(raw);
+      } catch (_) {}
+
+      fetch('/api/users/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ localLikedIds }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data.favorites)) setFavorites(data.favorites);
+        })
+        .catch(() => {});
+    };
+
+    window.addEventListener('gamesato_reactions_updated', handleReactionsUpdated);
+    return () => window.removeEventListener('gamesato_reactions_updated', handleReactionsUpdated);
+  }, []);
 
   // Load avatar from localStorage
   useEffect(() => {
@@ -110,6 +180,7 @@ export default function ProfileDrawer() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsAvatarSaving(true);
       const reader = new FileReader();
       reader.onloadend = () => {
         const img = new Image();
@@ -178,7 +249,13 @@ export default function ProfileDrawer() {
               }
             } catch (err) {
               console.error('Failed to update avatar in database:', err);
+            } finally {
+              setIsAvatarSaving(false);
+              setIsAvatarPickerOpen(false);
+              if (fileInputRef.current) fileInputRef.current.value = '';
             }
+          } else {
+            setIsAvatarSaving(false);
           }
         };
         img.src = reader.result as string;
@@ -189,6 +266,64 @@ export default function ProfileDrawer() {
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSelectPresetAvatar = async (presetUrl: string) => {
+    setIsAvatarSaving(true);
+    setCustomAvatar(presetUrl);
+    if (session?.user?.id) {
+      localStorage.setItem(`customProfileAvatar_${session.user.id}`, presetUrl);
+    }
+    window.dispatchEvent(new Event('customProfileAvatarUpdated'));
+
+    try {
+      const res = await fetch('/api/users/update-avatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: presetUrl }),
+      });
+      if (res.ok) {
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            image: presetUrl,
+          },
+        });
+        window.dispatchEvent(new Event('customProfileAvatarUpdated'));
+      }
+    } catch (err) {
+      console.error('Failed to select preset avatar in drawer:', err);
+    } finally {
+      setIsAvatarSaving(false);
+      setIsAvatarPickerOpen(false);
+    }
+  };
+
+  const getProviderIcon = (provider?: string) => {
+    const p = (provider || 'google').toLowerCase();
+    if (p === 'facebook') {
+      return (
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="#1877F2">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      );
+    }
+    if (p === 'discord') {
+      return (
+        <svg viewBox="0 0 127.14 96.36" width="15" height="15" fill="#5865F2">
+          <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.5-5c1-.73,2-1.5,2.92-2.3a75.76,75.76,0,0,0,72.16,0c.93.8,1.91,1.57,2.92,2.3a68.43,68.43,0,0,1-10.5,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31.06-18.83C129.3,47.88,122.9,25.13,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+        </svg>
+      );
+    }
+    return (
+      <svg viewBox="0 0 24 24" width="15" height="15">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+      </svg>
+    );
   };
 
   const getLanguageLabel = () => {
@@ -378,11 +513,30 @@ export default function ProfileDrawer() {
               {/* Avatar Section */}
               <div className={styles.avatarSection}>
                 <div className={styles.avatarOuterWrapper}>
-                  <div className={styles.avatarGlowBorder}>
+                  <div 
+                    className={styles.avatarGlowBorder}
+                    onClick={() => setIsAvatarPickerOpen(true)}
+                    style={{ cursor: 'pointer' }}
+                    title="Change Avatar"
+                  >
                     <img src={avatarUrl} alt={session.user?.name || 'User'} className={styles.avatarImg} />
                   </div>
-                  <button className={styles.editBtn} onClick={triggerFileInput} aria-label="Edit Avatar">
-                    <Pencil size={14} color="currentColor" />
+
+                  {/* Provider icon badge on bottom-left */}
+                  {(session.user as any).provider && (session.user as any).provider !== 'credentials' && (
+                    <div className={styles.providerBadgeOverlay} title={(session.user as any).provider}>
+                      {getProviderIcon((session.user as any).provider)}
+                    </div>
+                  )}
+
+                  {/* Edit avatar button on bottom-right */}
+                  <button 
+                    type="button"
+                    className={styles.editBtn} 
+                    onClick={() => setIsAvatarPickerOpen(true)} 
+                    aria-label="Edit Avatar"
+                  >
+                    <Pencil size={13} color="currentColor" />
                   </button>
                   
                   <input 
@@ -393,13 +547,15 @@ export default function ProfileDrawer() {
                     style={{ display: 'none' }} 
                   />
                 </div>
-                <h2 className={styles.profileName}>{session.user?.name || 'Yuki Tsunoda'}</h2>
+                <h2 className={styles.profileName}>{session.user?.name || 'Gamer'}</h2>
               </div>
 
               {/* Favorites Slider Card */}
               <div className={`${styles.favoritesCard} glass`}>
                 <div className={styles.favoritesHeader}>
-                  <h3 className={styles.favoritesTitle}><Translate textKey="favoriteGames" fallback="Favorites" /></h3>
+                  <h3 className={styles.favoritesTitle}>
+                    <Translate textKey="favoriteGames" fallback="Favorite Games" />
+                  </h3>
                   {favorites.length > 0 && (
                     <div className={styles.carouselNavBtns}>
                       <button 
@@ -408,7 +564,7 @@ export default function ProfileDrawer() {
                         onClick={() => handleScrollNav('left')}
                         aria-label="Previous"
                       >
-                        <ChevronLeft size={16} />
+                        <ChevronLeft size={14} />
                       </button>
                       <button 
                         type="button" 
@@ -416,7 +572,7 @@ export default function ProfileDrawer() {
                         onClick={() => handleScrollNav('right')}
                         aria-label="Next"
                       >
-                        <ChevronRight size={16} />
+                        <ChevronRight size={14} />
                       </button>
                     </div>
                   )}
@@ -463,7 +619,7 @@ export default function ProfileDrawer() {
                 <div className={styles.optionItem} onClick={() => setCurrentView('settings')}>
                   <div className={styles.optionLeft}>
                     <div className={styles.optionIconWrapper}>
-                      <img src="/profile.webp" alt="Profile" className={styles.optionIcon} onError={(e) => { e.currentTarget.src = '/profile.svg'; }} />
+                      <User size={20} />
                     </div>
                     <span className={styles.optionText}><Translate textKey="accountSettings" fallback="Account settings" /></span>
                   </div>
@@ -478,7 +634,7 @@ export default function ProfileDrawer() {
                 >
                   <div className={styles.optionLeft}>
                     <div className={styles.optionIconWrapper}>
-                      <img src="/contact.webp" alt="Contact" className={styles.optionIcon} onError={(e) => { e.currentTarget.src = '/contact.svg'; }} />
+                      <Phone size={19} />
                     </div>
                     <span className={styles.optionText}><Translate textKey="contactSupport" fallback="Contact support" /></span>
                   </div>
@@ -494,7 +650,7 @@ export default function ProfileDrawer() {
                 >
                   <div className={styles.optionLeft}>
                     <div className={styles.optionIconWrapper}>
-                      <img src="/logout.webp" alt="Logout" className={styles.optionIcon} onError={(e) => { e.currentTarget.src = '/logout.svg'; }} />
+                      <LogOut size={19} />
                     </div>
                     <span className={styles.optionText}><Translate textKey="logOut" fallback="Log out" /></span>
                   </div>
@@ -527,11 +683,11 @@ export default function ProfileDrawer() {
               {/* Delete account option */}
               <div className={styles.optionItem} onClick={() => setCurrentView('delete')}>
                 <div className={styles.optionLeft}>
-                  <div className={styles.optionIconWrapper}>
-                    <Trash2 size={20} color="currentColor" className={styles.optionSvgIcon} />
+                  <div className={styles.optionIconWrapper} style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171' }}>
+                    <Trash2 size={18} />
                   </div>
                   <div className={styles.optionMeta}>
-                    <span className={styles.optionTitleText}>
+                    <span className={styles.optionTitleText} style={{ color: '#fca5a5' }}>
                       <Translate textKey="deleteAccountTitle" fallback="Delete account" />
                     </span>
                     <span className={styles.optionSubtext}>
@@ -792,6 +948,97 @@ export default function ProfileDrawer() {
             <Link href="/terms" onClick={closeProfileDrawer}>Terms & conditions</Link>
           </footer>
         </div>
+
+        {/* Avatar Selection Modal Overlay */}
+        {isAvatarPickerOpen && (
+          <div 
+            className={styles.avatarModalOverlay} 
+            onClick={() => !isAvatarSaving && setIsAvatarPickerOpen(false)}
+          >
+            <div 
+              className={styles.avatarModalContent} 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.avatarModalHeader}>
+                <div className={styles.avatarModalTitleWrap}>
+                  <h3 className={styles.avatarModalTitle}>
+                    <Translate textKey="chooseAvatar" fallback="Choose Avatar" />
+                  </h3>
+                  <p className={styles.avatarModalSubtitle}>
+                    Select a character or upload your own image
+                  </p>
+                </div>
+                <button 
+                  type="button"
+                  className={styles.avatarModalCloseBtn}
+                  onClick={() => !isAvatarSaving && setIsAvatarPickerOpen(false)}
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className={styles.avatarModalBody}>
+                {/* Upload Image Option */}
+                <button 
+                  type="button" 
+                  className={styles.avatarUploadBtn}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isAvatarSaving}
+                >
+                  <div className={styles.avatarUploadIconWrap}>
+                    <Upload size={18} />
+                  </div>
+                  <div className={styles.avatarUploadTextWrap}>
+                    <span className={styles.avatarUploadMainText}>
+                      <Translate textKey="uploadCustomImage" fallback="Upload Your Image" />
+                    </span>
+                    <span className={styles.avatarUploadSubText}>
+                      PNG, JPG or WebP (square recommended)
+                    </span>
+                  </div>
+                  {isAvatarSaving && (
+                    <Loader2 size={18} className={styles.avatarSpinner} />
+                  )}
+                </button>
+
+                {/* Divider */}
+                <div className={styles.avatarDivider}>
+                  <span><Translate textKey="orChooseAvatar" fallback="Or choose an avatar" /></span>
+                </div>
+
+                {/* Preset Avatars Grid */}
+                <div className={styles.avatarPresetsGrid}>
+                  {AVATAR_PRESETS.map((preset, index) => {
+                    const isSelected = avatarUrl === preset;
+                    return (
+                      <button
+                        key={preset}
+                        type="button"
+                        className={`${styles.presetAvatarBtn} ${isSelected ? styles.presetAvatarSelected : ''}`}
+                        onClick={() => handleSelectPresetAvatar(preset)}
+                        disabled={isAvatarSaving}
+                        aria-label={`Avatar option ${index + 1}`}
+                      >
+                        <img 
+                          src={preset} 
+                          alt={`Avatar ${index + 1}`} 
+                          className={styles.presetAvatarImg}
+                          loading="lazy" 
+                        />
+                        {isSelected && (
+                          <div className={styles.presetSelectedBadge}>
+                            <Check size={10} strokeWidth={3} />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
     </div>

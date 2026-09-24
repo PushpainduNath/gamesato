@@ -40,6 +40,8 @@ interface Game {
   newGameBothUrl?: string | null;
   gamePageBothUrl?: string | null;
   orientation?: 'LANDSCAPE' | 'PORTRAIT' | 'AUTO' | string;
+  targetDevice?: 'ALL' | 'MOBILE' | 'DESKTOP' | string;
+  target_device?: 'ALL' | 'MOBILE' | 'DESKTOP' | string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -502,6 +504,7 @@ export default function AdminGamesManager() {
   const [howToPlay, setHowToPlay] = useState('');
   const [createdAt, setCreatedAt] = useState(new Date().toISOString().slice(0, 16));
   const [orientation, setOrientation] = useState<'AUTO' | 'LANDSCAPE' | 'PORTRAIT'>('AUTO');
+  const [targetDevice, setTargetDevice] = useState<'ALL' | 'MOBILE' | 'DESKTOP'>('ALL');
 
   const resetUploadForm = () => {
     setTitle('');
@@ -514,6 +517,7 @@ export default function AdminGamesManager() {
     setEmbedFormat('url');
     setEmbedUrl('');
     setOrientation('AUTO');
+    setTargetDevice('ALL');
     setZipFile(null);
     setThumbnailFile(null);
     setFeaturedDesktopFile(null);
@@ -538,6 +542,7 @@ export default function AdminGamesManager() {
   const [editEmbedFormat, setEditEmbedFormat] = useState<'url' | 'iframe'>('url');
   const [editEmbedUrl, setEditEmbedUrl] = useState('');
   const [editOrientation, setEditOrientation] = useState<'AUTO' | 'LANDSCAPE' | 'PORTRAIT'>('AUTO');
+  const [editTargetDevice, setEditTargetDevice] = useState<'ALL' | 'MOBILE' | 'DESKTOP'>('ALL');
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editGameId, setEditGameId] = useState('');
   const [editTitle, setEditTitle] = useState('');
@@ -929,6 +934,7 @@ export default function AdminGamesManager() {
       formData.append('likesCount', likesCount.toString());
       formData.append('playCount', playCount.toString());
       formData.append('orientation', orientation);
+      formData.append('target_device', targetDevice);
 
       const res = await uploadFormWithProgress(
         `${backendUrl}/api/games`,
@@ -992,6 +998,8 @@ export default function AdminGamesManager() {
     setEditHowToPlay(game.howToPlay || game.how_to_play || '');
     setEditStatus(game.status || 'published');
     setEditOrientation(((game.orientation || (game as any).orientation || 'AUTO').toUpperCase()) as any);
+    const rawDev = ((game.targetDevice || (game as any).target_device || 'ALL').toUpperCase());
+    setEditTargetDevice((rawDev === 'MOBILE' || rawDev === 'DESKTOP') ? rawDev : 'ALL');
     const initialUrl = game.gameUrl || game.game_url || '';
     const isExt = initialUrl.startsWith('http://') || initialUrl.startsWith('https://') || initialUrl.startsWith('//');
     setEditSourceType(isExt ? 'embed' : 'zip');
@@ -1029,6 +1037,10 @@ export default function AdminGamesManager() {
         if (freshGame.meta_title) setEditMetaTitle(freshGame.meta_title);
         if (freshGame.meta_description) setEditMetaDescription(freshGame.meta_description);
         if (freshGame.meta_tags) setEditMetaTags(freshGame.meta_tags);
+        if (freshGame.target_device || freshGame.targetDevice) {
+          const freshDev = (freshGame.target_device || freshGame.targetDevice).toUpperCase();
+          setEditTargetDevice((freshDev === 'MOBILE' || freshDev === 'DESKTOP') ? freshDev : 'ALL');
+        }
         const freshUrl = freshGame.game_url || freshGame.gameUrl || '';
         if (freshUrl) {
           const freshExt = freshUrl.startsWith('http://') || freshUrl.startsWith('https://') || freshUrl.startsWith('//');
@@ -1139,6 +1151,7 @@ export default function AdminGamesManager() {
       formData.append('likesCount', editLikesCount.toString());
       formData.append('playCount', editPlayCount.toString());
       formData.append('orientation', editOrientation);
+      formData.append('target_device', editTargetDevice);
 
       const res = await uploadFormWithProgress(
         `${backendUrl}/api/games/${editGameId}`,
@@ -2080,7 +2093,25 @@ export default function AdminGamesManager() {
                         </div>
 
                         {/* Dedicated Fixed-Width Aligned Badge Container */}
-                        <div style={{ width: '56px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, marginLeft: 'auto' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', flexShrink: 0, marginLeft: 'auto' }}>
+                          {(() => {
+                            const dev = (game.targetDevice || (game as any).target_device || 'ALL').toUpperCase();
+                            if (dev === 'MOBILE') {
+                              return (
+                                <span title="Mobile Priority" style={{ fontSize: '0.65rem', padding: '2px 5px', borderRadius: '4px', background: 'rgba(139, 92, 246, 0.2)', color: '#c4b5fd', border: '1px solid rgba(139, 92, 246, 0.4)', fontWeight: 700, display: 'inline-block' }}>
+                                  📱 MOB
+                                </span>
+                              );
+                            }
+                            if (dev === 'DESKTOP') {
+                              return (
+                                <span title="Desktop Priority" style={{ fontSize: '0.65rem', padding: '2px 5px', borderRadius: '4px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)', fontWeight: 700, display: 'inline-block' }}>
+                                  🖥️ PC
+                                </span>
+                              );
+                            }
+                            return null;
+                          })()}
                           {(() => {
                             const url = (game.gameUrl || (game as any).game_url || '').trim();
                             const hasBuild = (game as any).hasBuild;
@@ -2584,6 +2615,84 @@ export default function AdminGamesManager() {
                       }}
                     >
                       🔄 Auto / Any
+                    </button>
+                  </div>
+                </div>
+
+                {/* Device Priority Control */}
+                <div className={styles.figmaFormGroupFull}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label className={styles.figmaLabel} style={{ marginBottom: 0 }}>Device Priority</label>
+                    <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                      Choose which device view highlights this game first
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setTargetDevice('MOBILE')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: targetDevice === 'MOBILE' ? '2px solid #8b5cf6' : '1px solid rgba(255,255,255,0.15)',
+                        background: targetDevice === 'MOBILE' ? 'rgba(139, 92, 246, 0.22)' : 'rgba(0,0,0,0.2)',
+                        color: targetDevice === 'MOBILE' ? '#ffffff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      📱 Mobile Priority
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTargetDevice('DESKTOP')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: targetDevice === 'DESKTOP' ? '2px solid #38bdf8' : '1px solid rgba(255,255,255,0.15)',
+                        background: targetDevice === 'DESKTOP' ? 'rgba(56, 189, 248, 0.22)' : 'rgba(0,0,0,0.2)',
+                        color: targetDevice === 'DESKTOP' ? '#ffffff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🖥️ Desktop Priority
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTargetDevice('ALL')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: targetDevice === 'ALL' ? '2px solid #10b981' : '1px solid rgba(255,255,255,0.15)',
+                        background: targetDevice === 'ALL' ? 'rgba(16, 185, 129, 0.22)' : 'rgba(0,0,0,0.2)',
+                        color: targetDevice === 'ALL' ? '#ffffff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🌐 All Devices (Both)
                     </button>
                   </div>
                 </div>
@@ -3318,6 +3427,84 @@ export default function AdminGamesManager() {
                       }}
                     >
                       🔄 Auto / Any
+                    </button>
+                  </div>
+                </div>
+
+                {/* Device Priority Control */}
+                <div className={styles.figmaFormGroupFull}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label className={styles.figmaLabel} style={{ marginBottom: 0 }}>Device Priority</label>
+                    <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                      Choose which device view highlights this game first
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setEditTargetDevice('MOBILE')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: editTargetDevice === 'MOBILE' ? '2px solid #8b5cf6' : '1px solid rgba(255,255,255,0.15)',
+                        background: editTargetDevice === 'MOBILE' ? 'rgba(139, 92, 246, 0.22)' : 'rgba(0,0,0,0.2)',
+                        color: editTargetDevice === 'MOBILE' ? '#ffffff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      📱 Mobile Priority
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditTargetDevice('DESKTOP')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: editTargetDevice === 'DESKTOP' ? '2px solid #38bdf8' : '1px solid rgba(255,255,255,0.15)',
+                        background: editTargetDevice === 'DESKTOP' ? 'rgba(56, 189, 248, 0.22)' : 'rgba(0,0,0,0.2)',
+                        color: editTargetDevice === 'DESKTOP' ? '#ffffff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🖥️ Desktop Priority
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditTargetDevice('ALL')}
+                      style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: editTargetDevice === 'ALL' ? '2px solid #10b981' : '1px solid rgba(255,255,255,0.15)',
+                        background: editTargetDevice === 'ALL' ? 'rgba(16, 185, 129, 0.22)' : 'rgba(0,0,0,0.2)',
+                        color: editTargetDevice === 'ALL' ? '#ffffff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      🌐 All Devices (Both)
                     </button>
                   </div>
                 </div>

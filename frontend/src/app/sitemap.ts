@@ -64,7 +64,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let categoryPages: MetadataRoute.Sitemap = [];
   try {
-    const res = await query("SELECT slug FROM categories");
+    const res = await query(`
+      SELECT c.slug 
+      FROM categories c
+      INNER JOIN games g ON (LOWER(g.category) = LOWER(c.name) OR LOWER(g.category) = LOWER(c.slug)) AND g.status = 'published'
+      GROUP BY c.id, c.slug
+      HAVING COUNT(g.id) > 0
+    `);
     if (res.rows && res.rows.length > 0) {
       categoryPages = res.rows.map((cat: any) => ({
         url: `${baseUrl}/category/${cat.slug}`,

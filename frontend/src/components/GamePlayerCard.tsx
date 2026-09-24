@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Play, Heart, Share2, ThumbsUp, Maximize, Minimize, X, Wrench } from 'lucide-react';
+import { Play, Heart, Share2, ThumbsUp, ThumbsDown, Maximize, Minimize, Wrench } from 'lucide-react';
+import { useGamePlayTracker, toggleLocalReaction, getLocalReactions } from '@/lib/usePlayHistory';
 import OrientationRotateOverlay from './OrientationRotateOverlay';
+import GameLoadingOverlay from './GameLoadingOverlay';
 import styles from './GamePlayerCard.module.css';
 
 interface GamePlayerCardProps {
@@ -15,6 +17,7 @@ interface GamePlayerCardProps {
   gameUrl: string;
   initialLikes: number;
   orientation?: 'LANDSCAPE' | 'PORTRAIT' | 'AUTO' | string;
+  category?: string;
 }
 
 export default function GamePlayerCard({
@@ -25,18 +28,44 @@ export default function GamePlayerCard({
   gameUrl,
   initialLikes,
   orientation = 'AUTO',
+  category = 'Games',
 }: GamePlayerCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
   
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
+  const [dislikes, setDislikes] = useState(Math.max(10, Math.floor(initialLikes / 160)));
+  const [isDisliked, setIsDisliked] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
 
-  // Playing, Fullscreen, Maintenance, and Orientation States
-  const [isPlaying, setIsPlaying] = useState(false);
+  const formatCount = (count: number) => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1).replace(/\.0$/, '')}M`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}K`;
+    }
+    return count.toString();
+  };
+
+  // Playing, Fullscreen, Maintenance, and Orientation States (Autoplays directly on page load)
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] = useState(true);
+
+  // Track active gameplay time in the background
+  useGamePlayTracker(
+    {
+      id: gameId,
+      slug: gameSlug,
+      title: gameTitle,
+      thumbnail_url: imageUrl,
+      category: 'Games',
+    },
+    isPlaying
+  );
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [sessionId, setSessionId] = useState('');
@@ -69,6 +98,16 @@ export default function GamePlayerCard({
 
   // Sync likes and check if user has liked this game
   useEffect(() => {
+    // 1. Check local guest reaction first
+    const localReactions = getLocalReactions();
+    if (localReactions[gameId] === 'like') {
+      setIsLiked(true);
+      setIsDisliked(false);
+    } else if (localReactions[gameId] === 'dislike') {
+      setIsLiked(false);
+      setIsDisliked(true);
+    }
+
     async function fetchStatus() {
       try {
         const res = await fetch(`/api/games/slug/${gameSlug}`, {
@@ -77,14 +116,34 @@ export default function GamePlayerCard({
         if (res.ok) {
           const data = await res.json();
           setLikes(data.likesCount ?? initialLikes);
-          setIsLiked(data.isLiked ?? false);
+          if (data.isLiked) {
+            setIsLiked(true);
+            setIsDisliked(false);
+          }
+          setDislikes(Math.max(10, Math.floor((data.likesCount ?? initialLikes) / 160)));
         }
       } catch (err) {
         console.error('Failed to fetch status for game player card:', err);
       }
     }
     fetchStatus();
-  }, [gameSlug, session, backendUrl, initialLikes]);
+
+    const handleReactionsUpdated = () => {
+      const updated = getLocalReactions();
+      if (updated[gameId] === 'like') {
+        setIsLiked(true);
+        setIsDisliked(false);
+      } else if (updated[gameId] === 'dislike') {
+        setIsLiked(false);
+        setIsDisliked(true);
+      } else {
+        setIsLiked(false);
+        setIsDisliked(false);
+      }
+    };
+    window.addEventListener('gamesato_reactions_updated', handleReactionsUpdated);
+    return () => window.removeEventListener('gamesato_reactions_updated', handleReactionsUpdated);
+  }, [gameId, gameSlug, session, backendUrl, initialLikes]);
 
   // Check if game files are accessible before or during play
   const verifyGameFile = async () => {
@@ -172,12 +231,14 @@ export default function GamePlayerCard({
 
   const handlePlayClick = () => {
     setIsPlaying(true);
+    setIsLoadingOverlayVisible(true);
   };
 
   const handleExitPlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setIsPlaying(false);
     setIsMaintenance(false);
+    setIsLoadingOverlayVisible(true);
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(err => console.error(err));
     }
@@ -202,6 +263,7 @@ export default function GamePlayerCard({
   const handleFullscreenPlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsPlaying(true);
+    setIsLoadingOverlayVisible(true);
     // Request fullscreen after state change
     setTimeout(() => {
       const element = cardRef.current;
@@ -213,28 +275,39 @@ export default function GamePlayerCard({
     }, 50);
   };
 
-  const handleLikeClick = async (e: React.MouseEvent) => {
+  const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!session) {
-      setShowAuthWarning(true);
-      setTimeout(() => setShowAuthWarning(false), 3000);
-      return;
+    const result = toggleLocalReaction(gameId, 'like');
+    setIsLiked(result.liked);
+    setIsDisliked(result.disliked);
+    setLikes((prev) => (result.liked ? prev + 1 : Math.max(0, prev - 1)));
+
+    if (result.liked && isDisliked) {
+      setDislikes((prev) => Math.max(0, prev - 1));
     }
 
-    try {
-      const res = await fetch(`/api/games/${gameId}/like`, {
+    // Send async backend update (guest or authenticated)
+    fetch(`/api/games/${gameId}/like`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    }).catch(() => {});
+  };
+
+  const handleDislikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const result = toggleLocalReaction(gameId, 'dislike');
+    if (isLiked) {
+      setLikes((prev) => Math.max(0, prev - 1));
+      fetch(`/api/games/${gameId}/like`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setIsLiked(data.liked);
-        setLikes((prev) => (data.liked ? prev + 1 : Math.max(0, prev - 1)));
-      }
-    } catch (err) {
-      console.error('Failed to toggle like:', err);
+      }).catch(() => {});
     }
+    setIsLiked(result.liked);
+    setIsDisliked(result.disliked);
+    setDislikes((prev) => (result.disliked ? prev + 1 : Math.max(0, prev - 1)));
   };
 
   const handleShareClick = (e: React.MouseEvent) => {
@@ -284,40 +357,40 @@ export default function GamePlayerCard({
         />
       )}
 
-      {isPlaying ? (
-        <div className={styles.iframeContainer}>
-          {isMaintenance ? (
-            <div className={styles.maintenanceContainer}>
-              <div className={styles.maintenanceCard}>
-                <div className={styles.iconPulseWrapper}>
-                  <Wrench size={32} />
-                </div>
-                <h3 className={styles.maintenanceTitle}>Game Under Maintenance</h3>
-                <p className={styles.maintenanceDescription}>
-                  The game files for this title are currently being updated or under maintenance. Please check back soon!
-                </p>
-                <div className={styles.maintenanceActions}>
-                  <button className={styles.exploreBtn} onClick={() => router.push('/')}>
-                    Explore Other Games
-                  </button>
-                  <button className={styles.exitBtn} onClick={handleExitPlay}>
-                    Back to Info
-                  </button>
-                </div>
+      {/* Main 16:9 Game Screen Viewport Area */}
+      <div className={styles.gameViewArea}>
+        {/* Gamesato 5-Second Animated Loading Screen Overlay */}
+        {isLoadingOverlayVisible && !isMaintenance && (
+          <GameLoadingOverlay
+            gameTitle={gameTitle}
+            imageUrl={imageUrl}
+            durationMs={5000}
+            onComplete={() => setIsLoadingOverlayVisible(false)}
+          />
+        )}
+
+        {isMaintenance ? (
+          <div className={styles.maintenanceContainer}>
+            <div className={styles.maintenanceCard}>
+              <div className={styles.iconPulseWrapper}>
+                <Wrench size={32} />
+              </div>
+              <h3 className={styles.maintenanceTitle}>Game Under Maintenance</h3>
+              <p className={styles.maintenanceDescription}>
+                The game files for this title are currently being updated or under maintenance. Please check back soon!
+              </p>
+              <div className={styles.maintenanceActions}>
+                <button className={styles.exploreBtn} onClick={() => router.push('/')}>
+                  Explore Other Games
+                </button>
+                <button className={styles.exitBtn} onClick={handleExitPlay}>
+                  Back to Info
+                </button>
               </div>
             </div>
-          ) : isDesktopPortrait ? (
-            <div className={styles.portraitWrapper}>
-              <iframe
-                src={iframeSrc}
-                title={gameTitle}
-                className={styles.iframe}
-                allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
-                allowFullScreen
-                referrerPolicy="no-referrer"
-              />
-            </div>
-          ) : (
+          </div>
+        ) : isDesktopPortrait ? (
+          <div className={styles.portraitWrapper}>
             <iframe
               src={iframeSrc}
               title={gameTitle}
@@ -326,83 +399,95 @@ export default function GamePlayerCard({
               allowFullScreen
               referrerPolicy="no-referrer"
             />
-          )}
-
-          {/* Floating exit control in top-right */}
-          <div className={styles.exitControl}>
-            <button onClick={handleExitPlay} className={styles.floatingBtn} title="Exit Game">
-              <X size={18} />
-            </button>
           </div>
+        ) : (
+          <iframe
+            src={iframeSrc}
+            title={gameTitle}
+            className={styles.iframe}
+            allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
+            allowFullScreen
+            referrerPolicy="no-referrer"
+          />
+        )}
+      </div>
 
-          {/* Floating fullscreen control in bottom-right */}
-          {!isMaintenance && (
-            <div className={styles.fullscreenControl}>
-              <button onClick={toggleFullscreen} className={styles.floatingBtn} title="Toggle Fullscreen">
-                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
-              </button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className={styles.previewContainer} onClick={handlePlayClick}>
-          {/* Thumbnail Image - Full 16:9 unzoomed view like landscape games */}
-          <img src={imageUrl} alt={gameTitle} className={styles.thumbnail} />
-          
-          {/* Dark tint overlay */}
-          <div className={styles.darkOverlay} />
-
-          {/* Center Play Button Wrapper */}
-          <div className={styles.playButtonWrapper}>
-            <img src="/PlayButton.svg" alt="Play Now" className={styles.playButtonImage} />
-            <span className={styles.playNowText} style={{ color: '#ffffff' }}>Play Now</span>
-          </div>
-
-          {/* Share Toast Feedback */}
-          {shareCopied && (
-            <div className={styles.toast}>Link Copied!</div>
-          )}
-
-          {/* Auth Warning Toast */}
-          {showAuthWarning && (
-            <div className={styles.toast}>Please login to like!</div>
-          )}
-
-          {/* Bottom Controls Overlay */}
-          <div className={styles.bottomControls} onClick={(e) => e.stopPropagation()}>
-            {/* Left Side */}
-            <div className={styles.controlGroup}>
-              <button onClick={handlePlayClick} className={styles.actionBtn} aria-label="Play">
-                <Play size={18} fill="#ffffff" stroke="#ffffff" />
-              </button>
-            </div>
-
-            {/* Right Side */}
-            <div className={styles.controlGroup}>
-              <button 
-                onClick={handleLikeClick} 
-                className={`${styles.actionBtn} ${isLiked ? styles.activeHeart : ''}`} 
-                aria-label="Like"
-              >
-                <Heart size={18} fill={isLiked ? '#ff4b82' : 'none'} stroke={isLiked ? '#ff4b82' : '#ffffff'} />
-              </button>
-
-              <button onClick={handleFullscreenPlay} className={styles.actionBtn} aria-label="Play Fullscreen" title="Play Fullscreen">
-                <Maximize size={18} />
-              </button>
-              
-              <button onClick={handleShareClick} className={styles.actionBtn} aria-label="Share">
-                <Share2 size={18} />
-              </button>
-
-              <div className={styles.statItem}>
-                <ThumbsUp size={16} fill="#14b8a6" stroke="#14b8a6" />
-                <span className={styles.statVal} style={{ color: '#ffffff' }}>{likes}</span>
-              </div>
-            </div>
+      {/* Poki-Style Gamesato Theme Bottom Player Bar */}
+      <div className={styles.playerBottomBar}>
+        <div className={styles.barLeft}>
+          <img src={imageUrl} alt={gameTitle} className={styles.barThumb} />
+          <div className={styles.barMeta}>
+            <span className={styles.barTitle} title={gameTitle}>
+              {gameTitle}
+            </span>
+            <span className={styles.barSubtitle}>
+              by Gamesato • {category || 'Free Online Game'}
+            </span>
           </div>
         </div>
-      )}
+
+        <div className={styles.barRight}>
+          {/* Like Button */}
+          <button
+            type="button"
+            className={`${styles.barBtn} ${isLiked ? styles.barBtnLikeActive : ''}`}
+            onClick={handleLikeClick}
+            title={isLiked ? "Unlike game" : "Like game"}
+            aria-label="Like game"
+          >
+            <ThumbsUp size={19} fill={isLiked ? '#10b981' : 'none'} stroke={isLiked ? '#10b981' : 'currentColor'} />
+            <span className={styles.barBtnCount}>{formatCount(likes)}</span>
+          </button>
+
+          {/* Dislike Button */}
+          <button
+            type="button"
+            className={`${styles.barBtn} ${isDisliked ? styles.barBtnDislikeActive : ''}`}
+            onClick={handleDislikeClick}
+            title="Dislike game"
+            aria-label="Dislike game"
+          >
+            <ThumbsDown size={19} fill={isDisliked ? '#ef4444' : 'none'} stroke={isDisliked ? '#ef4444' : 'currentColor'} />
+            <span className={styles.barBtnCount}>{formatCount(dislikes)}</span>
+          </button>
+
+          {/* Favorite Heart Button */}
+          <button
+            type="button"
+            className={`${styles.barBtn} ${isLiked ? styles.barBtnHeartActive : ''}`}
+            onClick={handleLikeClick}
+            title={isLiked ? "Remove from Favorites" : "Add to Favorites"}
+            aria-label="Favorite game"
+          >
+            <Heart size={19} fill={isLiked ? '#ff4b82' : 'none'} stroke={isLiked ? '#ff4b82' : 'currentColor'} />
+            <span className={styles.barBtnCount}>{isLiked ? 'Saved' : 'Save'}</span>
+          </button>
+
+          {/* Share Button */}
+          <button
+            type="button"
+            className={styles.barBtn}
+            onClick={handleShareClick}
+            title="Share game link"
+            aria-label="Share game"
+          >
+            <Share2 size={19} />
+            <span className={styles.barBtnCount}>{shareCopied ? 'Copied!' : 'Share'}</span>
+          </button>
+
+          {/* Fullscreen Button */}
+          <button
+            type="button"
+            className={styles.barBtn}
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            aria-label="Toggle Fullscreen"
+          >
+            {isFullscreen ? <Minimize size={19} /> : <Maximize size={19} />}
+            <span className={styles.barBtnCount}>{isFullscreen ? 'Exit' : 'Full'}</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

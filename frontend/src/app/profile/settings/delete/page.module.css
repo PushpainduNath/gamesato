@@ -1,263 +1,270 @@
-.deleteLayout {
+/* ==========================================================================
+   DELETE ACCOUNT PAGE
+   Poki / Cyber Dark Danger Zone Theme
+   ========================================================================== */
+
+.container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh !important;
-  flex: 1;
-  background: transparent !important;
-  color: white;
-  box-sizing: border-box;
-}
-
-/* Header matches settings */
-.settingsHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1rem;
-  background: transparent;
-  border-bottom: 1px solid rgba(20, 184, 166, 0.18);
-  box-sizing: border-box;
-}
-
-.headerLeft {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.backBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 300;
-  padding: 0 0.5rem 0.2rem 0.2rem;
-  font-family: monospace, var(--font-sans);
-  transition: opacity 0.2s ease;
-}
-
-.backBtn:hover {
-  opacity: 0.7;
-}
-
-.headerBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 50%;
-  transition: background-color 0.2s ease;
-}
-
-.headerBtn:hover {
-  background: rgba(20, 184, 166, 0.15);
-}
-
-.headerTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-  font-family: var(--font-sans);
-  letter-spacing: -0.01em;
-}
-
-/* Content Area */
-.contentContainer {
+  gap: 20px;
   width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 1.5rem 1.25rem;
-  box-sizing: border-box;
+}
+
+.dangerCard {
+  background: linear-gradient(135deg, rgba(34, 18, 26, 0.92) 0%, rgba(18, 12, 20, 0.97) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 22px;
+  padding: 32px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.6), 0 0 24px rgba(239, 68, 68, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
-.warningText {
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 1.5rem 0;
-  font-family: var(--font-sans);
-}
-
-.bodyCardWrapper {
-  width: 100%;
-  margin-bottom: 1.5rem;
-}
-
-.bodyCardImg {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 12px;
-}
-
-/* Deletion Form */
-.deletionForm {
+.cardHeader {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 18px;
 }
 
-/* Custom Checkbox */
-.checkboxLabel {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-  cursor: pointer;
-  user-select: none;
-}
-
-.hiddenCheckbox {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.customCheckbox {
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid rgba(20, 184, 166, 0.3);
-  border-radius: 4px;
-  background: rgba(4, 23, 22, 0.6);
+.dangerIconCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.3);
+}
+
+.title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 0.86rem;
+  color: #fca5a5;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Warnings List */
+.warningsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.warningItem {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.warningItemIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.warningItemText {
+  flex: 1;
+}
+
+.warningItemTitle {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #fca5a5;
+  margin: 0 0 4px;
+}
+
+.warningItemDesc {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.errorAlert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 12px;
+  color: #fca5a5;
+  font-size: 0.86rem;
+}
+
+/* Checkbox */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.customCheckbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
 
 .checkboxChecked {
-  border-color: #2dd4bf;
-  background: #14b8a6;
-}
-
-.checkboxChecked::after {
-  content: "";
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-  margin-bottom: 2px;
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
 }
 
 .checkboxText {
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.8);
-  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #cbd5e1;
+  line-height: 1.4;
 }
 
-/* Password Input */
+/* Inputs */
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 8px;
 }
 
 .inputLabel {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: white;
-  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #fca5a5;
 }
 
-.passwordInput {
-  background: rgba(4, 23, 22, 0.75) !important;
-  border: 1px solid rgba(20, 184, 166, 0.3) !important;
-  border-radius: 12px !important;
-  padding: 0.85rem 1rem;
-  color: white !important;
-  font-size: 0.9rem;
-  outline: none;
-  font-family: var(--font-sans);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.passwordInput:focus {
-  border-color: #2dd4bf !important;
-  box-shadow: 0 0 12px rgba(20, 184, 166, 0.3) !important;
-}
-
-.passwordInput::placeholder {
-  color: #94a3b8;
-}
-
-.errorMessage {
-  font-size: 0.8rem;
+.requiredStar {
   color: #ef4444;
-  margin: -0.5rem 0 0 0;
-  font-family: var(--font-sans);
 }
 
-/* Delete Button Submit using SVG */
-.deleteButtonSubmit {
-  background: transparent;
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.textInput {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  font-size: 0.92rem;
+  color: #ffffff;
+  font-family: inherit;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-sizing: border-box;
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+}
+
+.textInput::placeholder {
+  color: #475569;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 12px;
+  background: none;
   border: none;
+  color: #64748b;
   cursor: pointer;
-  padding: 0;
-  margin-top: 1rem;
-  width: 100%;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: color 0.18s ease;
 }
 
-.deleteButtonSubmit:hover:not(:disabled) {
-  transform: scale(1.02);
+.eyeBtn:hover {
+  color: #fca5a5;
 }
 
-.deleteButtonSubmit:active:not(:disabled) {
-  transform: scale(0.98);
+/* Form Actions */
+.formActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
 }
 
-.deleteButtonSubmit:disabled {
-  opacity: 0.45;
+.dangerBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.dangerBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(239, 68, 68, 0.55);
+}
+
+.dangerBtn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-}
-
-.deleteBtnImg {
-  width: 100%;
-  max-width: 380px;
-  height: auto;
-  display: block;
-}
-
-/* Loading state */
-.loadingBtnState {
-  background: #ef4444;
-  color: white;
-  border-radius: 28px; /* Circular rounded like the button SVG */
-  padding: 0.85rem 2rem;
-  font-weight: 700;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  width: 100%;
-  max-width: 380px;
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
-  color: #14b8a6;
 }
 
 .btnSpinner {
@@ -265,157 +272,71 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Loading & Unauthorized States styling */
-.loadingContainer,
-.unauthorizedContainer {
-  display: flex;
-  flex-direction: column;
+.cancelBtn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: #000000 !important;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-.unauthorizedContainer h3 {
-  font-size: 1.25rem;
-  color: #ef4444;
-  margin: 0 0 0.5rem 0;
-  font-family: var(--font-sans);
-}
-
-.unauthorizedContainer p {
-  color: #94a3b8;
-  font-size: 0.9rem;
-  margin: 0 0 1.5rem 0;
-  font-family: var(--font-sans);
-}
-
-.backHomeBtn {
-  background: #14b8a6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  font-family: var(--font-sans);
-  transition: background-color 0.2s ease;
-}
-
-.backHomeBtn:hover {
-  background: #2563eb;
-}
-
-.warningCardGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.warningCardItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 1rem;
-  box-sizing: border-box;
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.18s ease;
 }
 
-.warningCardIconWrapper {
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Bottom Nav */
+.bottomNav {
   display: flex;
+}
+
+.backLink {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  background: rgba(239, 68, 68, 0.12);
-  border-radius: 8px;
-  padding: 6px;
-  flex-shrink: 0;
+  gap: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 500;
+  transition: color 0.18s ease;
 }
 
-.warningCardContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+.backLink:hover {
+  color: #c4b5fd;
 }
 
-.warningCardTitle {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-  font-family: var(--font-sans);
-}
+@media (max-width: 640px) {
+  .dangerCard {
+    padding: 22px 18px;
+  }
 
-.warningCardDesc {
-  font-size: 0.82rem;
-  line-height: 1.35;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-  font-family: var(--font-sans);
-}
+  .cardHeader {
+    flex-direction: column;
+    text-align: center;
+  }
 
-/* Light Theme Overrides */
-:global(.light-theme) .deleteLayout {
-  background: #ffffff !important;
-  color: #0f172a !important;
-}
+  .formActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-:global(.light-theme) .settingsHeader {
-  border-bottom: 1px solid #e2e8f0 !important;
-}
-
-:global(.light-theme) .headerTitle {
-  color: #0f172a !important;
-}
-
-:global(.light-theme) .headerBtn {
-  color: #0f172a !important;
-}
-
-:global(.light-theme) .warningText {
-  color: #64748b !important;
-}
-
-:global(.light-theme) .warningCardItem {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-}
-
-:global(.light-theme) .warningCardTitle {
-  color: #0f172a !important;
-}
-
-:global(.light-theme) .warningCardDesc {
-  color: #64748b !important;
-}
-
-:global(.light-theme) .checkboxText {
-  color: #334155 !important;
-}
-
-:global(.light-theme) .passwordInputGroup label {
-  color: #0f172a !important;
-}
-
-:global(.light-theme) .passwordInput {
-  background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-:global(.light-theme) .passwordInput::placeholder {
-  color: #64748b !important;
-}
-
-:global(.light-theme) .eyeToggleBtn {
-  color: #64748b !important;
+  .dangerBtn,
+  .cancelBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

@@ -420,7 +420,7 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   -webkit-font-smoothing: antialiased;
 }
@@ -469,7 +469,7 @@ button {
   transition: all 0.2s ease-in-out;
 }
 
-/* Global Form Input Control Styles matching Tealish Theme */
+/* Global Form Input Control Styles matching Cyber Dark Violet Theme */
 input[type="text"]:not([class*="Search"]):not([class*="search"]),
 input[type="email"]:not([class*="Search"]):not([class*="search"]),
 input[type="password"]:not([class*="Search"]):not([class*="search"]),
@@ -478,9 +478,10 @@ input[type="number"]:not([class*="Search"]):not([class*="search"]),
 input[type="url"]:not([class*="Search"]):not([class*="search"]),
 textarea,
 select {
-  background-color: #051817 !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(20, 184, 166, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
@@ -492,8 +493,9 @@ input[type="number"]:not([class*="Search"]):not([class*="search"]):focus,
 input[type="url"]:not([class*="Search"]):not([class*="search"]):focus,
 textarea:focus,
 select:focus {
-  border-color: #14b8a6 !important;
-  box-shadow: 0 0 12px rgba(20, 184, 166, 0.3) !important;
+  background-color: rgba(139, 92, 246, 0.06) !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
   outline: none !important;
 }
 

@@ -707,7 +707,7 @@ router.get('/content/pages', authenticate, requireAdmin, async (req: Authenticat
  */
 router.put('/content/pages/:id', authenticate, requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  const { title, content, status, meta_title, meta_description, meta_tags } = req.body;
+  const { title, content, status, meta_title, meta_description, meta_tags, faq } = req.body;
 
   if (!title) {
     return res.status(400).json({ error: 'Title is required' });
@@ -716,9 +716,10 @@ router.put('/content/pages/:id', authenticate, requireAdmin, async (req: Authent
   try {
     const result = await pool.query(
       `UPDATE static_pages 
-       SET title = $1, content = $2, status = $3, meta_title = $4, meta_description = $5, meta_tags = $6, updated_at = CURRENT_TIMESTAMP 
-       WHERE id = $7 RETURNING *`,
-      [title, content || '', status || 'published', meta_title || null, meta_description || null, meta_tags || null, id]
+       SET title = $1, content = $2, status = $3, meta_title = $4, meta_description = $5, meta_tags = $6, 
+           faq = $7, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $8 RETURNING *`,
+      [title, content || '', status || 'published', meta_title || null, meta_description || null, meta_tags || null, faq !== undefined ? faq : null, id]
     );
 
     if (result.rowCount === 0) {

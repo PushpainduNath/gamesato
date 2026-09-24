@@ -18,12 +18,13 @@ export const metadata: Metadata = {
   keywords: ['Gamesato', 'H5 games', 'web games', 'free online games', 'arcade', 'racing games', 'action games', 'mobile games'],
   icons: {
     icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-32x32.png?v=3', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png?v=3', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-48x48.png?v=3', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon.ico?v=3' },
     ],
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.ico?v=3',
+    apple: '/apple-touch-icon.png?v=3',
   },
   manifest: '/site.webmanifest',
   verification: {
@@ -79,25 +80,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
+      <body>
+        <Script
+          id="organization-schema"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <script
+        <Script
+          id="theme-initializer"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                try {
-                  document.documentElement.classList.remove('light-theme');
-                  localStorage.setItem('theme', 'dark');
-                } catch (e) {}
-              })();
+              try {
+                document.documentElement.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+              } catch (e) {}
             `,
           }}
         />
-      </head>
-      <body>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-B3F3Z0WNME"
           strategy="afterInteractive"

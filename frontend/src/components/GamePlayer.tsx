@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Wrench } from 'lucide-react';
 import { useTranslation } from '@/store/useLanguageStore';
+import { useGamePlayTracker } from '@/lib/usePlayHistory';
 import OrientationRotateOverlay from './OrientationRotateOverlay';
+import GameLoadingOverlay from './GameLoadingOverlay';
 import styles from './GamePlayer.module.css';
 
 interface GamePlayerProps {
@@ -12,14 +14,37 @@ interface GamePlayerProps {
   gameSlug: string;
   gameUrl: string;
   gameTitle: string;
+  imageUrl?: string;
   orientation?: 'LANDSCAPE' | 'PORTRAIT' | 'AUTO' | string;
+  onExit?: () => void;
 }
 
-export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle, orientation = 'AUTO' }: GamePlayerProps) {
+export default function GamePlayer({
+  gameId,
+  gameSlug,
+  gameUrl,
+  gameTitle,
+  imageUrl = '',
+  orientation = 'AUTO',
+  onExit,
+}: GamePlayerProps) {
   const router = useRouter();
   const [sessionId, setSessionId] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] = useState(true);
+
+  // Track playtime while on full play page
+  useGamePlayTracker(
+    {
+      id: gameId,
+      slug: gameSlug,
+      title: gameTitle,
+      thumbnail_url: imageUrl || '',
+      category: 'Games',
+    },
+    !isMaintenance
+  );
   const [isMobile, setIsMobile] = useState(false);
   const [deviceOrientation, setDeviceOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [isForceRotated, setIsForceRotated] = useState(false);
@@ -132,7 +157,11 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle, orien
   }, [sessionId, gameId, backendUrl, isMaintenance]);
 
   const handleBack = () => {
-    router.push(`/games/${gameSlug}`);
+    if (onExit) {
+      onExit();
+    } else {
+      router.push(`/games/${gameSlug}`);
+    }
   };
 
   const translatedTitle = t(`game_${gameSlug}_title` as any) || gameTitle;
@@ -162,6 +191,16 @@ export default function GamePlayer({ gameId, gameSlug, gameUrl, gameTitle, orien
               }
             } catch (e) {}
           }}
+        />
+      )}
+
+      {/* 5-Second Gamesato Animated Loading Screen Overlay */}
+      {isLoadingOverlayVisible && !isMaintenance && (
+        <GameLoadingOverlay
+          gameTitle={gameTitle}
+          imageUrl={imageUrl}
+          durationMs={5000}
+          onComplete={() => setIsLoadingOverlayVisible(false)}
         />
       )}
 

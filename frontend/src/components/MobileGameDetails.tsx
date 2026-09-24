@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Heart, ThumbsUp, ThumbsDown, Share2, Play, Puzzle, Gamepad2, ChevronsRight } from 'lucide-react';
+import { toggleLocalReaction, getLocalReactions } from '@/lib/usePlayHistory';
 import Translate from './Translate';
+import GamePlayer from './GamePlayer';
 import styles from './MobileGameDetails.module.css';
 
 const categoryIconMap: { [key: string]: string } = {
@@ -38,6 +40,8 @@ interface MobileGameDetailsProps {
   gameDescription: string;
   gameHowToPlay?: string | null;
   gameImageUrl: string;
+  gameUrl?: string;
+  orientation?: string;
   initialLikes: number;
   moreGames?: MoreGame[];
 }
@@ -50,6 +54,8 @@ export default function MobileGameDetails({
   gameDescription,
   gameHowToPlay,
   gameImageUrl,
+  gameUrl,
+  orientation,
   initialLikes,
   moreGames = [],
 }: MobileGameDetailsProps) {
@@ -62,11 +68,22 @@ export default function MobileGameDetails({
   const [isDisliked, setIsDisliked] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
+  const [isPlayingFullscreen, setIsPlayingFullscreen] = useState(false);
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
 
-  // Fetch actual like status on mount if user is logged in
+  // Fetch actual like status on mount and sync local reactions
   useEffect(() => {
+    // 1. Check local reaction first
+    const localReactions = getLocalReactions();
+    if (localReactions[gameId] === 'like') {
+      setIsLiked(true);
+      setIsDisliked(false);
+    } else if (localReactions[gameId] === 'dislike') {
+      setIsLiked(false);
+      setIsDisliked(true);
+    }
+
     async function fetchLikeStatus() {
       try {
         const res = await fetch(`/api/games/slug/${gameSlug}`, {
@@ -75,7 +92,10 @@ export default function MobileGameDetails({
         if (res.ok) {
           const data = await res.json();
           setLikes(data.likesCount ?? initialLikes);
-          setIsLiked(data.isLiked ?? false);
+          if (data.isLiked) {
+            setIsLiked(true);
+            setIsDisliked(false);
+          }
           // Scale dislike mockup proportionally based on true likes
           setDislikes(Math.max(10, Math.floor((data.likesCount ?? initialLikes) / 160)));
         }
@@ -84,52 +104,41 @@ export default function MobileGameDetails({
       }
     }
     fetchLikeStatus();
-  }, [gameSlug, session, backendUrl, initialLikes]);
+  }, [gameId, gameSlug, session, backendUrl, initialLikes]);
 
-  const handleLike = async (e?: React.MouseEvent) => {
+  const handleLike = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!session) {
-      setShowAuthWarning(true);
-      setTimeout(() => setShowAuthWarning(false), 3000);
-      return;
+    const result = toggleLocalReaction(gameId, 'like');
+    setIsLiked(result.liked);
+    setIsDisliked(result.disliked);
+    setLikes((prev) => (result.liked ? prev + 1 : Math.max(0, prev - 1)));
+
+    if (result.liked && isDisliked) {
+      setDislikes((prev) => Math.max(0, prev - 1));
     }
 
-    try {
-      const res = await fetch(`/api/games/${gameId}/like`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setIsLiked(data.liked);
-        setLikes((prev) => (data.liked ? prev + 1 : Math.max(0, prev - 1)));
-        
-        // If they liked it, make sure they don't dislike it
-        if (data.liked && isDisliked) {
-          setIsDisliked(false);
-          setDislikes((prev) => Math.max(0, prev - 1));
-        }
-      }
-    } catch (err) {
-      console.error('Error toggling like:', err);
-    }
+    // Async backend update
+    fetch(`/api/games/${gameId}/like`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    }).catch(() => {});
   };
 
   const handleDislike = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isDisliked) {
-      setIsDisliked(false);
-      setDislikes((prev) => Math.max(0, prev - 1));
-    } else {
-      setIsDisliked(true);
-      setDislikes((prev) => prev + 1);
-      
-      // If they disliked, remove like if liked
-      if (isLiked) {
-        handleLike(); // Toggles like off
-      }
+    const result = toggleLocalReaction(gameId, 'dislike');
+    if (isLiked) {
+      setLikes((prev) => Math.max(0, prev - 1));
+      fetch(`/api/games/${gameId}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      }).catch(() => {});
     }
+    setIsLiked(result.liked);
+    setIsDisliked(result.disliked);
+    setDislikes((prev) => (result.disliked ? prev + 1 : Math.max(0, prev - 1)));
   };
 
   const handleShare = (e: React.MouseEvent) => {
@@ -146,8 +155,35 @@ export default function MobileGameDetails({
   };
 
   const handlePlayNow = () => {
-    router.push(`/games/${gameSlug}/play`);
+    setIsPlayingFullscreen(true);
+    if (typeof window !== 'undefined') {
+      try {
+        window.history.pushState({ modal: 'play' }, '', `/games/${gameSlug}/play`);
+      } catch (_) {}
+    }
   };
+
+  const handleExitPlay = () => {
+    setIsPlayingFullscreen(false);
+    if (typeof window !== 'undefined') {
+      try {
+        if (window.location.pathname.endsWith('/play')) {
+          window.history.pushState(null, '', `/games/${gameSlug}`);
+        }
+      } catch (_) {}
+    }
+  };
+
+  // Close full-screen player if user taps physical back button or browser back
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isPlayingFullscreen) {
+        setIsPlayingFullscreen(false);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isPlayingFullscreen]);
 
   const formatCount = (count: number) => {
     if (count >= 1000) {
@@ -175,15 +211,37 @@ export default function MobileGameDetails({
         </span>
       </div>
 
-      {/* Full Width Game Banner Image */}
-      <div className={styles.bannerContainer} onClick={handlePlayNow}>
+      {/* 3:3 Aspect Ratio Game Card with Play Button */}
+      <div 
+        className={styles.bannerContainer} 
+        onClick={handlePlayNow}
+        role="button"
+        tabIndex={0}
+        aria-label={`Play ${gameTitle}`}
+      >
         <img src={gameImageUrl} alt={gameTitle} className={styles.bannerImage} />
         <div className={styles.bannerOverlay} />
         <div className={styles.playButtonWrapper}>
+          <div className={styles.playPulseGlow} />
           <img src="/PlayButton.svg" alt="Play Now" className={styles.playButtonImage} />
-          <span className={styles.playNowText} style={{ color: '#ffffff' }}>Play Now</span>
+          <span className={styles.playNowText}>
+            <Translate textKey="playNow" fallback="Play Now" />
+          </span>
         </div>
       </div>
+
+      {/* Full Screen Player Modal with Loading Screen */}
+      {isPlayingFullscreen && gameUrl && (
+        <GamePlayer
+          gameId={gameId}
+          gameSlug={gameSlug}
+          gameUrl={gameUrl}
+          gameTitle={gameTitle}
+          imageUrl={gameImageUrl}
+          orientation={orientation || 'AUTO'}
+          onExit={handleExitPlay}
+        />
+      )}
 
       {/* Content Metadata Block */}
       <div className={styles.contentBlock}>

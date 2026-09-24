@@ -1,31 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { query } from '@/lib/db';
-import { Gamepad2, ArrowLeft, Play, Users, ChevronDown, ChevronsRight } from 'lucide-react';
-import Translate from '@/components/Translate';
-import GamePlayerCard from '@/components/GamePlayerCard';
-import GameActions from '@/components/GameActions';
-import MobileGameDetails from '@/components/MobileGameDetails';
 import { getImageUrl } from '@/lib/utils';
-import styles from './page.module.css';
-
-// Type definitions
-interface Game {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  thumbnail_url: string;
-  game_url: string;
-  play_count: number;
-  created_at: string;
-  game_page_both_url?: string | null;
-  how_to_play?: string | null;
-}
-
-
+import GameDetailClientView, { GameDetailData, GridGameItem, CategoryItem } from './GameDetailClientView';
+import { CategoryWithGames } from '@/components/NewHomepage/CategorySectionGrid';
 
 // Dynamic routes pre-generation
 export const dynamicParams = true;
@@ -53,7 +34,7 @@ export async function generateMetadata(props: {
   
   try {
     const res = await query(
-      'SELECT title, description, thumbnail_url FROM games WHERE slug = $1',
+      'SELECT title, description, thumbnail_url, category FROM games WHERE slug = $1',
       [slug]
     );
 
@@ -65,8 +46,8 @@ export async function generateMetadata(props: {
 
     const game = res.rows[0];
     return {
-      title: `${game.title} - Play Free H5 Game Online`,
-      description: game.description || `Play ${game.title} instantly in your web browser. A high-performance H5 web game on Gamesato.`,
+      title: `${game.title} - Play Free Online HTML5 Game on Gamesato`,
+      description: game.description || `Play ${game.title} instantly in your web browser. A high-performance free web game on Gamesato with no download required.`,
       alternates: {
         canonical: `/games/${slug}`,
       },
@@ -93,18 +74,21 @@ export default async function GameDetailPage(props: {
   const params = await props.params;
   const { slug } = params;
 
-  // 1. Fetch game details directly from database (for ISR generation)
-  let game: Game | null = null;
+  // 1. Fetch game details directly from database
+  let game: GameDetailData | null = null;
   let likesCount = 0;
   
   try {
-    const gameRes = await query('SELECT * FROM games WHERE slug = $1', [slug]);
+    const gameRes = await query(
+      "SELECT * FROM games WHERE slug = $1 AND status = 'published' LIMIT 1",
+      [slug]
+    );
     if (gameRes.rows.length > 0) {
       const activeGame = gameRes.rows[0];
       game = activeGame;
       
-      const likesRes = await query('SELECT COUNT(*) FROM likes WHERE "gameId" = $1', [activeGame.id]);
-      likesCount = parseInt(likesRes.rows[0].count || '0');
+      const likesRes = await query('SELECT COUNT(*)::int as count FROM likes WHERE "gameId" = $1', [activeGame.id]);
+      likesCount = likesRes.rows[0]?.count || 0;
     }
   } catch (err) {
     console.error('Failed to query game details:', err);
@@ -114,197 +98,137 @@ export default async function GameDetailPage(props: {
     notFound();
   }
 
-  // 2. Fetch up to 15 random games for "More Games" section on desktop
-  let moreGames: Game[] = [];
+  // 2. Fetch categories with game counts for NewSidebar
+  let categories: CategoryItem[] = [];
   try {
-    const moreRes = await query(
-      "SELECT id, title, slug, thumbnail_url, category FROM games WHERE status = 'published' AND id != $1 ORDER BY RANDOM() LIMIT 15",
-      [game.id]
-    );
-    moreGames = moreRes.rows;
+    const catRes = await query(`
+      SELECT c.id, c.name, c.slug, c.icon, COUNT(g.id)::int as count
+      FROM categories c
+      INNER JOIN games g ON (LOWER(g.category) = LOWER(c.name) OR LOWER(g.category) = LOWER(c.slug)) AND g.status = 'published'
+      GROUP BY c.id, c.name, c.slug, c.icon
+      HAVING COUNT(g.id) > 0
+      ORDER BY count DESC
+    `);
+    categories = catRes.rows;
   } catch (err) {
-    console.error('Failed to fetch more games for details page:', err);
+    console.error('Failed to fetch categories:', err);
   }
 
-  const gameImageUrl = getImageUrl(
-    (game as any).game_page_both_url ||
-    (game as any).featured_mobile_url ||
-    (game as any).featured_desktop_url ||
-    game.thumbnail_url
-  );
+  // 3. User favorites count
+  let favoritesCount = 0;
+  try {
+    const session = await getServerSession(authOptions);
+    if (session?.user?.id) {
+      const favRes = await query(
+        `SELECT COUNT(*)::int as count FROM likes l
+         JOIN games g ON l."gameId" = g.id
+         WHERE l."userId" = $1 AND g.status = 'published'`,
+        [session.user.id]
+      );
+      favoritesCount = favRes.rows[0]?.count || 0;
+    }
+  } catch (err) {
+    console.error('Failed to fetch favorites count:', err);
+  }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
+  // 4. Fetch 18 games for the right sidebar (related category games first, then popular)
+  let sidebarGames: GridGameItem[] = [];
+  try {
+    const sideRes = await query(
+      `SELECT id, title, slug, thumbnail_url, category, play_count
+       FROM games
+       WHERE status = 'published' AND id != $1
+       ORDER BY CASE WHEN LOWER(category) = LOWER($2) THEN 0 ELSE 1 END, play_count DESC, created_at DESC
+       LIMIT 18`,
+      [game.id, game.category]
+    );
+    sidebarGames = sideRes.rows;
+  } catch (err) {
+    console.error('Failed to fetch sidebar games:', err);
+  }
 
-  const videoGameSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'VideoGame',
-    name: game.title,
-    description: game.description,
-    image: getImageUrl(game.thumbnail_url),
-    url: `${siteUrl}/games/${game.slug}`,
-    genre: game.category,
-    playMode: 'SinglePlayer',
-    applicationCategory: 'Game',
-    gamePlatform: 'Web Browser',
-    operatingSystem: 'Any',
-    author: {
-      '@type': 'Organization',
-      name: 'Gamesato',
-    },
-  };
+  // 5. Fetch pool of 45 games for the bottom Poki Bento Grid and Header instant search
+  let bentoGames: GridGameItem[] = [];
+  try {
+    const bentoRes = await query(
+      `SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.play_count,
+              g.featured_desktop_url, g.featured_mobile_url,
+              COUNT(l."userId")::int as likes_count
+       FROM games g
+       LEFT JOIN likes l ON l."gameId" = g.id
+       WHERE g.status = 'published' AND g.id != $1
+       GROUP BY g.id
+       ORDER BY CASE WHEN LOWER(g.category) = LOWER($2) THEN 0 ELSE 1 END, g.play_count DESC, g.created_at DESC
+       LIMIT 45`,
+      [game.id, game.category]
+    );
+    bentoGames = bentoRes.rows;
+  } catch (err) {
+    console.error('Failed to fetch bento games:', err);
+  }
 
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteUrl,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: game.category || 'Games',
-        item: `${siteUrl}/category/${(game.category || 'all').toLowerCase().replace(/\s+/g, '-')}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: game.title,
-        item: `${siteUrl}/games/${game.slug}`,
-      },
-    ],
-  };
+  // 6. Fetch top 4 category sections with their games (identical to homepage)
+  let topCategorySections: CategoryWithGames[] = [];
+  try {
+    const top4 = categories.slice(0, 4);
+    const top4Ids = top4.map((c) => c.id).filter(Boolean);
+
+    if (top4Ids.length > 0) {
+      const topCatGamesRes = await query(`
+        WITH RankedGames AS (
+          SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
+                 c.id as category_id, c.name as category_name, c.slug as category_slug,
+                 COUNT(l."userId")::int as likes_count,
+                 ROW_NUMBER() OVER (
+                   PARTITION BY c.id 
+                   ORDER BY g.is_featured DESC, g.play_count DESC, g.created_at DESC
+                 ) as row_num
+          FROM categories c
+          JOIN games g ON (LOWER(g.category) = LOWER(c.name) OR LOWER(g.category) = LOWER(c.slug)) AND g.status = 'published'
+          LEFT JOIN likes l ON g.id = l."gameId"
+          WHERE c.id = ANY($1::uuid[])
+          GROUP BY g.id, c.id, c.name, c.slug
+        )
+        SELECT * FROM RankedGames WHERE row_num <= 24 ORDER BY category_id, row_num
+      `, [top4Ids]);
+
+      topCategorySections = top4.map((cat) => ({
+        id: cat.id!,
+        name: cat.name,
+        slug: cat.slug,
+        count: cat.count || 0,
+        games: topCatGamesRes.rows.filter((g: any) => g.category_id === cat.id),
+      }));
+    }
+  } catch (err) {
+    console.error('Failed to query top category sections:', err);
+  }
+
+  // 7. Fetch category SEO content and FAQ for this game's category
+  let categoryData: { id: string; name: string; slug: string; content?: string; faq?: string } | null = null;
+  try {
+    const catDataRes = await query(
+      `SELECT id, name, slug, content, faq FROM categories WHERE LOWER(name) = LOWER($1) OR LOWER(slug) = LOWER($1) LIMIT 1`,
+      [game.category]
+    );
+    if (catDataRes.rows.length > 0) {
+      categoryData = catDataRes.rows[0];
+    }
+  } catch (err) {
+    console.error('Failed to fetch category data for game:', err);
+  }
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <div className={styles.container}>
-      {/* ----------------- MOBILE LAYOUT (Screenshot layout matching) ----------------- */}
-      <div className={styles.mobileLayout}>
-        <MobileGameDetails
-          gameId={game.id}
-          gameSlug={game.slug}
-          gameTitle={game.title}
-          gameCategory={game.category}
-          gameDescription={game.description}
-          gameHowToPlay={game.how_to_play}
-          gameImageUrl={gameImageUrl}
-          initialLikes={likesCount}
-          moreGames={moreGames}
-        />
-      </div>
-
-      {/* ----------------- DESKTOP LAYOUT (Mockup screen visual) ----------------- */}
-      <div className={styles.desktopLayout}>
-        {/* Breadcrumbs */}
-        <div className={styles.breadcrumbs}>
-          <Link href="/" className={styles.breadcrumbLink}>
-            <Translate textKey="home" fallback="Home" />
-          </Link>
-          <ChevronsRight size={18} className={styles.breadcrumbSeparator} />
-          <Link href={`/category/${game.category.toLowerCase().replace(/\s+/g, '-')}`} className={styles.breadcrumbLink}>
-            <Translate textKey={game.category} fallback={game.category} />
-          </Link>
-          <ChevronsRight size={18} className={styles.breadcrumbSeparator} />
-          <span className={styles.breadcrumbActive}>{game.title}</span>
-        </div>
-
-        <div className={styles.layout}>
-          {/* Left Side: Game Player Card */}
-          <div className={styles.leftColumn}>
-            <GamePlayerCard
-              gameId={game.id}
-              gameSlug={game.slug}
-              gameTitle={game.title}
-              imageUrl={gameImageUrl}
-              gameUrl={game.game_url}
-              initialLikes={likesCount}
-              orientation={(game as any).orientation || 'AUTO'}
-            />
-          </div>
-
-          {/* Right Side: More Games grid container */}
-          <div className={styles.rightColumn}>
-            <div className={styles.moreGamesBox}>
-              <h3 className={styles.moreGamesTitle}>
-                <Translate textKey="moreGames" fallback="More Games" />
-              </h3>
-              <div className={styles.moreGamesScrollWrapper}>
-                <div className={styles.moreGamesGrid}>
-                  {moreGames.map((g) => {
-                    const thumbUrl = getImageUrl(g.thumbnail_url);
-                    return (
-                      <Link
-                        key={g.id}
-                        href={`/games/${g.slug}`}
-                        className={styles.moreGamesCard}
-                        title={g.title}
-                      >
-                        <div className={styles.moreGamesThumbWrapper}>
-                          <img src={thumbUrl} alt={g.title} className={styles.moreGamesThumb} />
-                        </div>
-                        <div className={styles.moreGamesCardContent}>
-                          <span className={styles.moreGamesCardTitle}>
-                            <Translate textKey={`game_${g.slug}_title`} fallback={g.title} />
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Full Width Bottom Details info card */}
-        <div className={styles.detailsBox}>
-          <h1 className={styles.detailsTitle}>
-            <Translate textKey={`game_${game.slug}_title`} fallback={game.title} />
-          </h1>
-          <div className={styles.categoryRow}>
-            <Gamepad2 size={16} className={styles.categoryIcon} />
-            <span className={styles.categoryLabel}>
-              <Translate textKey={game.category} fallback={game.category} />
-            </span>
-          </div>
-          <div className={styles.detailsContent}>
-            <Translate textKey={`game_${game.slug}_desc`} fallback={game.description || 'No description available for this game.'} />
-          </div>
-        </div>
-
-        {/* How to Play Section */}
-        {game.how_to_play && (
-          <div className={styles.howToPlayBox}>
-            <h2 className={styles.howToPlayTitle}>
-              How to Play the {game.title}
-            </h2>
-            <ul className={styles.howToPlayList}>
-              {game.how_to_play
-                .split('\n')
-                .map((item: string) => item.trim())
-                .filter((item: string) => item.length > 0)
-                .map((bullet: string, index: number) => (
-                  <li key={index} className={styles.howToPlayItem}>
-                    {bullet.replace(/^[\s•*-]+/, '')}
-                  </li>
-                ))}
-            </ul>
-          </div>
-        )}
-
-      </div>
-    </div>
-    </>
+    <GameDetailClientView
+      game={game}
+      likesCount={likesCount}
+      sidebarGames={sidebarGames}
+      bentoGames={bentoGames}
+      categories={categories}
+      favoritesCount={favoritesCount}
+      allGamesPool={bentoGames}
+      categorySections={topCategorySections}
+      categoryData={categoryData}
+    />
   );
 }

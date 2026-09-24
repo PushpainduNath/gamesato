@@ -21,6 +21,7 @@ interface ContentItem {
   meta_description?: string | null;
   meta_tags?: string | null;
   originalName?: string; // For categories original name
+  faq?: string | null;
 }
 
 export default function AdminContentManager() {
@@ -155,7 +156,8 @@ export default function AdminContentManager() {
         type: 'static',
         meta_title: p.meta_title,
         meta_description: p.meta_description,
-        meta_tags: p.meta_tags
+        meta_tags: p.meta_tags,
+        faq: p.faq || null
       }));
 
       const mappedCats: ContentItem[] = catsData.map((c: any) => ({
@@ -169,7 +171,8 @@ export default function AdminContentManager() {
         meta_title: c.meta_title,
         meta_description: c.meta_description,
         meta_tags: c.meta_tags,
-        originalName: c.name
+        originalName: c.name,
+        faq: c.faq || null
       }));
 
       setItems([...mappedPages, ...mappedCats]);
@@ -218,6 +221,15 @@ export default function AdminContentManager() {
       } catch (e) {
         setFaqList([]);
       }
+    } else if (item.faq) {
+      try {
+        const parsed = JSON.parse(item.faq || '[]');
+        setFaqList(Array.isArray(parsed) ? parsed : []);
+      } catch (e) {
+        setFaqList([]);
+      }
+    } else {
+      setFaqList([]);
     }
     setEditModalOpen(true);
   };
@@ -248,6 +260,7 @@ export default function AdminContentManager() {
       setError('');
       
       const payloadContent = selectedPage.slug === 'faq' ? JSON.stringify(faqList) : editContent;
+      const payloadFaq = JSON.stringify(faqList);
       
       let res;
       if (selectedPage.type === 'static') {
@@ -263,7 +276,8 @@ export default function AdminContentManager() {
             status: editStatus,
             meta_title: editMetaTitle || null,
             meta_description: editMetaDescription || null,
-            meta_tags: editMetaTags || null
+            meta_tags: editMetaTags || null,
+            faq: payloadFaq
           })
         });
       } else {
@@ -281,7 +295,8 @@ export default function AdminContentManager() {
             status: editStatus,
             meta_title: editMetaTitle || null,
             meta_description: editMetaDescription || null,
-            meta_tags: editMetaTags || null
+            meta_tags: editMetaTags || null,
+            faq: payloadFaq
           })
         });
       }
@@ -967,6 +982,69 @@ export default function AdminContentManager() {
                   <span style={{ fontSize: '0.75rem', color: 'var(--adm-text-secondary, #94a3b8)', marginTop: '0.35rem', display: 'block' }}>
                     💡 Tip: Switch to <b>Live Visual Preview</b> to inspect rendered formatting in real-time. Use <b>Auto-wrap Lines</b> for quick plain text formatting.
                   </span>
+                </div>
+              )}
+
+              {/* Page FAQ Section (Accordion) for all non-faq pages */}
+              {selectedPage.slug !== 'faq' && (
+                <div className={styles.figmaFormGroupFull} style={{ marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '8px' }}>
+                    <div>
+                      <label className={styles.figmaLabel} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Sparkles size={14} color="#14b8a6" /> Page FAQ Section (Accordion)
+                      </label>
+                      <span style={{ fontSize: '0.74rem', color: 'var(--adm-text-secondary, #94a3b8)' }}>
+                        Add custom questions &amp; answers specifically for this page.
+                      </span>
+                    </div>
+                    <button 
+                      type="button" 
+                      className={styles.addGameBtn}
+                      onClick={handleAddFaq}
+                      style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem', height: '28px' }}
+                    >
+                      <Plus size={13} /> Add FAQ Item
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    {faqList.length > 0 ? (
+                      faqList.map((faq, index) => (
+                        <div key={index} style={{ borderBottom: index < faqList.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: index < faqList.length - 1 ? '1rem' : 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.8rem', color: '#14b8a6', fontWeight: 600 }}>FAQ Item #{index + 1}</span>
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveFaq(index)}
+                              style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
+                              title="Delete Item"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                          
+                          <input 
+                            type="text" 
+                            placeholder="Question text..."
+                            className={styles.figmaInput} 
+                            value={faq.q}
+                            onChange={(e) => handleFaqChange(index, 'q', e.target.value)}
+                          />
+                          <textarea 
+                            placeholder="Answer text..."
+                            className={styles.figmaTextarea} 
+                            rows={3}
+                            value={faq.a}
+                            onChange={(e) => handleFaqChange(index, 'a', e.target.value)}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '1rem', color: '#94a3b8', fontSize: '0.85rem' }}>
+                        No custom FAQs added for this page yet. Click &quot;Add FAQ Item&quot; to add page-specific questions.
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
