@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Script from 'next/script';
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 interface GoogleAdSenseScriptProps {
@@ -12,9 +11,15 @@ export default function GoogleAdSenseScript({
   publisherId = 'ca-pub-6678125372401107',
 }: GoogleAdSenseScriptProps) {
   const pathname = usePathname();
-  const [isAllowedEnv, setIsAllowedEnv] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Strictly do NOT load AdSense on the dedicated game play screen
+    if (pathname && pathname.includes('/play')) {
+      return;
+    }
+
     // Only load AdSense script on production domains (not localhost / 127.0.0.1)
     const hostname = window.location.hostname;
     const isLocal =
@@ -23,7 +28,16 @@ export default function GoogleAdSenseScript({
       hostname.endsWith('.local');
 
     if (!isLocal) {
-      setIsAllowedEnv(true);
+      const existingScript = document.querySelector(
+        'script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]'
+      );
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`;
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
+      }
     }
 
     // Suppress AdSense TagError (e.g. availableWidth=0 or slot size issues) from triggering Next.js dev overlay
@@ -60,26 +74,8 @@ export default function GoogleAdSenseScript({
       window.removeEventListener('error', handleAdError, true);
       window.removeEventListener('unhandledrejection', handleRejection, true);
     };
-  }, []);
+  }, [pathname, publisherId]);
 
-  // Strictly do NOT load AdSense on the dedicated game play screen
-  if (pathname && pathname.includes('/play')) {
-    return null;
-  }
-
-  // In local development, do not load Google AdSense script (avoids TagError and domain reject errors)
-  if (!isAllowedEnv) {
-    return null;
-  }
-
-  return (
-    <Script
-      id="google-adsense"
-      async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
-      crossOrigin="anonymous"
-      strategy="afterInteractive"
-    />
-  );
+  return null;
 }
 
