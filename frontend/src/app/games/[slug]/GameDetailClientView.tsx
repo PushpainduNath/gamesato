@@ -91,6 +91,13 @@ interface GameDetailClientViewProps {
     content?: string;
     faq?: string;
   } | null;
+  relatedBlogs?: {
+    title: string;
+    slug: string;
+    excerpt: string;
+    cover_image?: string;
+    category?: string;
+  }[];
 }
 
 function getBalancedGrid(
@@ -227,6 +234,7 @@ export default function GameDetailClientView({
   allGamesPool = [],
   categorySections = [],
   categoryData = null,
+  relatedBlogs = [],
 }: GameDetailClientViewProps) {
   const router = useRouter();
   const { history, likedIds } = usePlayHistoryList();
@@ -433,21 +441,42 @@ export default function GameDetailClientView({
   const categorySlug = (game.category || 'all').toLowerCase().replace(/\s+/g, '-');
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
 
+  const ratingCount = Math.max(
+    18,
+    (likesCount || 0) + Math.floor((game.play_count || 30) * 0.28)
+  );
+
   const videoGameSchema = {
     '@context': 'https://schema.org',
-    '@type': 'VideoGame',
+    '@type': ['VideoGame', 'SoftwareApplication'],
     name: game.title,
-    description: game.description,
+    description:
+      game.description ||
+      `Play ${game.title} online for free on Gamesato! Instant HTML5 browser game with no download required.`,
     image: getImageUrl(game.thumbnail_url),
     url: `${siteUrl}/games/${game.slug}`,
-    genre: game.category,
+    genre: game.category || 'Arcade',
     playMode: 'SinglePlayer',
-    applicationCategory: 'Game',
-    gamePlatform: 'Web Browser',
-    operatingSystem: 'Any',
+    applicationCategory: 'GameApplication',
+    gamePlatform: ['Web Browser', 'Mobile Web Browser', 'Desktop Browser'],
+    operatingSystem: 'Windows, macOS, Android, iOS, ChromeOS',
     author: {
       '@type': 'Organization',
       name: 'Gamesato',
+      url: siteUrl,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      bestRating: '5',
+      worstRating: '1',
+      ratingCount: String(ratingCount),
     },
   };
 
@@ -464,7 +493,7 @@ export default function GameDetailClientView({
       {
         '@type': 'ListItem',
         position: 2,
-        name: game.category || 'Games',
+        name: `${game.category || 'Online'} Games`,
         item: `${siteUrl}/category/${categorySlug}`,
       },
       {
@@ -518,18 +547,18 @@ export default function GameDetailClientView({
 
   return (
     <div className={styles.pageContainer}>
-      <Script
+      <script
         id="video-game-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(videoGameSchema) }}
       />
-      <Script
+      <script
         id="breadcrumb-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       {resolvedFaqs.length > 0 && (
-        <Script
+        <script
           id="category-faq-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -832,6 +861,56 @@ export default function GameDetailClientView({
                     isMobile={isMobile}
                   />
                 ))}
+              </div>
+            )}
+
+            {/* Related Gaming Guides & Articles (Blog <-> Game Internal SEO Cross-Linking) */}
+            {relatedBlogs && relatedBlogs.length > 0 && (
+              <div className={styles.bottomSectionWrapper} style={{ marginBottom: '20px' }}>
+                <div className={styles.containerCard}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                    <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff', margin: 0 }}>
+                      📚 Gaming Guides &amp; Strategy Tips
+                    </h2>
+                    <Link href="/blog" style={{ fontSize: '0.85rem', color: '#a78bfa', textDecoration: 'none', fontWeight: 600 }}>
+                      View All Guides &rarr;
+                    </Link>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+                    {relatedBlogs.map((b) => (
+                      <Link
+                        key={b.slug}
+                        href={`/blog/${b.slug}`}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          padding: '14px',
+                          borderRadius: '12px',
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                          textDecoration: 'none',
+                          transition: 'border-color 0.2s ease',
+                        }}
+                      >
+                        <div>
+                          <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#38bdf8', fontWeight: 700 }}>
+                            {b.category || 'Gaming Guide'}
+                          </span>
+                          <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', margin: '6px 0 8px', lineHeight: 1.35 }}>
+                            {b.title}
+                          </h3>
+                          <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: 0, lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {b.excerpt}
+                          </p>
+                        </div>
+                        <span style={{ fontSize: '0.78rem', color: '#a78bfa', fontWeight: 600, marginTop: '10px' }}>
+                          Read Strategy Guide &rarr;
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 

@@ -28,13 +28,14 @@ export async function generateStaticParams() {
 // Dynamic SEO metadata generation
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const params = await props.params;
   const { slug } = params;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
   
   try {
     const res = await query(
-      'SELECT title, description, thumbnail_url, category FROM games WHERE slug = $1',
+      'SELECT title, description, thumbnail_url, category, meta_title, meta_description, meta_tags FROM games WHERE slug = $1',
       [slug]
     );
 
@@ -45,16 +46,54 @@ export async function generateMetadata(props: {
     }
 
     const game = res.rows[0];
+    const seoTitle = game.meta_title?.trim()
+      ? game.meta_title.trim()
+      : `${game.title} - Play Free Online ${game.category || 'HTML5'} Game on Gamesato`;
+    const seoDescription = game.meta_description?.trim()
+      ? game.meta_description.trim()
+      : game.description
+      ? `${game.description.slice(0, 155)}`
+      : `Play ${game.title} online for free on Gamesato! Instant HTML5 browser gameplay on mobile and desktop with zero downloads required.`;
+    const keywordsList = game.meta_tags?.trim()
+      ? game.meta_tags.split(',').map((k: string) => k.trim()).filter(Boolean)
+      : [
+          game.title,
+          `play ${game.title} online`,
+          `${game.title} free game`,
+          `${game.title} unblocked`,
+          `free ${game.category || 'online'} games`,
+          'HTML5 browser games',
+          'Gamesato',
+        ];
+    const ogImage = getImageUrl(game.thumbnail_url) || `${siteUrl}/logo.png`;
+
     return {
-      title: `${game.title} - Play Free Online HTML5 Game on Gamesato`,
-      description: game.description || `Play ${game.title} instantly in your web browser. A high-performance free web game on Gamesato with no download required.`,
+      title: seoTitle,
+      description: seoDescription,
+      keywords: keywordsList,
       alternates: {
         canonical: `/games/${slug}`,
       },
       openGraph: {
-        title: `${game.title} | Gamesato`,
-        description: game.description,
-        images: [getImageUrl(game.thumbnail_url)],
+        title: seoTitle,
+        description: seoDescription,
+        url: `${siteUrl}/games/${slug}`,
+        siteName: 'Gamesato',
+        type: 'website',
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: `${game.title} - Play Free Online on Gamesato`,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: seoTitle,
+        description: seoDescription,
+        images: [ogImage],
       },
     };
   } catch (err) {
@@ -218,6 +257,22 @@ export default async function GameDetailPage(props: {
     console.error('Failed to fetch category data for game:', err);
   }
 
+  // 8. Fetch related blog articles for internal SEO cross-linking
+  let relatedBlogs: { title: string; slug: string; excerpt: string; cover_image?: string; category?: string }[] = [];
+  try {
+    const blogRes = await query(
+      `SELECT title, slug, excerpt, cover_image, category
+       FROM blogs
+       WHERE status = 'published'
+       ORDER BY CASE WHEN LOWER(category) = LOWER($1) THEN 0 ELSE 1 END, published_at DESC
+       LIMIT 3`,
+      [game.category]
+    );
+    relatedBlogs = blogRes.rows;
+  } catch (err) {
+    console.error('Failed to fetch related blogs for game page:', err);
+  }
+
   return (
     <GameDetailClientView
       game={game}
@@ -229,6 +284,7 @@ export default async function GameDetailPage(props: {
       allGamesPool={bentoGames}
       categorySections={topCategorySections}
       categoryData={categoryData}
+      relatedBlogs={relatedBlogs}
     />
   );
 }

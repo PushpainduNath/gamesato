@@ -181,17 +181,21 @@ export default function NewSidebar({
           <div className={styles.sidebarScroll}>
             {/* Top Navigation */}
             <div className={styles.navGroup}>
-              <button
-                type="button"
-                onClick={() => handleItemClick(() => onSelectFilter('All'))}
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleItemClick(() => onSelectFilter('All'));
+                }}
                 className={`${styles.navItem} ${activeFilter === 'All' ? styles.navItemActive : ''}`}
-                title="Home"
+                title="Home - Play Free Online Games"
+                style={{ textDecoration: 'none' }}
               >
                 <div className={styles.navIconWrapper}>
                   <Home size={18} color="#a78bfa" />
                 </div>
                 <span className={styles.navLabel}>Home</span>
-              </button>
+              </a>
 
               <button
                 type="button"

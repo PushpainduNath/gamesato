@@ -292,7 +292,7 @@ export default function CategorySectionGrid({
                           ? (game.featured_desktop_url || game.featured_mobile_url)!
                           : game.thumbnail_url
                       )}
-                      alt={game.title}
+                      alt={`${game.title} - Play Free Online ${category.name} Game on Gamesato`}
                       fill
                       unoptimized
                       sizes={size === 'hero' ? '320px' : size === 'medium' ? '220px' : '110px'}

@@ -12,11 +12,33 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   title: {
-    default: 'Gamesato | Free Online Web Games',
+    default: 'Gamesato - Play Free Online HTML5 Games (No Download)',
     template: '%s | Gamesato',
   },
-  description: 'Play free online HTML5 games instantly on Gamesato. Action, racing, sports, logic, adventure, and arcade games available to play in your browser with no downloads required.',
-  keywords: ['Gamesato', 'H5 games', 'web games', 'free online games', 'arcade', 'racing games', 'action games', 'mobile games'],
+  description: 'Play 100+ free online HTML5 games instantly on Gamesato. Enjoy unblocked action, racing, sports, puzzle, adventure, and arcade games in your browser on mobile and desktop with zero downloads.',
+  keywords: [
+    'Gamesato',
+    'free online games',
+    'play HTML5 games',
+    'unblocked games',
+    'browser games',
+    'no download games',
+    'free racing games',
+    'free action games',
+    'mobile web games',
+    'instant play games',
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon-32x32.png?v=3', sizes: '32x32', type: 'image/png' },
@@ -35,46 +57,73 @@ export const metadata: Metadata = {
     'google-adsense-account': 'ca-pub-6678125372401107',
   },
   openGraph: {
-    title: 'Gamesato | Free Online Web Games',
-    description: 'Play free online HTML5 games instantly on Gamesato. No downloads required.',
+    title: 'Gamesato - Play Free Online HTML5 Games (No Download)',
+    description: 'Play free online HTML5 games instantly on Gamesato. Action, racing, sports, puzzle, and arcade games with no downloads required.',
     url: 'https://gamesato.com',
     siteName: 'Gamesato',
     type: 'website',
-    images: ['/logo.png'],
+    images: [
+      {
+        url: 'https://gamesato.com/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Gamesato - Play Free Online HTML5 Games',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Gamesato | Free Online Web Games',
+    title: 'Gamesato - Play Free Online HTML5 Games (No Download)',
     description: 'Play free online HTML5 games instantly on Gamesato. No downloads required.',
-    images: ['/logo.png'],
+    images: ['https://gamesato.com/logo.png'],
   },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
 };
 
-const organizationSchema = {
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
+
+const globalJsonLdSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Gamesato',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com',
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com'}/logo.png`,
-  sameAs: [
-    'https://twitter.com',
-    'https://facebook.com',
-    'https://youtube.com',
-    'https://instagram.com',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${siteUrl}/#organization`,
+      name: 'Gamesato',
+      url: siteUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/logo.png`,
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'support@gamesato.com',
+        contactType: 'customer support',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
+      url: siteUrl,
+      name: 'Gamesato',
+      description: 'Play free online HTML5 browser games instantly on mobile and desktop with no downloads.',
+      publisher: {
+        '@id': `${siteUrl}/#organization`,
+      },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${siteUrl}/?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
   ],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    email: 'support@gamesato.com',
-    contactType: 'customer support',
-  },
 };
 
 export default function RootLayout({
@@ -93,11 +142,10 @@ export default function RootLayout({
             crossOrigin="anonymous"
           />
         )}
-        <Script
-          id="organization-schema"
+        <script
+          id="organization-website-schema"
           type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(globalJsonLdSchema) }}
         />
         <Script
           id="theme-initializer"

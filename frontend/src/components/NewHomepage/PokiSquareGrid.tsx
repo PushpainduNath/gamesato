@@ -709,7 +709,7 @@ export default function PokiSquareGrid({
                           ? (game.featured_desktop_url || game.featured_mobile_url)!
                           : game.thumbnail_url
                       )}
-                      alt={game.title}
+                      alt={`${game.title} - Play Free Online ${game.category || 'HTML5'} Game on Gamesato`}
                       fill
                       unoptimized
                       sizes={size === 'hero' ? '400px' : size === 'medium' ? '250px' : '150px'}

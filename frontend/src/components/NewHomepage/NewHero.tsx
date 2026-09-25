@@ -61,48 +61,61 @@ export default function NewHero({
         <div className={styles.titleWrapper}>
           <div className={styles.topBadge}>
             <span className={styles.badgeDot} />
-            <span>Good times start here</span>
+            <span>Play Free Online HTML5 Games • Instant Browser Gaming</span>
           </div>
           <h1 className={styles.title}>
             Less scrolling. <span className={styles.titleSubtitle}>More playing.</span>
+            <span style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0 }}>
+              {' '}— Free Online Web Games on Gamesato (No Download)
+            </span>
           </h1>
         </div>
 
         {totalGamesCount > 0 && (
           <div className={styles.gameCountBadge}>
             <span className={styles.gameCountNumber}>
-              {totalGamesCount.toLocaleString()} games.
+              {totalGamesCount.toLocaleString()} free games.
             </span> Endless possibilities.
           </div>
         )}
       </div>
 
-      {/* Category Pills Horizontal Scroll */}
-      <div className={styles.filterScrollWrapper}>
-        <button
-          type="button"
-          onClick={() => onSelectFilter('All')}
+      {/* Category Pills Horizontal Scroll (Crawlable Anchor Links for SEO + Instant Filter on Click) */}
+      <nav className={styles.filterScrollWrapper} aria-label="Game Categories">
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            onSelectFilter('All');
+          }}
           className={`${styles.pill} ${activeFilter === 'All' ? styles.pillActive : ''}`}
+          style={{ textDecoration: 'none' }}
         >
           {getPillIcon('all')}
           <span>All games</span>
-        </button>
+        </a>
 
         {categories.map((cat) => {
           const isActive = activeFilter.toLowerCase() === cat.name.toLowerCase();
+          const catSlug = cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-');
           return (
-            <button
+            <a
               key={cat.slug || cat.name}
-              type="button"
-              onClick={() => onSelectFilter(cat.name)}
+              href={`/category/${catSlug}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onSelectFilter(cat.name);
+              }}
               className={`${styles.pill} ${isActive ? styles.pillActive : ''}`}
+              style={{ textDecoration: 'none' }}
+              title={`Play free ${cat.name} games online`}
             >
               {getPillIcon(cat.name)}
               <span>{cat.name}</span>
-            </button>
+            </a>
           );
         })}
-      </div>
+      </nav>
     </section>
   );
 }

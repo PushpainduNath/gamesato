@@ -255,12 +255,58 @@ export default async function HomePage() {
     console.error('Failed to query all games:', err);
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
+  const effectiveFaqs = faqList.length > 0 ? faqList : [
+    {
+      question: 'What are the best free online games on Gamesato?',
+      answer: 'Top games on Gamesato include Subway Surfers, Bounce Tales, Bouncemasters, Stick War, and 100+ curated HTML5 action, racing, sports, and puzzle games. All games are 100% free with no downloads required.',
+    },
+    {
+      question: 'Can I play free HTML5 games without downloading or installing anything?',
+      answer: 'Yes! Every game on Gamesato is an instant-play HTML5 & WebGL game that runs directly inside your web browser on desktop, tablet, and mobile phones.',
+    },
+    {
+      question: 'Is Gamesato free and unblocked on mobile and desktop?',
+      answer: 'Yes, Gamesato is completely free to play on Android, iPhone, iPad, Chromebook, Windows, and Mac browsers with fast HTTPS streaming.',
+    },
+  ];
+
+  const dynamicFaqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: effectiveFaqs.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+
+  const homeItemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Most Popular Free Online Games on Gamesato',
+    itemListElement: allGames.slice(0, 20).map((g, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: g.title,
+      url: `${siteUrl}/games/${g.slug}`,
+    })),
+  };
+
   return (
     <>
-      <Script
+      <script
         id="faq-schema"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(dynamicFaqSchema) }}
+      />
+      <script
+        id="home-itemlist-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeItemListSchema) }}
       />
       <NewHomepageView
         featuredGames={featuredGames}
