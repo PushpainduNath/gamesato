@@ -27,6 +27,7 @@ import {
 import NewHeader from '@/components/NewHomepage/NewHeader';
 import NewSidebar from '@/components/NewHomepage/NewSidebar';
 import NewFooter from '@/components/NewHomepage/NewFooter';
+import AdBanner from '@/components/AdBanner';
 import { formatCompactNumber, getImageUrl } from '@/lib/utils';
 import { usePlayHistoryList } from '@/lib/usePlayHistory';
 import styles from './page.module.css';
@@ -882,6 +883,9 @@ export default function CategoryClientView({
                     </button>
                   </div>
                 )}
+
+                {/* In-Grid Category Responsive Horizontal Ad */}
+                <AdBanner type="horizontal" />
               </>
             ) : (
               <div className={styles.emptyState}>
@@ -928,9 +932,13 @@ export default function CategoryClientView({
               </section>
             )}
 
+            {/* Pre-FAQ In-Feed Horizontal Ad */}
+            <AdBanner type="horizontal" />
+
             {/* SECTION: CATEGORY SEO CONTENT & FAQ ACCORDION */}
             <div className={styles.bottomSectionWrapper}>
-              <div className={styles.containerCard}>
+              <div className={styles.categoryMiddleLayout}>
+                <div className={styles.containerCard}>
                 {/* 1. Category Description / Article Section */}
                 <section className={styles.seoArticleSection} aria-label="About Category">
                   {categoryData?.content ? (
@@ -993,7 +1001,13 @@ export default function CategoryClientView({
                   </section>
                 )}
               </div>
+
+              {/* Right Skyscraper Ad Column */}
+              <aside className={styles.categoryAdCol}>
+                <AdBanner type="skyscraper" />
+              </aside>
             </div>
+          </div>
           </div>
 
           {/* Footer */}

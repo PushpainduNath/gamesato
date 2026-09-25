@@ -37,7 +37,6 @@ export default function GamePlayerCard({
   const [isLiked, setIsLiked] = useState(false);
   const [dislikes, setDislikes] = useState(Math.max(10, Math.floor(initialLikes / 160)));
   const [isDisliked, setIsDisliked] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
 
@@ -74,6 +73,7 @@ export default function GamePlayerCard({
   const [isForceRotated, setIsForceRotated] = useState(false);
   
   const cardRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
   const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
@@ -310,16 +310,37 @@ export default function GamePlayerCard({
     setDislikes((prev) => (result.disliked ? prev + 1 : Math.max(0, prev - 1)));
   };
 
-  const handleShareClick = (e: React.MouseEvent) => {
+
+  const handleShareClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (typeof window !== 'undefined') {
-      const shareUrl = `${window.location.origin}/games/${gameSlug}`;
-      navigator.clipboard.writeText(shareUrl)
-        .then(() => {
-          setShareCopied(true);
-          setTimeout(() => setShareCopied(false), 2000);
-        })
-        .catch((err) => console.error('Failed to copy link:', err));
+    if (typeof window === 'undefined') return;
+
+    const shareUrl = `${window.location.origin}/games/${gameSlug}`;
+    const shareData = {
+      title: `${gameTitle} - Gamesato`,
+      text: `Play ${gameTitle} free online on Gamesato!`,
+      url: shareUrl,
+    };
+
+    // Native device share sheet popup (iOS, Android, macOS Safari/Chrome, Windows)
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') {
+          return;
+        }
+      }
+    }
+
+    // Fallback: Copy to clipboard if native share sheet is unavailable
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
     }
   };
 
@@ -392,6 +413,7 @@ export default function GamePlayerCard({
         ) : isDesktopPortrait ? (
           <div className={styles.portraitWrapper}>
             <iframe
+              ref={iframeRef}
               src={iframeSrc}
               title={gameTitle}
               className={styles.iframe}
@@ -402,6 +424,7 @@ export default function GamePlayerCard({
           </div>
         ) : (
           <iframe
+            ref={iframeRef}
             src={iframeSrc}
             title={gameTitle}
             className={styles.iframe}
@@ -462,6 +485,7 @@ export default function GamePlayerCard({
             <Heart size={19} fill={isLiked ? '#ff4b82' : 'none'} stroke={isLiked ? '#ff4b82' : 'currentColor'} />
             <span className={styles.barBtnCount}>{isLiked ? 'Saved' : 'Save'}</span>
           </button>
+
 
           {/* Share Button */}
           <button

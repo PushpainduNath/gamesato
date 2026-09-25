@@ -596,13 +596,13 @@
 }
 
 /* Mobile & Responsive adjustments */
-@media (max-width: 960px) {
+@media (max-width: 960px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .leftQuote {
     display: none;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .header {
     padding: 10px 12px;
     gap: 8px;

@@ -22,6 +22,7 @@ export interface GameItem {
   featured_mobile_url?: string | null;
   is_featured?: boolean;
   target_device?: string;
+  created_at?: string;
 }
 
 interface PokiSquareGridProps {
@@ -35,9 +36,15 @@ interface PokiSquareGridProps {
 
 type CardSize = 'hero' | 'medium' | 'small';
 
+export interface GridBadge {
+  text: string;
+  type: 'hot' | 'new' | 'featured' | 'liked' | 'recent' | 'fan';
+}
+
 interface GridDisplayItem {
   game: GameItem;
   size: CardSize;
+  badge?: GridBadge;
 }
 
 export default function PokiSquareGrid({
@@ -56,7 +63,9 @@ export default function PokiSquareGrid({
 
   React.useEffect(() => {
     const checkMobile = () => {
-      setIsMobileViewport(window.innerWidth <= 1024);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setIsMobileViewport(w <= 1024 || h <= 550);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -65,46 +74,62 @@ export default function PokiSquareGrid({
 
   const isMobileOrTablet = isMobileViewport || isMobileOrTabletProp;
 
-  // Container ref to query cards & measure grid columns
+  // Container and grid refs to measure grid columns
   const gridContainerRef = React.useRef<HTMLDivElement>(null);
+  const gridRef = React.useRef<HTMLDivElement>(null);
 
   // Measure dynamic grid columns on window resize and mount
-  const [columnCount, setColumnCount] = React.useState(3);
+  const [columnCount, setColumnCount] = React.useState(12);
 
   React.useEffect(() => {
     const updateColumns = () => {
       if (typeof window === 'undefined') return;
       const w = window.innerWidth;
-      if (w <= 640) {
-        setColumnCount(3);
-      } else if (w <= 1024) {
+      const h = window.innerHeight;
+      const isMobileScreen = w <= 640 || (w <= 1024 && h <= 550);
+      if (isMobileScreen) {
+        setColumnCount(Math.max(3, Math.floor((w + 8) / 104)));
+        return;
+      }
+      if (w <= 1024) {
         setColumnCount(6);
-      } else {
-        const container = gridContainerRef.current;
-        if (container) {
-          const gridEl = container.querySelector(`.${styles.grid}`) as HTMLElement;
-          if (gridEl) {
-            const computed = window.getComputedStyle(gridEl);
-            const colsStr = computed.getPropertyValue('grid-template-columns');
-            if (colsStr) {
-              const count = colsStr.trim().split(/\s+/).length;
-              if (count > 0) {
-                setColumnCount(count);
-                return;
-              }
-            }
+        return;
+      }
+
+      const gridEl = gridRef.current || (gridContainerRef.current?.querySelector(`.${styles.grid}`) as HTMLElement | null);
+      if (gridEl) {
+        const computed = window.getComputedStyle(gridEl);
+        const colsStr = computed.getPropertyValue('grid-template-columns');
+        if (colsStr && colsStr !== 'none') {
+          const count = colsStr.trim().split(/\s+/).length;
+          if (count > 0) {
+            setColumnCount(count);
+            return;
           }
-          const width = container.clientWidth;
+        }
+        const width = gridEl.clientWidth;
+        if (width > 0) {
           setColumnCount(Math.max(3, Math.floor((width + 10) / 106)));
-        } else {
-          setColumnCount(12);
+          return;
         }
       }
+      setColumnCount(12);
     };
 
     updateColumns();
     window.addEventListener('resize', updateColumns);
-    return () => window.removeEventListener('resize', updateColumns);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => updateColumns());
+      if (gridRef.current) ro.observe(gridRef.current);
+      if (gridContainerRef.current) ro.observe(gridContainerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateColumns);
+      if (ro) ro.disconnect();
+    };
   }, []);
 
   // Create fast lookup map for played games
@@ -179,199 +204,295 @@ export default function PokiSquareGrid({
   // Rhythmical pattern:
   // [Small, Small, 3x3 HERO, 2x2 MEDIUM, Small, Small, Small, 2x2 MEDIUM, Small, Small, Small, Small, 3x3 HERO (in middle), Small, 2x2 MEDIUM, ...]
   const gridItems = React.useMemo(() => {
-    if (filteredRegularGames.length === 0) {
+    if (allGames.length === 0) {
       return [];
     }
 
     const items: GridDisplayItem[] = [];
-    const usedIds = new Set<string>();
 
-    // Helper: find unused game matching predicate or fallback
-    const findUnused = (pool: GameItem[]) => {
-      for (const g of pool) {
-        if (!usedIds.has(g.id)) {
-          if (isMobileOrTablet && (g.target_device || 'ALL').toUpperCase() === 'DESKTOP') {
-            continue;
-          }
-          return g;
-        }
-      }
-      return null;
-    };
-
-    // Pool A: Played games from history
-    const playedPool: GameItem[] = [];
-    for (const h of history) {
-      const match = allGames.find((g) => g.id === h.id || g.slug === h.slug);
-      if (match && !playedPool.some((p) => p.id === match.id)) {
-        playedPool.push(match);
-      }
-    }
-
-    // Pool B: Featured games
-    const featPool = [...featuredGames];
-
-    // Pool C: Regular filtered games
-    const regularPool = [...filteredRegularGames];
-
-    // Source picker: picks next candidate from played, then featured, then regular
-    const getNextCandidate = (preferPlayed = false): GameItem | null => {
-      if (preferPlayed && playedPool.length > 0) {
-        const g = findUnused(playedPool);
-        if (g) return g;
-      }
-      const feat = findUnused(featPool);
-      if (feat) return feat;
-      return findUnused(regularPool);
-    };
-
+    // --- Search / Category / Filtered View ---
     if (!isDefaultView) {
-      // For Category / Search view:
-      // Hero top, then medium, then rest with rhythmic 2x2 every 10 items
-      const total = regularPool.length;
-      regularPool.forEach((game, idx) => {
+      if (filteredRegularGames.length === 0) return [];
+      const total = filteredRegularGames.length;
+      filteredRegularGames.forEach((game, idx) => {
         const remaining = total - idx - 1;
         if (idx === 0) {
-          items.push({ game, size: 'hero' });
+          // On mobile/tablet strictly 2x2 medium, never 3x3 hero
+          items.push({ game, size: isMobileOrTablet ? 'medium' : 'hero' });
         } else if ((idx === 3 || idx === 8 || (idx > 10 && idx % 12 === 0)) && remaining >= 16) {
           items.push({ game, size: 'medium' });
         } else {
           items.push({ game, size: 'small' });
         }
       });
+
+      // Bottom Row Balancer for Category / Search view
+      const effectiveCols = columnCount > 0 ? columnCount : (isMobileOrTablet ? 3 : 12);
+      let totalUnits = 0;
+      for (const it of items) {
+        if (isMobileOrTablet) {
+          totalUnits += (it.size === 'hero' || it.size === 'medium') ? 4 : 1;
+        } else {
+          totalUnits += it.size === 'hero' ? 9 : (it.size === 'medium' ? 4 : 1);
+        }
+      }
+      const remainder = totalUnits % effectiveCols;
+      if (remainder !== 0) {
+        const needed = effectiveCols - remainder;
+        for (let k = 0; k < needed; k++) {
+          const g = items[k % items.length]?.game;
+          if (g) {
+            items.push({ game: g, size: 'small' });
+          }
+        }
+      }
       return items;
     }
 
-    // Default Homepage View: Highly catchy interwoven rhythm!
-    // 1. Two small cards (top-left corner flank)
-    for (let i = 0; i < 2; i++) {
-      const g = findUnused(regularPool);
-      if (g) {
-        items.push({ game: g, size: 'small' });
-        usedIds.add(g.id);
+    // --- Default Homepage View: Exact Curated Hierarchy ---
+    // User Specification:
+    // 1. 2 Most Played Games: #1 in 3x3 (on desktop) / 2x2 (on mobile), #2 in 2x2
+    // 2. 2 Most Recently Played Games (from history)
+    // 3. 2 Favorite Games (from likedIds)
+    // 4. 2 Most Liked Games (from likes_count)
+    // 5. 2 New Games (from created_at)
+    // 6. 2 Featured Games (from is_featured / featuredGames)
+    // 7. Remaining Top Games: filled randomly in 1x1 small tiles
+    // 8. Grid Balancer: 100% flat and level bottom row across all columns
+
+    // Filter games suitable for the current device
+    const deviceFiltered = allGames.filter((g) => {
+      if (isMobileOrTablet) {
+        return (g.target_device || 'ALL').toUpperCase() !== 'DESKTOP';
+      }
+      return true;
+    });
+
+    const usedIds = new Set<string>();
+
+    // 1. Most Played Pool (sorted by play_count DESC)
+    const mostPlayedPool = [...deviceFiltered].sort(
+      (a, b) => (b.play_count || 0) - (a.play_count || 0)
+    );
+
+    // 2. Recent Pool (from user history)
+    const recentPool: GameItem[] = [];
+    for (const h of history) {
+      const match = deviceFiltered.find((g) => g.id === h.id || g.slug === h.slug);
+      if (match && !recentPool.some((p) => p.id === match.id)) {
+        recentPool.push(match);
       }
     }
 
-    // 2. #1 Hero 3x3 (Top played game or top featured)
-    const hero1 = getNextCandidate(true);
-    if (hero1) {
-      items.push({ game: hero1, size: 'hero' });
-      usedIds.add(hero1.id);
-    }
-
-    // 3. Medium 2x2 card
-    const med1 = getNextCandidate(true);
-    if (med1) {
-      items.push({ game: med1, size: 'medium' });
-      usedIds.add(med1.id);
-    }
-
-    // 4. Three small cards
-    for (let i = 0; i < 3; i++) {
-      const g = findUnused(regularPool);
-      if (g) {
-        items.push({ game: g, size: 'small' });
-        usedIds.add(g.id);
+    // 3. Favorite Pool (from user likedIds)
+    const favoritePool: GameItem[] = [];
+    for (const id of likedIds) {
+      const match = deviceFiltered.find((g) => g.id === id);
+      if (match && !favoritePool.some((p) => p.id === match.id)) {
+        favoritePool.push(match);
       }
     }
 
-    // 5. Another Medium 2x2 card
-    const med2 = getNextCandidate(true);
-    if (med2) {
-      items.push({ game: med2, size: 'medium' });
-      usedIds.add(med2.id);
-    }
+    // 4. Most Liked Pool (sorted by likes_count DESC)
+    const mostLikedPool = [...deviceFiltered].sort(
+      (a, b) => (b.likes_count || 0) - (a.likes_count || 0)
+    );
 
-    // 6. Four small cards
-    for (let i = 0; i < 4; i++) {
-      const g = findUnused(regularPool);
-      if (g) {
-        items.push({ game: g, size: 'small' });
-        usedIds.add(g.id);
+    // 5. New Games Pool (sorted by created_at DESC)
+    const newPool = [...deviceFiltered].sort((a, b) => {
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    // 6. Featured Games Pool (from featuredGames or is_featured)
+    const featuredPool: GameItem[] = [];
+    for (const fg of featuredGames) {
+      if (isMobileOrTablet && (fg.target_device || 'ALL').toUpperCase() === 'DESKTOP') continue;
+      if (!featuredPool.some((p) => p.id === fg.id)) {
+        featuredPool.push(fg);
+      }
+    }
+    for (const g of deviceFiltered) {
+      if (g.is_featured && !featuredPool.some((p) => p.id === g.id)) {
+        featuredPool.push(g);
       }
     }
 
-    // 7. Another Medium 2x2 card
-    const med3 = getNextCandidate(true);
-    if (med3) {
-      items.push({ game: med3, size: 'medium' });
-      usedIds.add(med3.id);
-    }
-
-    // 8. Three small cards
-    for (let i = 0; i < 3; i++) {
-      const g = findUnused(regularPool);
-      if (g) {
-        items.push({ game: g, size: 'small' });
-        usedIds.add(g.id);
+    // Helper: Pick unused unique game across pools in priority order
+    const pickUnique = (...pools: GameItem[][]): GameItem | null => {
+      for (const pool of pools) {
+        for (const g of pool) {
+          if (!usedIds.has(g.id)) {
+            usedIds.add(g.id);
+            return g;
+          }
+        }
       }
+      return null;
+    };
+
+    // Pick Curated Games
+    const mp1 = pickUnique(mostPlayedPool);
+    const mp2 = pickUnique(mostPlayedPool);
+    const rec1 = pickUnique(recentPool, mostPlayedPool);
+    const rec2 = pickUnique(recentPool, mostPlayedPool);
+    const fav1 = pickUnique(favoritePool, mostLikedPool, mostPlayedPool);
+    const fav2 = pickUnique(favoritePool, mostLikedPool, mostPlayedPool);
+    const liked1 = pickUnique(mostLikedPool, mostPlayedPool);
+    const liked2 = pickUnique(mostLikedPool, mostPlayedPool);
+    const new1 = pickUnique(newPool, mostPlayedPool);
+    const new2 = pickUnique(newPool, mostPlayedPool);
+    const feat1 = pickUnique(featuredPool, mostPlayedPool);
+    const feat2 = pickUnique(featuredPool, mostPlayedPool);
+
+    const addItem = (
+      game: GameItem | null,
+      size: CardSize,
+      badge?: GridBadge
+    ) => {
+      if (!game) return;
+      items.push({ game, size, badge });
+    };
+
+    if (isMobileOrTablet) {
+      // MOBILE & TABLET (Strictly 2x2 and 1x1, ZERO 3x3):
+      // Row 1-2 (6 units = 2 full rows on 3-col): #1 Most Played (2x2) + 2 Recent (1x1 each)
+      addItem(mp1, 'medium', { text: '🔥 MOST PLAYED', type: 'hot' });
+      addItem(
+        rec1,
+        'small',
+        rec1 && (playedMap.has(rec1.id) || playedMap.has(rec1.slug))
+          ? { text: 'CONTINUE', type: 'recent' }
+          : { text: 'POPULAR', type: 'hot' }
+      );
+      addItem(
+        rec2,
+        'small',
+        rec2 && (playedMap.has(rec2.id) || playedMap.has(rec2.slug))
+          ? { text: 'CONTINUE', type: 'recent' }
+          : { text: 'POPULAR', type: 'hot' }
+      );
+
+      // Row 3-4 (6 units = 2 full rows on 3-col): 2 Favorites (1x1 each) + #2 Most Played (2x2)
+      addItem(
+        fav1,
+        'small',
+        fav1 && likedIds.includes(fav1.id)
+          ? { text: '❤️ FAVORITE', type: 'liked' }
+          : { text: 'TOP RATED', type: 'fan' }
+      );
+      addItem(
+        fav2,
+        'small',
+        fav2 && likedIds.includes(fav2.id)
+          ? { text: '❤️ FAVORITE', type: 'liked' }
+          : { text: 'TOP RATED', type: 'fan' }
+      );
+      addItem(mp2, 'medium', { text: '🔥 TOP PLAYED', type: 'hot' });
+
+      // Row 5-6 (6 units = 2 full rows on 3-col): #1 Featured (2x2) + 2 Most Liked (1x1 each)
+      addItem(feat1, 'medium', { text: '★ FEATURED', type: 'featured' });
+      addItem(liked1, 'small', { text: '❤️ MOST LIKED', type: 'liked' });
+      addItem(liked2, 'small', { text: '❤️ MOST LIKED', type: 'liked' });
+
+      // Row 7 (3 units = 1 full row on 3-col): 2 New (1x1) + #2 Featured (1x1)
+      addItem(new1, 'small', { text: '✨ NEW', type: 'new' });
+      addItem(new2, 'small', { text: '✨ NEW', type: 'new' });
+      addItem(feat2, 'small', { text: '★ FEATURED', type: 'featured' });
+    } else {
+      // DESKTOP GRID:
+      // Flank top-left with 2 small cards
+      addItem(
+        rec1,
+        'small',
+        rec1 && (playedMap.has(rec1.id) || playedMap.has(rec1.slug))
+          ? { text: 'CONTINUE', type: 'recent' }
+          : { text: 'POPULAR', type: 'hot' }
+      );
+      addItem(
+        rec2,
+        'small',
+        rec2 && (playedMap.has(rec2.id) || playedMap.has(rec2.slug))
+          ? { text: 'CONTINUE', type: 'recent' }
+          : { text: 'POPULAR', type: 'hot' }
+      );
+
+      // #1 Most Played Game in 3x3 Hero Card!
+      addItem(mp1, 'hero', { text: '🔥 MOST PLAYED', type: 'hot' });
+
+      // #2 Most Played Game in 2x2 Medium Card!
+      addItem(mp2, 'medium', { text: '🔥 TOP PLAYED', type: 'hot' });
+
+      // 2 Favorites
+      addItem(
+        fav1,
+        'small',
+        fav1 && likedIds.includes(fav1.id)
+          ? { text: '❤️ FAVORITE', type: 'liked' }
+          : { text: 'TOP RATED', type: 'fan' }
+      );
+      addItem(
+        fav2,
+        'small',
+        fav2 && likedIds.includes(fav2.id)
+          ? { text: '❤️ FAVORITE', type: 'liked' }
+          : { text: 'TOP RATED', type: 'fan' }
+      );
+
+      // #1 Featured in 2x2 Medium Card
+      addItem(feat1, 'medium', { text: '★ FEATURED', type: 'featured' });
+
+      // 2 Most Liked Games
+      addItem(liked1, 'small', { text: '❤️ MOST LIKED', type: 'liked' });
+      addItem(liked2, 'small', { text: '❤️ MOST LIKED', type: 'liked' });
+
+      // 2 New Games
+      addItem(new1, 'small', { text: '✨ NEW', type: 'new' });
+      addItem(new2, 'small', { text: '✨ NEW', type: 'new' });
+
+      // #2 Featured Game
+      addItem(feat2, 'small', { text: '★ FEATURED', type: 'featured' });
     }
 
-    // 9. #2 Hero 3x3 IN THE MIDDLE! (User request: beech me 3rd size!)
-    const hero2 = getNextCandidate(true) || findUnused(regularPool);
-    if (hero2) {
-      items.push({ game: hero2, size: 'hero' });
-      usedIds.add(hero2.id);
-    }
+    // 7. Remaining Top Games: filled randomly in 1x1 small tiles
+    const remainingTopGames = mostPlayedPool.filter((g) => !usedIds.has(g.id));
 
-    // 10. Three small cards
-    for (let i = 0; i < 3; i++) {
-      const g = findUnused(regularPool);
-      if (g) {
-        items.push({ game: g, size: 'small' });
-        usedIds.add(g.id);
+    // Stable pseudo-random hash for variety in smaller tiles without SSR hydration mismatch
+    const getGameHash = (g: GameItem) => {
+      const str = g.id || g.slug || g.title;
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0;
       }
-    }
+      return Math.abs(hash);
+    };
 
-    // 11. Another Medium 2x2 card
-    const med4 = getNextCandidate(true);
-    if (med4) {
-      items.push({ game: med4, size: 'medium' });
-      usedIds.add(med4.id);
-    }
+    const shuffledRemaining = [...remainingTopGames].sort((a, b) => {
+      return (getGameHash(a) % 1000) - (getGameHash(b) % 1000);
+    });
 
-    // 12. Rest of the games catalog:
-    // Flow remaining games with a Medium (2x2) card interspersed every ~14 items,
-    // BUT strictly NEVER in the last 16 items so the bottom edge is always 100% flush, straight, and even!
-    // On mobile and tablets in default view, target 50-60 games (base 52 + balancing cards)!
     const isMobileView = isMobileOrTablet && isDefaultView;
-    const TARGET_LIMIT = isMobileView ? 52 : Infinity;
-    let countSinceLastMedium = 0;
+    const TARGET_LIMIT = isMobileView ? 54 : 180;
 
-    while (items.length < TARGET_LIMIT) {
-      const g = findUnused(regularPool);
-      if (!g) break;
-
+    for (const g of shuffledRemaining) {
+      if (items.length >= TARGET_LIMIT) break;
       usedIds.add(g.id);
-
-      // Count how many unused games remain until target limit or pool exhaustion
-      const remainingCount = TARGET_LIMIT === Infinity
-        ? (regularPool.length - usedIds.size)
-        : (TARGET_LIMIT - items.length);
-
-      countSinceLastMedium++;
-
-      // Strict Rule: NEVER assign medium if fewer than 16 games remain before the target limit.
-      // This ensures 2-3 full rows of 1x1 small cards at the bottom,
-      // completely burying any previous 2x2 cards and preventing uneven hanging blocks!
-      if (countSinceLastMedium >= 14 && remainingCount >= 16) {
-        items.push({ game: g, size: 'medium' });
-        countSinceLastMedium = 0;
-      } else {
-        items.push({ game: g, size: 'small' });
-      }
+      items.push({
+        game: g,
+        size: 'small',
+        badge: g.is_featured ? { text: '★ FEATURED', type: 'featured' } : undefined
+      });
     }
 
-    // 13. Grid Balancer: Calculate total cells and ensure the bottom row is 100% full!
-    // Eliminates any single/lonely hanging box like in the screenshot!
+    // 8. Grid Balancer: Ensure the bottom row is 100% full, even, and level!
     const effectiveCols = columnCount > 0 ? columnCount : (isMobileView ? 3 : 12);
     let totalUnits = 0;
     for (const it of items) {
       if (isMobileOrTablet) {
-        // On mobile, hero & medium cards both span 2 cols x 2 rows = 4 cells. Small cards = 1 cell.
         totalUnits += (it.size === 'hero' || it.size === 'medium') ? 4 : 1;
       } else {
-        // On desktop, hero = 9 cells, medium = 4 cells, small = 1 cell.
         totalUnits += it.size === 'hero' ? 9 : (it.size === 'medium' ? 4 : 1);
       }
     }
@@ -379,17 +500,28 @@ export default function PokiSquareGrid({
     const remainder = totalUnits % effectiveCols;
     if (remainder !== 0) {
       const needed = effectiveCols - remainder;
-      for (let k = 0; k < needed; k++) {
-        const g = findUnused(regularPool);
-        if (g) {
+      let padAdded = 0;
+      for (const g of shuffledRemaining) {
+        if (!usedIds.has(g.id)) {
           usedIds.add(g.id);
           items.push({ game: g, size: 'small' });
+          padAdded++;
+          if (padAdded >= needed) break;
+        }
+      }
+      if (padAdded < needed && items.length > 0) {
+        for (let k = 0; padAdded < needed; k++) {
+          const g = items[k % items.length]?.game;
+          if (g) {
+            items.push({ game: g, size: 'small' });
+            padAdded++;
+          }
         }
       }
     }
 
     return items;
-  }, [filteredRegularGames, allGames, featuredGames, history, isDefaultView, isMobileOrTablet, columnCount]);
+  }, [allGames, featuredGames, history, likedIds, isDefaultView, isMobileOrTablet, columnCount, filteredRegularGames]);
 
   // Find category slug if activeFilter is a specific category
   const activeCategoryObj = React.useMemo(() => {
@@ -509,7 +641,7 @@ export default function PokiSquareGrid({
   }
 
   return (
-    <section className={styles.gridContainer}>
+    <section className={styles.gridContainer} ref={gridContainerRef}>
       {/* Section Header */}
       <div className={styles.sectionHeader}>
         <div className={styles.headerLeft}>
@@ -542,7 +674,7 @@ export default function PokiSquareGrid({
       </div>
 
       {/* Poki Modular Catchy Interleaved Dense Grid */}
-      <div className={styles.grid} ref={gridContainerRef}>
+      <div className={styles.grid} ref={gridRef}>
         {gridItems.map((item, idx) => {
           const { game, size } = item;
           const isPlayed = playedMap.has(game.id) || playedMap.has(game.slug);
@@ -590,9 +722,24 @@ export default function PokiSquareGrid({
                   <div className={styles.gradientOverlay} />
 
                   {/* Badge */}
-                  <div className={styles.badgeContainer}>
-                    {getBadge(game, size === 'hero', size === 'medium', idx)}
-                  </div>
+                  {item.badge ? (
+                    <div className={styles.badgeContainer}>
+                      <span className={`${styles.badge} ${
+                        item.badge.type === 'hot' ? styles.badgeHot :
+                        item.badge.type === 'new' ? styles.badgeNew :
+                        item.badge.type === 'liked' ? styles.badgeLiked :
+                        item.badge.type === 'recent' ? styles.badgeRecent :
+                        item.badge.type === 'featured' ? styles.badgeFeatured :
+                        styles.badgeFan
+                      }`}>
+                        {item.badge.text}
+                      </span>
+                    </div>
+                  ) : getBadge(game, size === 'hero', size === 'medium', idx) ? (
+                    <div className={styles.badgeContainer}>
+                      {getBadge(game, size === 'hero', size === 'medium', idx)}
+                    </div>
+                  ) : null}
 
                   {/* Center Play Button Overlay for Hero and Medium Cards */}
                   {size !== 'small' && (

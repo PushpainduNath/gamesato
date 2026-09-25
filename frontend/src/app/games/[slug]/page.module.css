@@ -40,7 +40,7 @@
   gap: 20px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .contentArea {
     padding: 10px 10px 32px;
     gap: 16px;
@@ -98,22 +98,38 @@
 }
 
 .gameHeroLayout {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 20px;
-  align-items: stretch;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
   position: relative;
   width: 100%;
 }
 
-.leftPlayerColumn {
-  width: 100%;
+.heroAdSide {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
+  position: relative;
+  z-index: 5;
+}
+
+.centerPlayerColumn {
+  flex: 1;
   min-width: 0;
-}
-
-.rightMoreColumn {
+  max-width: 1100px;
   width: 100%;
   position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 1200px), (max-height: 550px) and (orientation: landscape) {
+  .heroAdSide {
+    display: none !important;
+  }
 }
 
 /* ----------------- RIGHT COLUMN "MORE GAMES" BOX ----------------- */
@@ -499,34 +515,25 @@
   transform: translateX(2px);
 }
 
-/* ----------------- POKI BENTO GRID ----------------- */
+/* ----------------- EXPLORE MORE GAMES GRID (Poki Bento Pattern: 3x3, 2x2, 1x1) ----------------- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(106px, 1fr));
-  grid-auto-rows: minmax(106px, 1fr);
-  grid-auto-flow: dense;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
   gap: 10px;
+  grid-auto-flow: dense;
   width: 100%;
   box-sizing: border-box;
-}
-
-@media (min-width: 1440px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(122px, 1fr));
-    grid-auto-rows: minmax(122px, 1fr);
-    gap: 12px;
-  }
 }
 
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: minmax(0, 1fr);
     gap: 8px;
+    grid-auto-flow: dense;
   }
 }
 
-/* Card item with 3D Flip */
+/* Base Card item with 3D Flip (1x1 Aspect Ratio) */
 .card {
   position: relative;
   text-decoration: none;
@@ -538,24 +545,57 @@
   aspect-ratio: 1 / 1;
 }
 
+/* Desktop: 3x3 Hero Card */
 .heroCard {
   grid-column: span 3;
   grid-row: span 3;
+  border-radius: 22px;
 }
 
+.heroCard .cardInner,
+.heroCard .cardFront {
+  border-radius: 22px;
+}
+
+.heroCard .gameTitle {
+  font-size: 1.25rem;
+}
+
+/* Desktop & Mobile: 2x2 Medium Card */
 .mediumCard {
   grid-column: span 2;
   grid-row: span 2;
+  border-radius: 18px;
 }
 
+.mediumCard .cardInner,
+.mediumCard .cardFront {
+  border-radius: 18px;
+}
+
+.mediumCard .gameTitle {
+  font-size: 0.98rem;
+}
+
+/* Mobile: strictly 2x2 and 1x1 (no 3x3) */
 @media (max-width: 768px) {
-  .heroCard {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
+  .heroCard,
   .mediumCard {
-    grid-column: span 1;
-    grid-row: span 1;
+    grid-column: span 2 !important;
+    grid-row: span 2 !important;
+    border-radius: 16px;
+  }
+
+  .heroCard .cardInner,
+  .heroCard .cardFront,
+  .mediumCard .cardInner,
+  .mediumCard .cardFront {
+    border-radius: 16px;
+  }
+
+  .heroCard .gameTitle,
+  .mediumCard .gameTitle {
+    font-size: 0.85rem;
   }
 }
 
@@ -850,24 +890,13 @@
   width: 100%;
 }
 
-@media (max-width: 992px) {
-  .gameHeroLayout {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .rightMoreColumn {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .desktopLayout {
-    display: none;
+    display: none !important;
   }
 
   .mobileLayout {
-    display: block;
+    display: block !important;
     width: 100%;
   }
 }

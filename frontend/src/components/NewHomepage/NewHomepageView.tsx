@@ -8,6 +8,7 @@ import PokiSquareGrid, { GameItem } from './PokiSquareGrid';
 import NewFooter from './NewFooter';
 import SeoFaqSection from './SeoFaqSection';
 import CategorySectionGrid, { CategoryWithGames } from './CategorySectionGrid';
+import AdBanner from '@/components/AdBanner';
 import { usePlayHistoryList } from '@/lib/usePlayHistory';
 import styles from './NewHomepageView.module.css';
 
@@ -51,8 +52,11 @@ export default function NewHomepageView({
   // Detect mobile & tablet screen for responsive header and device-optimized grids
   React.useEffect(() => {
     const checkViewport = () => {
-      setIsMobile(window.innerWidth <= 768);
-      setIsMobileOrTablet(window.innerWidth <= 1024);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobileScreen = w <= 768 || (w <= 1024 && h <= 550);
+      setIsMobile(isMobileScreen);
+      setIsMobileOrTablet(w <= 1024);
     };
     checkViewport();
     window.addEventListener('resize', checkViewport);
@@ -72,17 +76,22 @@ export default function NewHomepageView({
   }, []);
 
   const handleToggleMenu = () => {
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      setIsMobileMenuOpen((prev) => !prev);
-    } else {
-      setIsSidebarPinnedDesktop((prev) => {
-        const next = !prev;
-        try {
-          localStorage.setItem('gamesato_sidebar_pinned', String(next));
-        } catch (_) {}
-        return next;
-      });
+    if (typeof window !== 'undefined') {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobileScreen = w <= 768 || (w <= 1024 && h <= 550);
+      if (isMobileScreen) {
+        setIsMobileMenuOpen((prev) => !prev);
+        return;
+      }
     }
+    setIsSidebarPinnedDesktop((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('gamesato_sidebar_pinned', String(next));
+      } catch (_) {}
+      return next;
+    });
   };
 
   const isMenuOpen = isMobile ? isMobileMenuOpen : isSidebarPinnedDesktop;
@@ -117,14 +126,23 @@ export default function NewHomepageView({
         isMobileOrTablet={isMobileOrTablet}
       />
 
+      {/* Primary Responsive Leaderboard Ad */}
+      <AdBanner type="horizontal" />
+
       {/* Top 4 Category Sections (3 rows of games each, with 3 box sizes + View all link) */}
       {activeFilter === 'All' && !searchQuery.trim() && categorySections && categorySections.length > 0 && (
         <div className={styles.categorySectionsWrapper}>
           {categorySections.map((cat, idx) => (
-            <CategorySectionGrid key={cat.id} category={cat} sectionIndex={idx} isMobile={isMobile} />
+            <React.Fragment key={cat.id}>
+              <CategorySectionGrid category={cat} sectionIndex={idx} isMobile={isMobile} />
+              {idx === 1 && <AdBanner type="horizontal" />}
+            </React.Fragment>
           ))}
         </div>
       )}
+
+      {/* Pre-FAQ In-Feed Ad Banner */}
+      <AdBanner type="horizontal" />
 
       {/* SEO & Interactive FAQ Section (Full-Width End-to-End) */}
       <SeoFaqSection

@@ -406,52 +406,282 @@
   color: #7c3aed !important;
 }
 
-/* More Games Section in Mobile View */
-.moreGamesSection {
-  margin-top: 20px;
+/* Explore More Games Bento Section in Mobile View (2x2 and 3x3 pattern) */
+.exploreSection {
+  margin-top: 22px;
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 14px;
+}
+
+.exploreHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
 }
 
-.moreGamesTitle {
+.exploreTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flameIcon {
+  color: #a78bfa;
+  flex-shrink: 0;
+}
+
+.exploreTitle {
   font-size: 1.25rem;
   font-weight: 800;
   color: #ffffff;
   margin: 0;
   font-family: var(--font-sans);
+  letter-spacing: -0.01em;
 }
 
-:global(.light-theme) .moreGamesTitle {
-  color: #181C1E !important;
+.viewMoreHeaderLink {
+  color: #a78bfa;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.moreGamesGrid {
+.viewMoreHeaderLink:active {
+  color: #c4b5fd;
+  transform: translateX(2px);
+}
+
+.exploreGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 8px;
+  grid-auto-flow: dense;
   width: 100%;
+  box-sizing: border-box;
 }
 
-.moreGameCard {
+.exploreCard {
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 12px;
   overflow: hidden;
   display: block;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
+  text-decoration: none;
+  background-color: #151722;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  outline: none;
 }
 
-.moreGameCard:active {
-  transform: scale(0.95);
+.exploreCard:active {
+  transform: scale(0.96);
 }
 
-.moreGameThumb {
+
+
+/* 2x2 Medium Card: spans 2 columns & 2 rows */
+.exploreMediumCard {
+  grid-column: span 2;
+  grid-row: span 2;
+  border-radius: 14px;
+  border-color: rgba(139, 92, 246, 0.22);
+}
+
+.exploreImageWrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.exploreImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.exploreOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.25) 50%, rgba(10, 12, 20, 0.92) 100%);
+  pointer-events: none;
+}
+
+/* Badges */
+.badgeTopLeft {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  z-index: 4;
+}
+
+.badgeHero {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.badgeHot {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Play button overlay */
+.explorePlayOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.88);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+}
+
+.exploreCard:active .explorePlayOverlay {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Card content */
+.exploreContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.exploreCardTitle {
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-sans);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.exploreMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 0.7rem;
+}
+
+.exploreCategoryTag {
+  color: #c4b5fd;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.exploreStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 600;
+}
+
+/* View More Games Option Button */
+.viewMoreFooter {
+  width: 100%;
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.viewMoreButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
   border-radius: 12px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(124, 58, 237, 0.38));
+  border: 1px solid rgba(139, 92, 246, 0.42);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.2);
+}
+
+.viewMoreButton:active {
+  transform: scale(0.98);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(124, 58, 237, 0.5));
+}
+
+/* Light Theme Overrides */
+:global(.light-theme) .exploreTitle {
+  color: #181C1E !important;
+}
+
+:global(.light-theme) .flameIcon {
+  color: #7c3aed !important;
+}
+
+:global(.light-theme) .viewMoreHeaderLink {
+  color: #7c3aed !important;
+}
+
+:global(.light-theme) .exploreCard {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+:global(.light-theme) .viewMoreButton {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #181C1E !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+:global(.light-theme) .viewMoreButton svg {
+  color: #181C1E !important;
+  stroke: #181C1E !important;
 }

@@ -113,7 +113,7 @@
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .hero {
     padding: 4px 14px 10px 14px;
     gap: 8px;

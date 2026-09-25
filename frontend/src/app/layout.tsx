@@ -3,6 +3,7 @@ import Script from 'next/script';
 import './globals.css';
 import Providers from '@/components/Providers';
 import PortalLayoutWrapper from '@/components/PortalLayoutWrapper';
+import GoogleAdSenseScript from '@/components/GoogleAdSenseScript';
 import React from 'react';
 
 export const metadata: Metadata = {
@@ -81,13 +82,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
+        <Script
           id="organization-schema"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <script
+        <Script
           id="theme-initializer"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               try {
@@ -112,6 +115,7 @@ export default function RootLayout({
             gtag('config', 'G-B3F3Z0WNME');
           `}
         </Script>
+        <GoogleAdSenseScript />
         <Providers>
           <PortalLayoutWrapper>{children}</PortalLayoutWrapper>
         </Providers>

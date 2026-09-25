@@ -3,7 +3,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .backdrop {
     display: block;
     position: fixed;
@@ -276,7 +276,7 @@
 }
 
 /* Mobile & Tablet Responsive: Hidden by default, slides out when burger menu clicked */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 550px) and (orientation: landscape) and (max-width: 1024px) {
   .backdrop {
     display: block !important;
     position: fixed !important;

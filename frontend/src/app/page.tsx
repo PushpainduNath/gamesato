@@ -183,47 +183,73 @@ export default async function HomePage() {
     console.error('Failed to query categories and top category sections:', err);
   }
 
-  // 5. Fetch Featured Games (is_featured = TRUE, for first 2 rows & big card)
+  // 5. Fetch Featured Games (is_featured = TRUE)
   let featuredGames: GameItem[] = [];
   try {
     const featRes = await query(
       `SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
+              g.target_device, g.is_featured, g.created_at,
               g.featured_desktop_url, g.featured_mobile_url,
               COUNT(l."userId")::int as likes_count
        FROM games g
        LEFT JOIN likes l ON g.id = l."gameId"
        WHERE g.status = 'published' AND g.is_featured = TRUE
        GROUP BY g.id
-       ORDER BY g.updated_at DESC
-       LIMIT 15`
+       ORDER BY g.play_count DESC, g.updated_at DESC
+       LIMIT 30`
     );
     featuredGames = featRes.rows;
   } catch (err) {
     console.error('Failed to query featured games:', err);
   }
 
-  // 6. Fetch All published games for feed
+  // 6. Fetch All published games for feed (top played + newest + most liked)
   let allGames: GameItem[] = [];
   try {
-    const allRes = await query(
-      `SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
-              g.target_device,
-              COUNT(l."userId")::int as likes_count
-       FROM games g
-       LEFT JOIN likes l ON g.id = l."gameId"
-       WHERE g.status = 'published'
-       GROUP BY g.id
-       ORDER BY 
-         (CASE 
-            WHEN $1::boolean = TRUE THEN 
-              (CASE WHEN g.target_device = 'MOBILE' THEN 1 WHEN g.target_device = 'ALL' THEN 2 ELSE 3 END)
-            ELSE 
-              (CASE WHEN g.target_device = 'DESKTOP' THEN 1 WHEN g.target_device = 'ALL' THEN 2 ELSE 3 END)
-          END),
-         g.created_at DESC
-       LIMIT 200`,
-      [isMobileServer]
-    );
+    const allRes = await query(`
+      WITH TopPlayed AS (
+        SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
+               g.target_device, g.is_featured, g.created_at, g.featured_desktop_url, g.featured_mobile_url,
+               COUNT(l."userId")::int as likes_count
+        FROM games g
+        LEFT JOIN likes l ON g.id = l."gameId"
+        WHERE g.status = 'published'
+        GROUP BY g.id
+        ORDER BY g.play_count DESC
+        LIMIT 250
+      ),
+      NewestGames AS (
+        SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
+               g.target_device, g.is_featured, g.created_at, g.featured_desktop_url, g.featured_mobile_url,
+               COUNT(l."userId")::int as likes_count
+        FROM games g
+        LEFT JOIN likes l ON g.id = l."gameId"
+        WHERE g.status = 'published'
+        GROUP BY g.id
+        ORDER BY g.created_at DESC
+        LIMIT 100
+      ),
+      MostLiked AS (
+        SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
+               g.target_device, g.is_featured, g.created_at, g.featured_desktop_url, g.featured_mobile_url,
+               COUNT(l."userId")::int as likes_count
+        FROM games g
+        LEFT JOIN likes l ON g.id = l."gameId"
+        WHERE g.status = 'published'
+        GROUP BY g.id
+        ORDER BY likes_count DESC
+        LIMIT 60
+      ),
+      Combined AS (
+        SELECT * FROM TopPlayed
+        UNION
+        SELECT * FROM NewestGames
+        UNION
+        SELECT * FROM MostLiked
+      )
+      SELECT * FROM Combined
+      ORDER BY play_count DESC, created_at DESC
+    `);
     allGames = allRes.rows;
   } catch (err) {
     console.error('Failed to query all games:', err);

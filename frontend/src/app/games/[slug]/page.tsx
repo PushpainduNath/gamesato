@@ -147,7 +147,7 @@ export default async function GameDetailPage(props: {
     console.error('Failed to fetch sidebar games:', err);
   }
 
-  // 5. Fetch pool of 45 games for the bottom Poki Bento Grid and Header instant search
+  // 5. Fetch pool of 60 games for the bottom Poki Bento Grid and Header instant search
   let bentoGames: GridGameItem[] = [];
   try {
     const bentoRes = await query(
@@ -159,7 +159,7 @@ export default async function GameDetailPage(props: {
        WHERE g.status = 'published' AND g.id != $1
        GROUP BY g.id
        ORDER BY CASE WHEN LOWER(g.category) = LOWER($2) THEN 0 ELSE 1 END, g.play_count DESC, g.created_at DESC
-       LIMIT 45`,
+       LIMIT 60`,
       [game.id, game.category]
     );
     bentoGames = bentoRes.rows;

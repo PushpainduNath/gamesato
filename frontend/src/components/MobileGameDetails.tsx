@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Heart, ThumbsUp, ThumbsDown, Share2, Play, Puzzle, Gamepad2, ChevronsRight } from 'lucide-react';
+import { Heart, ThumbsUp, ThumbsDown, Share2, Play, Puzzle, Gamepad2, ChevronsRight, Flame } from 'lucide-react';
 import { toggleLocalReaction, getLocalReactions } from '@/lib/usePlayHistory';
+import { formatCompactNumber, getImageUrl } from '@/lib/utils';
 import Translate from './Translate';
 import GamePlayer from './GamePlayer';
+import AdBanner from './AdBanner';
 import styles from './MobileGameDetails.module.css';
 
 const categoryIconMap: { [key: string]: string } = {
@@ -24,12 +26,68 @@ const categoryIconMap: { [key: string]: string } = {
   'Board': '/board.webp',
 };
 
-interface MoreGame {
+export interface MoreGame {
   id: string;
   title: string;
   slug: string;
   thumbnail_url: string;
   category: string;
+  play_count?: number;
+  likes_count?: number;
+  featured_desktop_url?: string | null;
+  featured_mobile_url?: string | null;
+}
+
+interface MobileGridItem {
+  game: MoreGame;
+  size: 'medium' | 'small';
+}
+
+function generateMobileExploreItems(games: MoreGame[]): MobileGridItem[] {
+  if (!games || games.length === 0) return [];
+
+  const total = games.length;
+  const items: MobileGridItem[] = [];
+
+  // Mobile strictly 2x2 ('medium') and 1x1 ('small') - NO 3x3 on mobile!
+  // In a 3-column mobile grid:
+  // - 2x2 Medium takes 2 columns x 2 rows (4 units)
+  // - 1x1 Small takes 1 column x 1 row (1 unit)
+  // Combination: 2x2 + two 1x1s = 6 units (2 full rows). Three 1x1s = 3 units (1 full row).
+  for (let idx = 0; idx < total; idx++) {
+    const game = games[idx];
+    const remaining = total - idx - 1;
+
+    let size: 'medium' | 'small' = 'small';
+
+    // Rhythmic 2x2 Medium cards, strictly when at least 5 cards remain
+    if (
+      (idx === 0 || idx === 3 || idx === 7 || idx === 11 || idx === 15 || (idx > 15 && idx % 4 === 0)) &&
+      remaining >= 5
+    ) {
+      size = 'medium';
+    }
+
+    items.push({ game, size });
+  }
+
+  // Calculate total units (cells) to ensure 100% full 3-column rows
+  let totalUnits = 0;
+  for (const it of items) {
+    totalUnits += it.size === 'medium' ? 4 : 1;
+  }
+
+  // Trim incomplete tail items so totalUnits % 3 === 0 (all columns end at the exact same row!)
+  const remainder = totalUnits % 3;
+  if (remainder !== 0) {
+    for (let k = 0; k < remainder; k++) {
+      if (items.length > 0 && items[items.length - 1].size === 'small') {
+        items.pop();
+      }
+    }
+  }
+
+  return items;
 }
 
 interface MobileGameDetailsProps {
@@ -71,6 +129,11 @@ export default function MobileGameDetails({
   const [isPlayingFullscreen, setIsPlayingFullscreen] = useState(false);
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const categorySlug = (gameCategory || 'all').toLowerCase().replace(/\s+/g, '-');
+
+  const exploreItems = useMemo(() => {
+    return generateMobileExploreItems(moreGames);
+  }, [moreGames]);
 
   // Fetch actual like status on mount and sync local reactions
   useEffect(() => {
@@ -141,16 +204,30 @@ export default function MobileGameDetails({
     setDislikes((prev) => (result.disliked ? prev + 1 : Math.max(0, prev - 1)));
   };
 
-  const handleShare = (e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (typeof window !== 'undefined') {
       const shareUrl = `${window.location.origin}/games/${gameSlug}`;
-      navigator.clipboard.writeText(shareUrl)
-        .then(() => {
-          setShareCopied(true);
-          setTimeout(() => setShareCopied(false), 2000);
-        })
-        .catch((err) => console.error('Failed to copy share link:', err));
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        try {
+          await navigator.share({
+            title: gameTitle,
+            text: `Play ${gameTitle} online for free on Gamesato!`,
+            url: shareUrl,
+          });
+          return;
+        } catch (err: any) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl)
+          .then(() => {
+            setShareCopied(true);
+            setTimeout(() => setShareCopied(false), 2000);
+          })
+          .catch((err) => console.error('Failed to copy share link:', err));
+      }
     }
   };
 
@@ -296,6 +373,9 @@ export default function MobileGameDetails({
           </button>
         </div>
 
+        {/* Mobile In-Feed Responsive Ad Banner */}
+        <AdBanner type="horizontal" />
+
         {/* How to Play Section */}
         {gameHowToPlay && (
           <div className={styles.howToPlayBox}>
@@ -316,31 +396,105 @@ export default function MobileGameDetails({
           </div>
         )}
 
-        {/* More Games 3-Column Grid Section */}
-        {moreGames && moreGames.length > 0 && (
-          <div className={styles.moreGamesSection}>
-            <h3 className={styles.moreGamesTitle}>
-              <Translate textKey="moreGames" fallback="More Games" />
-            </h3>
-            <div className={styles.moreGamesGrid}>
-              {moreGames.map((g) => {
-                const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
-                const thumbUrl = g.thumbnail_url.startsWith('http')
-                  ? g.thumbnail_url
-                  : `${backendUrl}${g.thumbnail_url}`;
+        {/* Explore More Games Section with 2x2 & 3x3 Bento Pattern */}
+        {exploreItems && exploreItems.length > 0 && (
+          <section className={styles.exploreSection}>
+            {/* Header */}
+            <div className={styles.exploreHeader}>
+              <div className={styles.exploreTitleGroup}>
+                <Flame size={20} className={styles.flameIcon} />
+                <h3 className={styles.exploreTitle}>
+                  <Translate textKey="exploreMoreGames" fallback="Explore More Games" />
+                </h3>
+              </div>
+              <Link
+                href={`/category/${categorySlug}`}
+                className={styles.viewMoreHeaderLink}
+              >
+                <span>{gameCategory}</span>
+                <ChevronsRight size={14} />
+              </Link>
+            </div>
+
+            {/* 3-Column Bento Grid (2x2 and 3x3 Box Pattern) */}
+            <div className={styles.exploreGrid}>
+              {exploreItems.map((item, idx) => {
+                const { game: g, size } = item;
+                const isMedium = size === 'medium';
+                const isSmall = size === 'small';
+
+                const cardImage = getImageUrl(
+                  !isSmall && (g.featured_mobile_url || g.featured_desktop_url)
+                    ? (g.featured_mobile_url || g.featured_desktop_url)!
+                    : g.thumbnail_url
+                );
+
+                const cardClass = isMedium
+                  ? `${styles.exploreCard} ${styles.exploreMediumCard}`
+                  : styles.exploreCard;
+
                 return (
                   <Link
-                    key={g.id}
+                    key={`${g.id}_${idx}`}
                     href={`/games/${g.slug}`}
-                    className={styles.moreGameCard}
+                    className={cardClass}
                     title={g.title}
                   >
-                    <img src={thumbUrl} alt={g.title} className={styles.moreGameThumb} />
+                    <div className={styles.exploreImageWrapper}>
+                      <img
+                        src={cardImage}
+                        alt={g.title}
+                        className={styles.exploreImage}
+                        loading={idx < 6 ? 'eager' : 'lazy'}
+                      />
+                      <div className={styles.exploreOverlay} />
+                    </div>
+
+                    {/* Badge Top Left for 2x2 cards */}
+                    {isMedium && (
+                      <div className={styles.badgeTopLeft}>
+                        <span className={idx % 2 === 0 ? styles.badgeHot : styles.badgeHero}>
+                          {idx % 2 === 0 ? 'HOT' : '★ FEATURED'}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Play Button Overlay */}
+                    <div className={styles.explorePlayOverlay}>
+                      <Play size={isMedium ? 18 : 14} fill="#ffffff" />
+                    </div>
+
+                    {/* Content for Medium 2x2 Cards */}
+                    {isMedium && (
+                      <div className={styles.exploreContent}>
+                        <h4 className={styles.exploreCardTitle}>{g.title}</h4>
+                        <div className={styles.exploreMeta}>
+                          <span className={styles.exploreCategoryTag}>{g.category}</span>
+                          {(g.play_count || 0) > 0 && (
+                            <span className={styles.exploreStat}>
+                              <Play size={8} fill="currentColor" />
+                              <span>{formatCompactNumber(g.play_count || 0)}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </Link>
                 );
               })}
             </div>
-          </div>
+
+            {/* View More Games Option Button */}
+            <div className={styles.viewMoreFooter}>
+              <Link
+                href={`/category/${categorySlug}`}
+                className={styles.viewMoreButton}
+              >
+                <span>View All in {gameCategory}</span>
+                <ChevronsRight size={17} />
+              </Link>
+            </div>
+          </section>
         )}
       </div>
 

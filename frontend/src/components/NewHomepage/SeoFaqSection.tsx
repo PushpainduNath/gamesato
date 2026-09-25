@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 import { 
   ChevronDown, 
   Zap, 
@@ -134,7 +135,8 @@ export default function SeoFaqSection({ faqList, homeContent }: SeoFaqSectionPro
 
   return (
     <section className={styles.seoSection} aria-label="About Gamesato and FAQ">
-      <script
+      <Script
+        id="seo-faq-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />

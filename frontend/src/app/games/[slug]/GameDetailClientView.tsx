@@ -25,6 +25,7 @@ import NewFooter from '@/components/NewHomepage/NewFooter';
 import GamePlayerCard from '@/components/GamePlayerCard';
 import MobileGameDetails from '@/components/MobileGameDetails';
 import CategorySectionGrid, { CategoryWithGames } from '@/components/NewHomepage/CategorySectionGrid';
+import AdBanner from '@/components/AdBanner';
 import { formatCompactNumber, getImageUrl } from '@/lib/utils';
 import { usePlayHistoryList } from '@/lib/usePlayHistory';
 import Translate from '@/components/Translate';
@@ -92,68 +93,128 @@ interface GameDetailClientViewProps {
   } | null;
 }
 
-function generatePokiGridItems(games: GridGameItem[]): GridDisplayItem[] {
-  if (!games || games.length === 0) return [];
+function getBalancedGrid(
+  allAvailableGames: GridGameItem[],
+  columnCount: number,
+  fallbackPool: GridGameItem[] = [],
+  isMobile = false
+): GridDisplayItem[] {
+  if (!allAvailableGames || allAvailableGames.length === 0) return [];
 
+  const effectiveCols = columnCount > 0 ? columnCount : (isMobile ? 3 : 12);
   const items: GridDisplayItem[] = [];
+  const usedIds = new Set<string>();
 
-  for (let i = 0; i < games.length; i++) {
-    const game = games[i];
+  if (isMobile) {
+    // Mobile: Strictly 2x2 and 1x1 (NO 3x3)
+    for (let idx = 0; idx < allAvailableGames.length; idx++) {
+      const game = allAvailableGames[idx];
+      usedIds.add(game.id);
+      const remaining = allAvailableGames.length - idx - 1;
+
+      let size: CardSize = 'small';
+      if ((idx === 0 || idx === 3 || idx === 7 || idx === 11 || (idx > 11 && idx % 4 === 0)) && remaining >= 5) {
+        size = 'medium';
+      }
+      items.push({ game, size });
+    }
+
+    let totalUnits = 0;
+    for (const it of items) totalUnits += it.size === 'medium' ? 4 : 1;
+    const remainder = totalUnits % 3;
+    if (remainder !== 0) {
+      const needed = 3 - remainder;
+      for (const g of fallbackPool) {
+        if (!usedIds.has(g.id)) {
+          usedIds.add(g.id);
+          items.push({ game: g, size: 'small' });
+          if (++totalUnits % 3 === 0) break;
+        }
+      }
+      while (items.length > 0 && totalUnits % 3 !== 0) {
+        if (items[items.length - 1].size === 'small') {
+          items.pop();
+          totalUnits--;
+        } else break;
+      }
+    }
+    return items;
+  }
+
+  // DESKTOP POKI BENTO GRID:
+  // Strict rule for a 100% FLAT and LEVEL bottom:
+  // All 3x3 Hero and 2x2 Medium cards are placed in the upper portion (first 12 items).
+  // ALL items after index 11 are STRICTLY 1x1 small cards!
+  // This guarantees that any large card is completed long before the bottom,
+  // and the bottom 25+ cards are entirely 1x1 small cards.
+  for (let idx = 0; idx < allAvailableGames.length; idx++) {
+    const game = allAvailableGames[idx];
+    usedIds.add(game.id);
+    const remaining = allAvailableGames.length - idx - 1;
+
     let size: CardSize = 'small';
 
-    if (i === 0) {
-      size = 'hero'; // 3x3
-    } else if (i === 4 || i === 11 || i === 19) {
-      size = 'medium'; // 2x2
-    } else {
-      size = 'small'; // 1x1
+    // Hero (3x3): Strictly at index 2 (only if at least 26 cards remain)
+    if (idx === 2 && remaining >= 26) {
+      size = 'hero';
+    }
+    // Medium (2x2): Strictly at indices 0, 6, 11 (only if at least 20 cards remain)
+    else if ((idx === 0 || idx === 6 || idx === 11) && remaining >= 20) {
+      size = 'medium';
     }
 
     items.push({ game, size });
   }
 
-  return items;
-}
-
-function getBalancedGrid(
-  allAvailableGames: GridGameItem[],
-  columnCount: number,
-  fallbackPool: GridGameItem[]
-): GridDisplayItem[] {
-  if (!allAvailableGames || allAvailableGames.length === 0) return [];
-  const bentoItems = generatePokiGridItems(allAvailableGames);
-
+  // Calculate total units
   let totalUnits = 0;
-  for (const item of bentoItems) {
-    totalUnits += item.size === 'hero' ? 9 : item.size === 'medium' ? 4 : 1;
+  for (const it of items) {
+    if (it.size === 'hero') totalUnits += 9;
+    else if (it.size === 'medium') totalUnits += 4;
+    else totalUnits += 1;
   }
 
-  const remainder = totalUnits % columnCount;
-  if (remainder === 0) return bentoItems;
+  // Ensure totalUnits % effectiveCols === 0 by padding small 1x1 cards to the tail
+  const remainder = totalUnits % effectiveCols;
+  if (remainder !== 0) {
+    const needed = effectiveCols - remainder;
+    let added = 0;
 
-  const needed = columnCount - remainder;
-  const existingIds = new Set(bentoItems.map((it) => it.game.id));
-  const newItems = [...bentoItems];
+    // 1. Take unique games from fallbackPool
+    if (fallbackPool && fallbackPool.length > 0) {
+      for (const g of fallbackPool) {
+        if (!usedIds.has(g.id)) {
+          usedIds.add(g.id);
+          items.push({ game: g, size: 'small' });
+          added++;
+          if (added >= needed) break;
+        }
+      }
+    }
 
-  let added = 0;
-  for (const g of fallbackPool) {
-    if (!existingIds.has(g.id)) {
-      newItems.push({ game: g, size: 'small' });
-      existingIds.add(g.id);
-      added++;
-      if (added >= needed) break;
+    // 2. Take unused games from allAvailableGames
+    if (added < needed) {
+      for (const g of allAvailableGames) {
+        if (!usedIds.has(g.id)) {
+          usedIds.add(g.id);
+          items.push({ game: g, size: 'small' });
+          added++;
+          if (added >= needed) break;
+        }
+      }
+    }
+
+    // 3. If pool is exhausted, loop from the top of the items as 1x1 cards
+    if (added < needed && items.length > 0) {
+      for (let i = 0; added < needed; i++) {
+        const g = items[i % items.length].game;
+        items.push({ game: g, size: 'small' });
+        added++;
+      }
     }
   }
 
-  if (added < needed && bentoItems.length > 0) {
-    for (let i = 0; added < needed; i++) {
-      const g = bentoItems[i % bentoItems.length].game;
-      newItems.push({ game: g, size: 'small' });
-      added++;
-    }
-  }
-
-  return newItems;
+  return items;
 }
 
 export default function GameDetailClientView({
@@ -174,9 +235,10 @@ export default function GameDetailClientView({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarPinnedDesktop, setIsSidebarPinnedDesktop] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [columnCount, setColumnCount] = useState(6);
+  const [columnCount, setColumnCount] = useState(12);
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
   const gridContainerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndices((prev) =>
@@ -188,29 +250,38 @@ export default function GameDetailClientView({
   useEffect(() => {
     const updateColumns = () => {
       const w = window.innerWidth;
-      if (w <= 768) {
+      const h = window.innerHeight;
+      const isMobileScreen = w <= 768 || (w <= 1024 && h <= 550);
+      if (isMobileScreen) {
         setIsMobile(true);
         setColumnCount(3);
         return;
       }
       setIsMobile(false);
 
-      const container = gridContainerRef.current;
-      if (container) {
-        const gridEl = container.querySelector(`.${styles.grid}`) as HTMLElement;
-        if (gridEl) {
-          const computed = window.getComputedStyle(gridEl);
-          const colsStr = computed.getPropertyValue('grid-template-columns');
-          if (colsStr) {
-            const count = colsStr.trim().split(/\s+/).length;
-            if (count > 0) {
-              setColumnCount(count);
-              return;
-            }
+      const gridEl = gridRef.current || (gridContainerRef.current?.querySelector(`.${styles.grid}`) as HTMLElement | null);
+      if (gridEl) {
+        const computed = window.getComputedStyle(gridEl);
+        const colsStr = computed.getPropertyValue('grid-template-columns');
+        if (colsStr && colsStr !== 'none') {
+          const count = colsStr.trim().split(/\s+/).length;
+          if (count > 0) {
+            setColumnCount(count);
+            return;
           }
         }
-        const containerW = container.clientWidth;
-        const count = Math.max(3, Math.floor((containerW + 10) / 106));
+        const gridW = gridEl.clientWidth;
+        if (gridW > 0) {
+          const count = Math.max(3, Math.floor((gridW + 10) / 106));
+          setColumnCount(count);
+          return;
+        }
+      }
+
+      if (w > 1200) {
+        setColumnCount(12);
+      } else {
+        const count = Math.max(3, Math.floor((w - 120) / 106));
         setColumnCount(count);
       }
     };
@@ -219,9 +290,10 @@ export default function GameDetailClientView({
     window.addEventListener('resize', updateColumns);
 
     let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && gridContainerRef.current) {
+    if (typeof ResizeObserver !== 'undefined') {
       ro = new ResizeObserver(() => updateColumns());
-      ro.observe(gridContainerRef.current);
+      if (gridRef.current) ro.observe(gridRef.current);
+      if (gridContainerRef.current) ro.observe(gridContainerRef.current);
     }
 
     return () => {
@@ -305,7 +377,8 @@ export default function GameDetailClientView({
   }, []);
 
   const handleToggleMenu = () => {
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    const isMobileScreen = typeof window !== 'undefined' && (window.innerWidth <= 768 || (window.innerWidth <= 1024 && window.innerHeight <= 550));
+    if (isMobileScreen) {
       setIsMobileMenuOpen((prev) => !prev);
     } else {
       setIsSidebarPinnedDesktop((prev) => {
@@ -347,8 +420,8 @@ export default function GameDetailClientView({
   }, [history]);
 
   const balancedBentoItems = useMemo(() => {
-    return getBalancedGrid(bentoGames, columnCount, allGamesPool);
-  }, [bentoGames, columnCount, allGamesPool]);
+    return getBalancedGrid(bentoGames, columnCount, allGamesPool, isMobile);
+  }, [bentoGames, columnCount, allGamesPool, isMobile]);
 
   const gameImageUrl = getImageUrl(
     game.game_page_both_url ||
@@ -529,15 +602,20 @@ export default function GameDetailClientView({
                 gameUrl={game.game_url}
                 orientation={game.orientation || 'AUTO'}
                 initialLikes={likesCount}
-                moreGames={sidebarGames as any}
+                moreGames={bentoGames as any}
               />
             </div>
 
             {/* ----------------- DESKTOP LAYOUT ----------------- */}
             <div className={styles.desktopLayout}>
               <div className={styles.gameHeroLayout}>
-                {/* Left Column: 16:9 Game Player */}
-                <div className={styles.leftPlayerColumn}>
+                {/* Left Skyscraper Ad */}
+                <aside className={styles.heroAdSide}>
+                  <AdBanner type="skyscraper" />
+                </aside>
+
+                {/* Center: 16:9 Game Player */}
+                <div className={styles.centerPlayerColumn}>
                   <GamePlayerCard
                     gameId={game.id}
                     gameSlug={game.slug}
@@ -550,42 +628,10 @@ export default function GameDetailClientView({
                   />
                 </div>
 
-                {/* Right Column: More Games Sleek Box */}
-                <div className={styles.rightMoreColumn}>
-                  <div className={styles.moreGamesBox}>
-                    <div className={styles.moreGamesHeader}>
-                      <Sparkles size={16} className={styles.moreGamesIcon} />
-                      <h3 className={styles.moreGamesTitle}>
-                        <Translate textKey="moreGames" fallback="More Games" />
-                      </h3>
-                    </div>
-                    <div className={styles.moreGamesScrollWrapper}>
-                      <div className={styles.moreGamesGrid}>
-                        {sidebarGames.map((g) => {
-                          const thumbUrl = getImageUrl(g.thumbnail_url);
-                          return (
-                            <Link
-                              key={g.id}
-                              href={`/games/${g.slug}`}
-                              className={styles.moreGamesCard}
-                              title={g.title}
-                            >
-                              <div className={styles.moreGamesThumbWrapper}>
-                                <img src={thumbUrl} alt={g.title} className={styles.moreGamesThumb} />
-                                <div className={styles.moreGamesOverlay} />
-                                <div className={styles.moreGamesCardContent}>
-                                  <span className={styles.moreGamesCardTitle}>
-                                    <Translate textKey={`game_${g.slug}_title`} fallback={g.title} />
-                                  </span>
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Right Skyscraper Ad */}
+                <aside className={styles.heroAdSide}>
+                  <AdBanner type="skyscraper" />
+                </aside>
               </div>
 
               {/* Game Info Details Card */}
@@ -653,6 +699,9 @@ export default function GameDetailClientView({
                 </div>
               )}
 
+              {/* Horizontal Leaderboard Ad */}
+              <AdBanner type="horizontal" />
+
               {/* Poki Bento Grid: Explore More Games */}
               {balancedBentoItems.length > 0 && (
                 <section className={styles.bentoSection}>
@@ -667,7 +716,7 @@ export default function GameDetailClientView({
                     </Link>
                   </div>
 
-                  <div className={styles.grid}>
+                  <div ref={gridRef} className={styles.grid}>
                     {balancedBentoItems.map((item, idx) => {
                       const { game: bGame, size } = item;
                       const isPlayed = playedSet.has(bGame.id) || playedSet.has(bGame.slug);
@@ -768,6 +817,9 @@ export default function GameDetailClientView({
                 </section>
               )}
             </div>
+
+            {/* In-Feed Responsive Horizontal Ad */}
+            <AdBanner type="horizontal" />
 
             {/* Top Category Sections from Homepage (Visible on BOTH Desktop & Mobile) */}
             {categorySections && categorySections.length > 0 && (
