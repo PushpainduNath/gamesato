@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { 
   Play, 
+  Heart,
   ArrowRight, 
   Puzzle, 
   Gamepad2, 
@@ -313,7 +314,13 @@ export default function CategorySectionGrid({
                   {/* Bottom Meta Content with Hover Game Title Reveal */}
                   <div className={styles.cardContent}>
                     <h3 className={styles.gameTitle}>{game.title}</h3>
-                    <div className={styles.cardMeta}>
+                    <div className={styles.cardMeta} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {(size !== 'small' || (game.likes_count ?? 0) > 0) && (
+                        <span className={styles.playBadge} title="Likes" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <Heart size={8} fill="#f43f5e" color="#f43f5e" />
+                          <span>{formatCompactNumber(game.likes_count || 0)}</span>
+                        </span>
+                      )}
                       <span className={styles.playBadge} title="Total Plays">
                         <Play size={8} className={styles.statPlay} fill="#a78bfa" />
                         <span>{formatCompactNumber(game.play_count || 0)}</span>

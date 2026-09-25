@@ -137,8 +137,11 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
               g.is_featured, g.featured_desktop_url, g.featured_mobile_url, g.new_game_both_url, g.game_page_both_url,
               g.is_popular, g.is_new, g.created_at, g.updated_at,
               COALESCE(g.play_count, 0) as play_count,
-              COALESCE(g.likes_count, 0) as likes_count
+              GREATEST(COALESCE(g.likes_count, 0), COALESCE(l.cnt, 0)) as likes_count
        FROM games g
+       LEFT JOIN (
+         SELECT "gameId", COUNT(*)::int as cnt FROM likes GROUP BY "gameId"
+       ) l ON l."gameId" = g.id
        ORDER BY play_count DESC
        LIMIT 20
     `;
@@ -216,8 +219,8 @@ router.get('/dashboard', authenticate, requireAdmin, async (req: AuthenticatedRe
       })),
     };
 
-    // Cache the compiled dashboard metrics response for 60 seconds
-    await redis.set(cacheKey, JSON.stringify(payload), 'EX', 60);
+    // Cache the compiled dashboard metrics response for 5 seconds
+    await redis.set(cacheKey, JSON.stringify(payload), 'EX', 5);
 
     res.json(payload);
   } catch (err) {
@@ -254,14 +257,17 @@ router.get('/games', authenticate, requirePermission('games'), async (req: Authe
 
     // Query table-essential columns ONLY (super fast, < 10ms execution)
     const gamesQuery = `
-      SELECT id, title, slug, category, thumbnail_url, game_url, orientation, status,
-             is_featured, featured_desktop_url, featured_mobile_url, new_game_both_url, game_page_both_url,
-             is_popular, is_new,
-             COALESCE(play_count, 0) as play_count,
-             COALESCE(likes_count, 0) as likes_count,
-             created_at, updated_at
-      FROM games
-      ORDER BY created_at DESC
+      SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.game_url, g.orientation, g.status,
+             g.is_featured, g.featured_desktop_url, g.featured_mobile_url, g.new_game_both_url, g.game_page_both_url,
+             g.is_popular, g.is_new,
+             COALESCE(g.play_count, 0) as play_count,
+             GREATEST(COALESCE(g.likes_count, 0), COALESCE(l.cnt, 0)) as likes_count,
+             g.created_at, g.updated_at
+      FROM games g
+      LEFT JOIN (
+        SELECT "gameId", COUNT(*)::int as cnt FROM likes GROUP BY "gameId"
+      ) l ON l."gameId" = g.id
+      ORDER BY g.created_at DESC
     `;
     const result = await pool.query(gamesQuery);
 
@@ -295,8 +301,8 @@ router.get('/games', authenticate, requirePermission('games'), async (req: Authe
       total: games.length
     };
 
-    // Cache the compiled games list for 60 seconds
-    await redis.set(cacheKey, JSON.stringify(payload), 'EX', 60);
+    // Cache the compiled games list for 5 seconds
+    await redis.set(cacheKey, JSON.stringify(payload), 'EX', 5);
 
     res.json(payload);
   } catch (err) {

@@ -11,14 +11,49 @@ export async function POST(
   const gameId = params.id;
   const session = await getServerSession(authOptions);
 
-  // If guest, respond with success so client-side localStorage tracking proceeds
-  if (!session?.user) {
-    return NextResponse.json({ liked: true, guest: true });
+  let bodyLiked: boolean | undefined = undefined;
+  try {
+    const body = await request.json();
+    if (typeof body?.liked === 'boolean') {
+      bodyLiked = body.liked;
+    }
+  } catch {
+    // No JSON body provided, default to toggle / like
   }
 
-  let userId = (session.user as any).id;
-
   try {
+    // Ensure targetGameId is a valid UUID, resolve from slug if necessary
+    let targetGameId = gameId;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(gameId);
+    if (!isUuid) {
+      const gRes = await query('SELECT id FROM games WHERE slug = $1', [gameId]);
+      if (gRes.rows.length > 0) {
+        targetGameId = gRes.rows[0].id;
+      } else {
+        return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+      }
+    }
+
+    // If guest user, directly increment or decrement games.likes_count in DB
+    if (!session?.user) {
+      const isLiking = bodyLiked !== undefined ? bodyLiked : true;
+      const delta = isLiking ? 1 : -1;
+      const updateRes = await query(
+        `UPDATE games
+         SET likes_count = GREATEST(0, COALESCE(likes_count, 0) + $1)
+         WHERE id = $2
+         RETURNING likes_count`,
+        [delta, targetGameId]
+      );
+      const updatedLikesCount = updateRes.rows[0]?.likes_count ?? 0;
+      return NextResponse.json({
+        liked: isLiking,
+        guest: true,
+        likesCount: updatedLikesCount,
+      });
+    }
+
+    let userId = (session.user as any).id;
     let validUser = false;
     if (userId) {
       const uRes = await query('SELECT id FROM users WHERE id = $1', [userId]);
@@ -35,20 +70,22 @@ export async function POST(
       }
     }
 
+    // If session user is not found in DB, still count their like in games.likes_count
     if (!validUser) {
-      return NextResponse.json({ error: 'User account not found' }, { status: 401 });
-    }
-
-    // Ensure targetGameId is a valid UUID, resolve from slug if necessary
-    let targetGameId = gameId;
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(gameId);
-    if (!isUuid) {
-      const gRes = await query('SELECT id FROM games WHERE slug = $1', [gameId]);
-      if (gRes.rows.length > 0) {
-        targetGameId = gRes.rows[0].id;
-      } else {
-        return NextResponse.json({ error: 'Game not found' }, { status: 404 });
-      }
+      const isLiking = bodyLiked !== undefined ? bodyLiked : true;
+      const delta = isLiking ? 1 : -1;
+      const updateRes = await query(
+        `UPDATE games
+         SET likes_count = GREATEST(0, COALESCE(likes_count, 0) + $1)
+         WHERE id = $2
+         RETURNING likes_count`,
+        [delta, targetGameId]
+      );
+      return NextResponse.json({
+        liked: isLiking,
+        guest: true,
+        likesCount: updateRes.rows[0]?.likes_count ?? 0,
+      });
     }
 
     const likeCheck = await query(
@@ -56,20 +93,46 @@ export async function POST(
       [userId, targetGameId]
     );
 
-    if (likeCheck.rows.length > 0) {
+    const shouldLike = bodyLiked !== undefined ? bodyLiked : likeCheck.rows.length === 0;
+
+    if (!shouldLike) {
       // Unlike
-      await query(
-        'DELETE FROM likes WHERE "userId" = $1 AND "gameId" = $2',
-        [userId, targetGameId]
+      if (likeCheck.rows.length > 0) {
+        await query(
+          'DELETE FROM likes WHERE "userId" = $1 AND "gameId" = $2',
+          [userId, targetGameId]
+        );
+      }
+      const updateRes = await query(
+        `UPDATE games
+         SET likes_count = GREATEST(0, COALESCE(likes_count, 0) - 1)
+         WHERE id = $1
+         RETURNING likes_count`,
+        [targetGameId]
       );
-      return NextResponse.json({ liked: false });
+      return NextResponse.json({
+        liked: false,
+        likesCount: updateRes.rows[0]?.likes_count ?? 0,
+      });
     } else {
       // Like
-      await query(
-        'INSERT INTO likes ("userId", "gameId") VALUES ($1, $2) ON CONFLICT DO NOTHING',
-        [userId, targetGameId]
+      if (likeCheck.rows.length === 0) {
+        await query(
+          'INSERT INTO likes ("userId", "gameId") VALUES ($1, $2) ON CONFLICT DO NOTHING',
+          [userId, targetGameId]
+        );
+      }
+      const updateRes = await query(
+        `UPDATE games
+         SET likes_count = GREATEST(0, COALESCE(likes_count, 0) + 1)
+         WHERE id = $1
+         RETURNING likes_count`,
+        [targetGameId]
       );
-      return NextResponse.json({ liked: true });
+      return NextResponse.json({
+        liked: true,
+        likesCount: updateRes.rows[0]?.likes_count ?? 0,
+      });
     }
   } catch (err) {
     console.error('Error toggling game like:', err);

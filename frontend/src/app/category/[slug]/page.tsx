@@ -117,7 +117,7 @@ export default async function CategoryPage(props: {
     const gamesRes = await query(
       `SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
               g.featured_desktop_url, g.featured_mobile_url,
-              COUNT(l."userId")::int as likes_count
+              GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
        FROM games g
        LEFT JOIN likes l ON g.id = l."gameId"
        WHERE g.status = 'published' AND (LOWER(g.category) = LOWER($1) OR LOWER(g.category) = LOWER($2))
@@ -137,7 +137,7 @@ export default async function CategoryPage(props: {
     const allRes = await query(
       `SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
               g.featured_desktop_url, g.featured_mobile_url,
-              COUNT(l."userId")::int as likes_count
+              GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
        FROM games g
        LEFT JOIN likes l ON g.id = l."gameId"
        WHERE g.status = 'published'

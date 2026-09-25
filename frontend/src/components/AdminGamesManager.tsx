@@ -759,6 +759,8 @@ export default function AdminGamesManager() {
         const rawGames = json.games || (Array.isArray(json) ? json : []);
         const sanitizedGames = rawGames.map((g: any) => ({
           ...g,
+          likesCount: Number(g.likesCount ?? g.likes_count ?? 0),
+          playCount: Number(g.playCount ?? g.play_count ?? 0),
           gameUrl: g.game_url || g.gameUrl || '',
           game_url: g.game_url || g.gameUrl || '',
           howToPlay: g.how_to_play || g.howToPlay || '',
@@ -1378,6 +1380,9 @@ export default function AdminGamesManager() {
   const totalPlays = useMemo(() => {
     return games.reduce((sum, g) => sum + (g.playCount || 0), 0);
   }, [games]);
+  const totalLikes = useMemo(() => {
+    return games.reduce((sum, g) => sum + (g.likesCount || 0), 0);
+  }, [games]);
 
   const formatPlays = (num: number) => {
     if (num >= 1000000) {
@@ -1549,13 +1554,13 @@ export default function AdminGamesManager() {
           </div>
         </div>
 
-        {/* Card 2: TOTAL PLAYS */}
+        {/* Card 2: TOTAL PLAYS & LIKES */}
         <div className={styles.metricCard}>
           <div className={`${styles.accentLine} ${styles.accentCyan}`} />
           <div className={styles.metricContent}>
-            <span className={styles.metricLabel}>TOTAL PLAYS</span>
+            <span className={styles.metricLabel}>TOTAL PLAYS / LIKES</span>
             <span className={styles.metricValue}>{formatPlays(totalPlays)}</span>
-            <span className={styles.metricSublabel}>all time</span>
+            <span className={styles.metricSublabel}>👍 {formatPlays(totalLikes)} total likes</span>
           </div>
           <div className={`${styles.metricIconWrapper} ${styles.cyanIcon}`}>
             <Play size={22} color="#22d3ee" style={{ transform: 'translateX(1px)' }} />

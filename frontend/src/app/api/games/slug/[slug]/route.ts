@@ -34,9 +34,15 @@ export async function GET(
       isLiked = userLikeResult.rows.length > 0;
     }
 
+    const totalLikes = Math.max(
+      Number(game.likes_count || 0),
+      Number(likesCountResult.rows[0]?.count || 0)
+    );
+
     return NextResponse.json({
       ...game,
-      likesCount: likesCountResult.rows[0]?.count || 0,
+      likes_count: totalLikes,
+      likesCount: totalLikes,
       isLiked,
     });
   } catch (err) {

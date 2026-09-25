@@ -185,19 +185,36 @@ export default function MobileGameDetails({
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    }).catch(() => {});
+      body: JSON.stringify({ liked: result.liked }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && typeof data.likesCount === 'number') {
+          setLikes(data.likesCount);
+        }
+      })
+      .catch(() => {});
   };
 
   const handleDislike = (e: React.MouseEvent) => {
     e.stopPropagation();
+    const wasLiked = isLiked;
     const result = toggleLocalReaction(gameId, 'dislike');
-    if (isLiked) {
+    if (wasLiked) {
       setLikes((prev) => Math.max(0, prev - 1));
       fetch(`/api/games/${gameId}/like`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-      }).catch(() => {});
+        body: JSON.stringify({ liked: false }),
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && typeof data.likesCount === 'number') {
+            setLikes(data.likesCount);
+          }
+        })
+        .catch(() => {});
     }
     setIsLiked(result.liked);
     setIsDisliked(result.disliked);

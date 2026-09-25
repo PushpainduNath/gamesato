@@ -139,9 +139,15 @@ router.get('/slug/:slug', optionalAuthenticate, async (req: AuthenticatedRequest
       isLiked = userLikeResult.rows.length > 0;
     }
 
+    const totalLikesCount = Math.max(
+      parseInt(game.likes_count || '0', 10),
+      parseInt(likesCountResult.rows[0].count, 10)
+    );
+
     const gameDetails = {
       ...game,
-      likesCount: parseInt(likesCountResult.rows[0].count, 10),
+      likes_count: totalLikesCount,
+      likesCount: totalLikesCount,
       isLiked,
     };
 
@@ -566,26 +572,40 @@ router.post('/:id/like', authenticate, async (req: AuthenticatedRequest, res: Re
   const userId = req.user!.id;
 
   try {
+    const gameRes = await pool.query('SELECT id, slug FROM games WHERE id::text = $1 OR slug = $1', [id]);
+    const targetId = gameRes.rows[0]?.id || id;
+    const targetSlug = gameRes.rows[0]?.slug || '';
+
     // Check if liked
     const likeCheck = await pool.query(
       'SELECT 1 FROM likes WHERE "userId" = $1 AND "gameId" = $2',
-      [userId, id]
+      [userId, targetId]
     );
 
     if (likeCheck.rows.length > 0) {
       // Unlike
       await pool.query(
         'DELETE FROM likes WHERE "userId" = $1 AND "gameId" = $2',
-        [userId, id]
+        [userId, targetId]
       );
-      res.json({ liked: false });
+      const upd = await pool.query(
+        'UPDATE games SET likes_count = GREATEST(0, COALESCE(likes_count, 0) - 1) WHERE id = $1 RETURNING likes_count',
+        [targetId]
+      );
+      if (targetSlug) await invalidateGameCache(targetSlug);
+      res.json({ liked: false, likesCount: upd.rows[0]?.likes_count ?? 0 });
     } else {
       // Like
       await pool.query(
-        'INSERT INTO likes ("userId", "gameId") VALUES ($1, $2)',
-        [userId, id]
+        'INSERT INTO likes ("userId", "gameId") VALUES ($1, $2) ON CONFLICT DO NOTHING',
+        [userId, targetId]
       );
-      res.json({ liked: true });
+      const upd = await pool.query(
+        'UPDATE games SET likes_count = GREATEST(0, COALESCE(likes_count, 0) + 1) WHERE id = $1 RETURNING likes_count',
+        [targetId]
+      );
+      if (targetSlug) await invalidateGameCache(targetSlug);
+      res.json({ liked: true, likesCount: upd.rows[0]?.likes_count ?? 0 });
     }
   } catch (err) {
     console.error('Error toggling like:', err);

@@ -88,7 +88,7 @@ export default async function GameDetailPage(props: {
       game = activeGame;
       
       const likesRes = await query('SELECT COUNT(*)::int as count FROM likes WHERE "gameId" = $1', [activeGame.id]);
-      likesCount = likesRes.rows[0]?.count || 0;
+      likesCount = Math.max(Number(activeGame.likes_count || 0), likesRes.rows[0]?.count || 0);
     }
   } catch (err) {
     console.error('Failed to query game details:', err);
@@ -135,7 +135,7 @@ export default async function GameDetailPage(props: {
   let sidebarGames: GridGameItem[] = [];
   try {
     const sideRes = await query(
-      `SELECT id, title, slug, thumbnail_url, category, play_count
+      `SELECT id, title, slug, thumbnail_url, category, play_count, COALESCE(likes_count, 0) as likes_count
        FROM games
        WHERE status = 'published' AND id != $1
        ORDER BY CASE WHEN LOWER(category) = LOWER($2) THEN 0 ELSE 1 END, play_count DESC, created_at DESC
@@ -153,7 +153,7 @@ export default async function GameDetailPage(props: {
     const bentoRes = await query(
       `SELECT g.id, g.title, g.slug, g.category, g.thumbnail_url, g.play_count,
               g.featured_desktop_url, g.featured_mobile_url,
-              COUNT(l."userId")::int as likes_count
+              GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
        FROM games g
        LEFT JOIN likes l ON l."gameId" = g.id
        WHERE g.status = 'published' AND g.id != $1
@@ -178,7 +178,7 @@ export default async function GameDetailPage(props: {
         WITH RankedGames AS (
           SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
                  c.id as category_id, c.name as category_name, c.slug as category_slug,
-                 COUNT(l."userId")::int as likes_count,
+                 GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count,
                  ROW_NUMBER() OVER (
                    PARTITION BY c.id 
                    ORDER BY g.is_featured DESC, g.play_count DESC, g.created_at DESC

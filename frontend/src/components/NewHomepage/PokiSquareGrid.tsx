@@ -756,9 +756,9 @@ export default function PokiSquareGrid({
                         <span className={styles.categoryLabel}>{game.category}</span>
                       )}
                       <div className={styles.statsWrapper}>
-                        {size !== 'small' && (game.likes_count ?? 0) > 0 && (
+                        {(size !== 'small' || (game.likes_count ?? 0) > 0) && (
                           <span className={styles.statItem} title="Likes">
-                            <Heart size={12} className={styles.statHeart} fill="#f43f5e" />
+                            <Heart size={size === 'small' ? 10 : 12} className={styles.statHeart} fill="#f43f5e" />
                             <span>{formatCompactNumber(game.likes_count || 0)}</span>
                           </span>
                         )}

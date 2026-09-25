@@ -157,7 +157,7 @@ export default async function HomePage() {
         WITH RankedGames AS (
           SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
                  c.id as category_id, c.name as category_name, c.slug as category_slug,
-                 COUNT(l."userId")::int as likes_count,
+                 GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count,
                  ROW_NUMBER() OVER (
                    PARTITION BY c.id 
                    ORDER BY g.is_featured DESC, g.play_count DESC, g.created_at DESC
@@ -190,7 +190,7 @@ export default async function HomePage() {
       `SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
               g.target_device, g.is_featured, g.created_at,
               g.featured_desktop_url, g.featured_mobile_url,
-              COUNT(l."userId")::int as likes_count
+              GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
        FROM games g
        LEFT JOIN likes l ON g.id = l."gameId"
        WHERE g.status = 'published' AND g.is_featured = TRUE
@@ -210,7 +210,7 @@ export default async function HomePage() {
       WITH TopPlayed AS (
         SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
                g.target_device, g.is_featured, g.created_at, g.featured_desktop_url, g.featured_mobile_url,
-               COUNT(l."userId")::int as likes_count
+               GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
         FROM games g
         LEFT JOIN likes l ON g.id = l."gameId"
         WHERE g.status = 'published'
@@ -221,7 +221,7 @@ export default async function HomePage() {
       NewestGames AS (
         SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
                g.target_device, g.is_featured, g.created_at, g.featured_desktop_url, g.featured_mobile_url,
-               COUNT(l."userId")::int as likes_count
+               GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
         FROM games g
         LEFT JOIN likes l ON g.id = l."gameId"
         WHERE g.status = 'published'
@@ -232,7 +232,7 @@ export default async function HomePage() {
       MostLiked AS (
         SELECT g.id, g.title, g.slug, g.description, g.category, g.thumbnail_url, g.game_url, g.play_count,
                g.target_device, g.is_featured, g.created_at, g.featured_desktop_url, g.featured_mobile_url,
-               COUNT(l."userId")::int as likes_count
+               GREATEST(COALESCE(g.likes_count, 0), COUNT(l."userId")::int) as likes_count
         FROM games g
         LEFT JOIN likes l ON g.id = l."gameId"
         WHERE g.status = 'published'
