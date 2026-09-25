@@ -35,7 +35,7 @@ export default function GamePlayerCard({
   
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
-  const [dislikes, setDislikes] = useState(Math.max(10, Math.floor(initialLikes / 160)));
+  const [dislikes, setDislikes] = useState(0);
   const [isDisliked, setIsDisliked] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
@@ -103,9 +103,13 @@ export default function GamePlayerCard({
     if (localReactions[gameId] === 'like') {
       setIsLiked(true);
       setIsDisliked(false);
+      setDislikes(0);
     } else if (localReactions[gameId] === 'dislike') {
       setIsLiked(false);
       setIsDisliked(true);
+      setDislikes(1);
+    } else {
+      setDislikes(0);
     }
 
     async function fetchStatus() {
@@ -119,8 +123,8 @@ export default function GamePlayerCard({
           if (data.isLiked) {
             setIsLiked(true);
             setIsDisliked(false);
+            setDislikes(0);
           }
-          setDislikes(Math.max(10, Math.floor((data.likesCount ?? initialLikes) / 160)));
         }
       } catch (err) {
         console.error('Failed to fetch status for game player card:', err);
