@@ -86,6 +86,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-adsense-account" content="ca-pub-6678125372401107" />
+        {process.env.NODE_ENV === 'production' && (
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678125372401107"
+            crossOrigin="anonymous"
+          />
+        )}
         <Script
           id="organization-schema"
           type="application/ld+json"
