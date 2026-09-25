@@ -31,6 +31,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'google72b218ef6dc38146',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-6678125372401107',
+  },
   openGraph: {
     title: 'Gamesato | Free Online Web Games',
     description: 'Play free online HTML5 games instantly on Gamesato. No downloads required.',
@@ -82,6 +85,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-adsense-account" content="ca-pub-6678125372401107" />
         <Script
           id="organization-schema"
           type="application/ld+json"
