@@ -22,6 +22,21 @@ export const metadata: Metadata = {
     url: 'https://gamesato.com/blog',
     siteName: 'Gamesato',
     type: 'website',
+    images: [
+      {
+        url: 'https://gamesato.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Gamesato Gaming Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Gamesato Gaming Blog | Strategy Guides & News',
+    description:
+      'Explore expert tips, browser game walkthroughs, H5 gaming insights, and platform announcements on Gamesato.',
+    images: ['https://gamesato.com/og-image.png'],
   },
 };
 
@@ -106,12 +121,74 @@ export default async function BlogIndexPage() {
     } catch (_) {}
   }
 
+  // JSON-LD Schemas: BreadcrumbList + Blog Collection
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://gamesato.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://gamesato.com/blog',
+      },
+    ],
+  };
+
+  const blogCollectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Gamesato Gaming Blog',
+    description:
+      'Explore expert tips, browser game walkthroughs, H5 gaming insights, and platform announcements on Gamesato.',
+    url: 'https://gamesato.com/blog',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Gamesato',
+      url: 'https://gamesato.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://gamesato.com/logo.png',
+      },
+    },
+    blogPost: blogs.map((b) => ({
+      '@type': 'BlogPosting',
+      headline: b.title,
+      description: b.excerpt,
+      url: `https://gamesato.com/blog/${b.slug}`,
+      datePublished: b.published_at,
+      image: b.cover_image
+        ? (b.cover_image.startsWith('http') ? b.cover_image : `https://gamesato.com${b.cover_image}`)
+        : 'https://gamesato.com/og-image.png',
+      author: {
+        '@type': 'Person',
+        name: b.author || 'Gamesato Editorial Team',
+      },
+    })),
+  };
+
   return (
-    <BlogIndexClientView
-      blogs={blogs}
-      categories={categories}
-      featuredGames={featuredGames}
-      favoritesCount={favoritesCount}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogCollectionSchema) }}
+      />
+      <BlogIndexClientView
+        blogs={blogs}
+        categories={categories}
+        featuredGames={featuredGames}
+        favoritesCount={favoritesCount}
+      />
+    </>
   );
 }

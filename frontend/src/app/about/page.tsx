@@ -38,6 +38,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: 'https://gamesato.com/about',
       siteName: 'Gamesato',
       type: 'website',
+      images: [
+        {
+          url: 'https://gamesato.com/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: 'About Gamesato',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://gamesato.com/og-image.png'],
     },
   };
 }
@@ -114,8 +128,52 @@ export default async function AboutPage() {
     console.error('Error fetching about page content:', err);
   }
 
+  // JSON-LD Schemas: BreadcrumbList + AboutPage
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://gamesato.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'About Us',
+        item: 'https://gamesato.com/about',
+      },
+    ],
+  };
+
+  const aboutPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About Gamesato',
+    description:
+      'Learn about Gamesato, our mission, and our next-generation web gaming platform delivering instant, free HTML5 games across all devices.',
+    url: 'https://gamesato.com/about',
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Gamesato',
+      url: 'https://gamesato.com',
+      logo: 'https://gamesato.com/logo.png',
+    },
+  };
+
   return (
-    <StaticPageClientView
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageSchema) }}
+      />
+      <StaticPageClientView
       slug="about"
       pageTitle={pageTitle}
       pageSubtitle="The next generation of instant web gaming — play thousands of free online games instantly without downloads, installs, or delays."
@@ -175,5 +233,6 @@ export default async function AboutPage() {
         </p>
       </div>
     </StaticPageClientView>
+    </>
   );
 }

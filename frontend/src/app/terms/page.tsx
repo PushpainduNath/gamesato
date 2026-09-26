@@ -38,6 +38,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: 'https://gamesato.com/terms',
       siteName: 'Gamesato',
       type: 'website',
+      images: [
+        {
+          url: 'https://gamesato.com/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: 'Gamesato Terms of Service',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://gamesato.com/og-image.png'],
     },
   };
 }
@@ -114,8 +128,52 @@ export default async function TermsPage() {
     console.error('Error fetching terms page content:', err);
   }
 
+  // JSON-LD Schemas: BreadcrumbList + WebPage
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://gamesato.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Terms of Service',
+        item: 'https://gamesato.com/terms',
+      },
+    ],
+  };
+
+  const termsPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Gamesato Terms of Service',
+    description:
+      'Review the official Terms of Service and user agreement for playing free instant web games on Gamesato.',
+    url: 'https://gamesato.com/terms',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Gamesato',
+      url: 'https://gamesato.com',
+      logo: 'https://gamesato.com/logo.png',
+    },
+  };
+
   return (
-    <StaticPageClientView
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(termsPageSchema) }}
+      />
+      <StaticPageClientView
       slug="terms"
       pageTitle={pageTitle}
       pageSubtitle="Please read these terms and conditions carefully before accessing or using the Gamesato instant gaming platform."
@@ -203,5 +261,6 @@ export default async function TermsPage() {
         </p>
       </div>
     </StaticPageClientView>
+    </>
   );
 }

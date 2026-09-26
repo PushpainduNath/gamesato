@@ -21,6 +21,21 @@ export const metadata: Metadata = {
     url: 'https://gamesato.com/contact',
     siteName: 'Gamesato',
     type: 'website',
+    images: [
+      {
+        url: 'https://gamesato.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Contact Gamesato',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact Us | Gamesato Support & Inquiries',
+    description:
+      'Get in touch with the Gamesato team for support, developer publishing inquiries, or general questions.',
+    images: ['https://gamesato.com/og-image.png'],
   },
 };
 
@@ -96,8 +111,65 @@ export default async function ContactPage() {
     console.error('Error fetching contact page content:', err);
   }
 
+  // JSON-LD Schemas: BreadcrumbList + ContactPage
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://gamesato.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Contact Us',
+        item: 'https://gamesato.com/contact',
+      },
+    ],
+  };
+
+  const contactPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact Gamesato',
+    description:
+      'Get in touch with the Gamesato team for support, developer publishing inquiries, or general questions.',
+    url: 'https://gamesato.com/contact',
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Gamesato',
+      url: 'https://gamesato.com',
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'customer support',
+          email: 'support@gamesato.com',
+          availableLanguage: ['English'],
+        },
+        {
+          '@type': 'ContactPoint',
+          contactType: 'technical support',
+          email: 'developers@gamesato.com',
+          availableLanguage: ['English'],
+        },
+      ],
+    },
+  };
+
   return (
-    <StaticPageClientView
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
+      />
+      <StaticPageClientView
       slug="contact"
       pageTitle={pageTitle}
       pageSubtitle="Have a question, feedback, or developer submission? Our team is here to assist you."
@@ -146,5 +218,6 @@ export default async function ContactPage() {
         </ul>
       </div>
     </StaticPageClientView>
+    </>
   );
 }

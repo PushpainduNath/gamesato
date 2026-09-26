@@ -38,6 +38,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: 'https://gamesato.com/privacy',
       siteName: 'Gamesato',
       type: 'website',
+      images: [
+        {
+          url: 'https://gamesato.com/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: 'Gamesato Privacy Policy',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://gamesato.com/og-image.png'],
     },
   };
 }
@@ -114,8 +128,52 @@ export default async function PrivacyPage() {
     console.error('Error fetching privacy page content:', err);
   }
 
+  // JSON-LD Schemas: BreadcrumbList + WebPage
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://gamesato.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Privacy Policy',
+        item: 'https://gamesato.com/privacy',
+      },
+    ],
+  };
+
+  const privacyPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Gamesato Privacy Policy',
+    description:
+      'Understand how Gamesato collects, safeguards, and respects your personal information while you enjoy free web games.',
+    url: 'https://gamesato.com/privacy',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Gamesato',
+      url: 'https://gamesato.com',
+      logo: 'https://gamesato.com/logo.png',
+    },
+  };
+
   return (
-    <StaticPageClientView
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(privacyPageSchema) }}
+      />
+      <StaticPageClientView
       slug="privacy"
       pageTitle={pageTitle}
       pageSubtitle="Transparent, secure, and privacy-first. Learn how Gamesato protects your personal data, browser privacy, and online security."
@@ -209,5 +267,6 @@ export default async function PrivacyPage() {
         </ul>
       </div>
     </StaticPageClientView>
+    </>
   );
 }
