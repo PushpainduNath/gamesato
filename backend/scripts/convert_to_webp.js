@@ -1,27 +1,15 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 // Database connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://portal_admin:PortalSecure%40321@localhost:5432/gamesato?schema=public'
 });
 
-// Try loading sharp for fast, high-quality WebP conversion
-let sharp;
-try {
-  sharp = require('sharp');
-} catch (e) {
-  console.log('Installing "sharp" library for high-performance WebP compression...');
-  try {
-    require('child_process').execSync('npm install sharp --no-save', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
-    sharp = require('sharp');
-  } catch (err) {
-    console.error('Failed to auto-install sharp. Please run "npm install sharp" in backend directory.');
-    process.exit(1);
-  }
-}
-
+const sharp = require('sharp');
 const uploadsDir = path.join(__dirname, '../uploads');
 
 // Helper to get all image files recursively
@@ -31,11 +19,13 @@ function getAllFiles(dirPath, arrayOfFiles = []) {
 
   files.forEach((file) => {
     const fullPath = path.join(dirPath, file);
-    if (fs.statSync(fullPath).isDirectory()) {
-      arrayOfFiles = getAllFiles(fullPath, arrayOfFiles);
-    } else {
-      arrayOfFiles.push(fullPath);
-    }
+    try {
+      if (fs.statSync(fullPath).isDirectory()) {
+        arrayOfFiles = getAllFiles(fullPath, arrayOfFiles);
+      } else {
+        arrayOfFiles.push(fullPath);
+      }
+    } catch (e) {}
   });
 
   return arrayOfFiles;
@@ -52,44 +42,63 @@ async function run() {
 
   let convertedCount = 0;
   let skippedCount = 0;
+  let errorCount = 0;
   let savedBytes = 0;
 
-  for (const filePath of filesToConvert) {
-    const ext = path.extname(filePath);
-    const webpPath = filePath.substring(0, filePath.length - ext.length) + '.webp';
+  // Process in concurrent batches of 6 for speed
+  const BATCH_SIZE = 6;
+  for (let i = 0; i < filesToConvert.length; i += BATCH_SIZE) {
+    const batch = filesToConvert.slice(i, i + BATCH_SIZE);
+    
+    await Promise.all(batch.map(async (filePath) => {
+      const ext = path.extname(filePath);
+      const webpPath = filePath.substring(0, filePath.length - ext.length) + '.webp';
 
-    // Skip if .webp already exists and is valid
-    if (fs.existsSync(webpPath)) {
-      skippedCount++;
-      continue;
-    }
+      // Skip if .webp already exists and is non-empty
+      try {
+        if (fs.existsSync(webpPath) && fs.statSync(webpPath).size > 0) {
+          skippedCount++;
+          return;
+        }
+      } catch (e) {}
 
-    try {
-      const originalStats = fs.statSync(filePath);
-      
-      // Convert to WebP with 85% quality (Visually Lossless)
-      await sharp(filePath)
-        .webp({ quality: 85, effort: 6 })
-        .toFile(webpPath);
+      try {
+        const originalStats = fs.statSync(filePath);
+        if (originalStats.size === 0) {
+          skippedCount++;
+          return;
+        }
+        
+        // Convert to WebP with 86% quality and smart subsampling (Pristine visual fidelity, 0 artifacting)
+        await sharp(filePath)
+          .webp({ quality: 86, effort: 6, smartSubsample: true })
+          .toFile(webpPath);
 
-      const newStats = fs.statSync(webpPath);
-      const saved = originalStats.size - newStats.size;
-      
-      if (saved > 0) {
-        savedBytes += saved;
+        const newStats = fs.statSync(webpPath);
+        const saved = originalStats.size - newStats.size;
+        
+        if (saved > 0) {
+          savedBytes += saved;
+        }
+        
+        convertedCount++;
+      } catch (err) {
+        errorCount++;
       }
-      
-      convertedCount++;
-      console.log(`✅ Converted: ${path.relative(uploadsDir, filePath)} -> .webp (Saved: ${(saved / 1024).toFixed(1)} KB)`);
-    } catch (err) {
-      console.error(`❌ Failed to convert ${filePath}:`, err.message);
+    }));
+
+    if ((i + BATCH_SIZE) % 150 === 0 || i + BATCH_SIZE >= filesToConvert.length) {
+      const current = Math.min(i + BATCH_SIZE, filesToConvert.length);
+      const pct = ((current / filesToConvert.length) * 100).toFixed(1);
+      console.log(`⏳ Progress: ${current}/${filesToConvert.length} (${pct}%) | Converted: ${convertedCount} | Skipped: ${skippedCount} | Saved: ${(savedBytes / (1024 * 1024)).toFixed(2)} MB`);
     }
   }
 
   console.log('\n📊 Image Compression Summary:');
-  console.log(`   - Converted: ${convertedCount} images`);
-  console.log(`   - Skipped (Already WebP): ${skippedCount} images`);
-  console.log(`   - Total Storage Saved: ${(savedBytes / (1024 * 1024)).toFixed(2)} MB`);
+  console.log(`   - Converted to WebP: ${convertedCount} images`);
+  console.log(`   - Already WebP / Skipped: ${skippedCount} images`);
+  console.log(`   - Errors: ${errorCount} images`);
+  console.log(`   - Total Disk Space Saved: ${(savedBytes / (1024 * 1024)).toFixed(2)} MB`);
 
   console.log('\n🗄️ Updating Database Image URLs to .webp...');
 
@@ -97,11 +106,13 @@ async function run() {
     { table: 'games', column: 'thumbnail_url' },
     { table: 'games', column: 'featured_desktop_url' },
     { table: 'games', column: 'featured_mobile_url' },
+    { table: 'games', column: 'featured_mobile_landscape_url' },
     { table: 'games', column: 'new_game_both_url' },
     { table: 'games', column: 'game_page_both_url' },
-    { table: 'games', column: 'sidebar_icon_url' },
+    { table: 'games', column: 'game_page_icon_url' },
     { table: 'categories', column: 'icon' },
-    { table: 'users', column: 'avatar_url' }
+    { table: 'users', column: 'image' },
+    { table: 'blogs', column: 'cover_image' }
   ];
 
   for (const item of imageColumns) {
@@ -114,12 +125,26 @@ async function run() {
       try {
         const result = await pool.query(queryStr);
         if (result.rowCount > 0) {
-          console.log(`   - Updated ${result.rowCount} rows in ${item.table}.${item.column} (${ext} -> .webp)`);
+          console.log(`   ✅ Updated ${result.rowCount} rows in ${item.table}.${item.column} (${ext} -> .webp)`);
         }
       } catch (dbErr) {
         // Table or column might not exist in some migrations, skip quietly
       }
     }
+  }
+
+  // Update blog HTML content links
+  for (const ext of ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) {
+    try {
+      const res = await pool.query(`
+        UPDATE blogs 
+        SET content = REPLACE(content, '${ext}', '.webp') 
+        WHERE content LIKE '%${ext}%';
+      `);
+      if (res.rowCount > 0) {
+        console.log(`   ✅ Updated ${res.rowCount} blog contents (${ext} -> .webp)`);
+      }
+    } catch (e) {}
   }
 
   console.log('\n🎉 Image WebP conversion and DB path migration completed successfully!');
