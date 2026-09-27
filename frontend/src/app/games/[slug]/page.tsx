@@ -8,22 +8,9 @@ import { getImageUrl } from '@/lib/utils';
 import GameDetailClientView, { GameDetailData, GridGameItem, CategoryItem } from './GameDetailClientView';
 import { CategoryWithGames } from '@/components/NewHomepage/CategorySectionGrid';
 
-// Dynamic routes pre-generation
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  try {
-    const res = await query(
-      "SELECT slug FROM games WHERE status = 'published' ORDER BY created_at DESC LIMIT 50"
-    );
-    return res.rows.map((row: { slug: string }) => ({
-      slug: row.slug,
-    }));
-  } catch (err) {
-    console.error('Error generating static parameters for ISR:', err);
-    return [];
-  }
-}
+// Dynamic route configuration
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Dynamic SEO metadata generation
 export async function generateMetadata(props: {
