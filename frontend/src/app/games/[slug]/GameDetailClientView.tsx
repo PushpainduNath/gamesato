@@ -728,6 +728,55 @@ export default function GameDetailClientView({
                 </div>
               )}
 
+              {/* Game Specifications & Features Card */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Sparkles size={18} color="#38bdf8" />
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                    {game.title} Overview & Key Details
+                  </h3>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>{game.category || 'Arcade'}</div>
+                  </div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Platform</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>Web Browser (No Downloads)</div>
+                  </div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Devices</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>Desktop, Mobile, Tablet, Chromebook</div>
+                  </div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Technology</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>HTML5 / WebGL / Canvas</div>
+                  </div>
+                </div>
+
+                <p style={{ fontSize: '0.8rem', color: 'rgba(148, 163, 184, 0.8)', margin: 0, lineHeight: 1.5, borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '12px' }}>
+                  <strong>Disclaimer:</strong> {game.title} is an online web game hosted on Gamesato under developer partner distribution agreements. All trademarks, character names, and copyrights belong to their respective owners.
+                </p>
+              </div>
+
               {/* Horizontal Leaderboard Ad */}
               <AdBanner type="horizontal" />
 
