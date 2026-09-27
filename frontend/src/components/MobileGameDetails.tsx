@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Heart, ThumbsUp, ThumbsDown, Share2, Play, Puzzle, Gamepad2, ChevronsRight, Flame } from 'lucide-react';
+import { Heart, ThumbsUp, ThumbsDown, Share2, Play, Puzzle, Gamepad2, ChevronsRight, Flame, Sparkles } from 'lucide-react';
 import { toggleLocalReaction, getLocalReactions } from '@/lib/usePlayHistory';
 import { formatCompactNumber, getImageUrl } from '@/lib/utils';
 import Translate from './Translate';
@@ -415,6 +415,56 @@ export default function MobileGameDetails({
             </ul>
           </div>
         )}
+
+        {/* Game Specifications & Features Card (Mobile) */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            marginTop: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Sparkles size={16} color="#38bdf8" />
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+              {gameTitle} Specifications
+            </h3>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '8px',
+            }}
+          >
+            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Category</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>{gameCategory || 'Arcade'}</div>
+            </div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Technology</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>HTML5 / WebGL</div>
+            </div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Play Mode</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>Touch / Keyboard</div>
+            </div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Access</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>100% Free • No App</div>
+            </div>
+          </div>
+
+          <p style={{ fontSize: '0.75rem', color: 'rgba(148, 163, 184, 0.75)', margin: 0, lineHeight: 1.4, borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '10px' }}>
+            <strong>Disclaimer:</strong> {gameTitle} is an online web game hosted on Gamesato under developer partner distribution agreements. All trademarks and copyrights belong to their respective owners.
+          </p>
+        </div>
 
         {/* Explore More Games Section with 2x2 & 3x3 Bento Pattern */}
         {exploreItems && exploreItems.length > 0 && (
