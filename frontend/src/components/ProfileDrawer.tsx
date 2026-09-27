@@ -911,7 +911,7 @@ export default function ProfileDrawer() {
                     <span>📧</span>
                     <strong style={{ color: 'white' }}>General Inquiries</strong>
                   </div>
-                  <p className={styles.supportCardEmail}>support@gamesato.com</p>
+                  <p className={styles.supportCardEmail}>hello@gamesato.com</p>
                 </div>
 
                 <div className={styles.supportCard}>
@@ -919,7 +919,7 @@ export default function ProfileDrawer() {
                     <span>🛠️</span>
                     <strong style={{ color: 'white' }}>Developer Relations</strong>
                   </div>
-                  <p className={styles.supportCardEmail}>developers@gamesato.com</p>
+                  <p className={styles.supportCardEmail}>hello@gamesato.com</p>
                 </div>
               </div>
 

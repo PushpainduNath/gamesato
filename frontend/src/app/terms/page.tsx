@@ -188,7 +188,7 @@ export default async function TermsPage() {
     >
       <div>
         <p>
-          Welcome to <strong>Gamesato</strong>. By accessing, browsing, or playing games on{' '}
+          Welcome to <strong>Gamesato</strong>, a free web gaming platform owned and operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>. By accessing, browsing, or playing games on{' '}
           <a href="https://gamesato.com">https://gamesato.com</a> (the &quot;Website&quot;, &quot;Platform&quot;, &quot;Service&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service (the &quot;Terms&quot;), together with our <a href="/privacy">Privacy Policy</a>.
         </p>
         <p>

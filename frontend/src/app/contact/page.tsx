@@ -140,8 +140,13 @@ export default async function ContactPage() {
     url: 'https://gamesato.com/contact',
     mainEntity: {
       '@type': 'Organization',
-      name: 'Gamesato',
-      url: 'https://gamesato.com',
+      name: 'Zhoop InfoTech',
+      url: 'https://zhoop.in',
+      brand: {
+        '@type': 'Brand',
+        name: 'Gamesato',
+        url: 'https://gamesato.com',
+      },
       contactPoint: [
         {
           '@type': 'ContactPoint',
@@ -151,8 +156,8 @@ export default async function ContactPage() {
         },
         {
           '@type': 'ContactPoint',
-          contactType: 'technical support',
-          email: 'developers@gamesato.com',
+          contactType: 'general inquiries',
+          email: 'hello@gamesato.com',
           availableLanguage: ['English'],
         },
       ],
@@ -176,7 +181,7 @@ export default async function ContactPage() {
       badgeText="CUSTOMER SUPPORT & INQUIRIES"
       iconType="contact"
       lastUpdated={lastUpdated}
-      highlightText="Fast response guarantee: Our player support and developer relations team typically responds within 24–48 business hours."
+      highlightText="Fast response guarantee: Our player support and relations team typically responds within 24–48 business hours."
       contentHtml={pageContent && pageContent.length > 250 ? pageContent : null}
       categories={categories}
       featuredGames={featuredGames}
@@ -184,7 +189,8 @@ export default async function ContactPage() {
     >
       <div>
         <p>
-          We are always happy to hear from players, creators, and business partners. Whether you encountered a glitch, want to submit a new HTML5 game, or have business inquiries, reach out using the dedicated channels below.
+          We are always happy to hear from players, creators, and business partners. Gamesato is owned and operated by{' '}
+          <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>. Whether you encountered a glitch, want to submit a new HTML5 game, or have business inquiries, reach out using the dedicated channels below.
         </p>
       </div>
 
@@ -196,12 +202,20 @@ export default async function ContactPage() {
             <a href="mailto:support@gamesato.com">support@gamesato.com</a>
             <br />
             <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)' }}>
-              For technical gameplay issues, please include the game name, URL, and your device/browser model.
+              For technical gameplay issues, account help, or reporting broken games.
+            </span>
+          </li>
+          <li>
+            <strong>General Inquiries & Partnerships:</strong>{' '}
+            <a href="mailto:hello@gamesato.com">hello@gamesato.com</a>
+            <br />
+            <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)' }}>
+              For general questions, collaborations, studio publishing, and business partnerships.
             </span>
           </li>
           <li>
             <strong>Developer Relations & Publishing:</strong>{' '}
-            <a href="mailto:developers@gamesato.com">developers@gamesato.com</a>
+            <a href="mailto:hello@gamesato.com">hello@gamesato.com</a>
             <br />
             <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)' }}>
               For HTML5 / WebGL game submissions, revenue sharing inquiries, and SDK integrations.
@@ -209,10 +223,10 @@ export default async function ContactPage() {
           </li>
           <li>
             <strong>Privacy & Legal Compliance:</strong>{' '}
-            <a href="mailto:privacy@gamesato.com">privacy@gamesato.com</a>
+            <a href="mailto:support@gamesato.com">support@gamesato.com</a>
             <br />
             <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)' }}>
-              For data access, GDPR/CCPA requests, or copyright and DMCA matters.
+              For data access, GDPR/CCPA requests, or copyright and DMCA takedown notices.
             </span>
           </li>
         </ul>

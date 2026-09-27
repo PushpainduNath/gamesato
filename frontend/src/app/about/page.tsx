@@ -157,9 +157,19 @@ export default async function AboutPage() {
     url: 'https://gamesato.com/about',
     mainEntity: {
       '@type': 'Organization',
-      name: 'Gamesato',
-      url: 'https://gamesato.com',
+      name: 'Zhoop InfoTech',
+      url: 'https://zhoop.in',
+      brand: {
+        '@type': 'Brand',
+        name: 'Gamesato',
+        url: 'https://gamesato.com',
+      },
       logo: 'https://gamesato.com/logo.png',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: 'support@gamesato.com',
+      },
     },
   };
 
@@ -188,7 +198,7 @@ export default async function AboutPage() {
     >
       <div>
         <p>
-          Welcome to <strong>Gamesato</strong> (<a href="https://gamesato.com">https://gamesato.com</a>), your premier global destination for high-quality, instant-play browser games. Founded by passionate gamers and web engineers, our mission is to deliver fast, responsive, and captivating gaming experiences right inside your web browser — completely free, with no downloads, installations, or hardware barriers.
+          Welcome to <strong>Gamesato</strong> (<a href="https://gamesato.com">https://gamesato.com</a>), your premier global destination for high-quality, instant-play browser games, proudly owned and operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>. Founded by passionate gamers and web engineers, our mission is to deliver fast, responsive, and captivating gaming experiences right inside your web browser — completely free, with no downloads, installations, or hardware barriers.
         </p>
       </div>
 
@@ -245,7 +255,7 @@ export default async function AboutPage() {
           Gamesato is also a vibrant launchpad for independent developers and game development studios worldwide. We provide creators with developer-centric tools to upload ZIP game packages, monitor analytics, evaluate real-time play counts, and monetize games transparently.
         </p>
         <p>
-          If you are an indie game developer or studio looking to reach millions of active players, please submit your game through our <a href="/contact">Developer Portal</a> or email us at <a href="mailto:support@gamesato.com">support@gamesato.com</a>.
+          If you are an indie game developer or studio looking to reach millions of active players, please submit your game through our <a href="/contact">Developer Portal</a> or email us at <a href="mailto:hello@gamesato.com">hello@gamesato.com</a>.
         </p>
       </div>
     </StaticPageClientView>

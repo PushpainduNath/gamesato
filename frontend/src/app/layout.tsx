@@ -92,18 +92,30 @@ const globalJsonLdSchema = {
   '@graph': [
     {
       '@type': 'Organization',
-      '@id': `${siteUrl}/#organization`,
-      name: 'Gamesato',
-      url: siteUrl,
+      '@id': `https://zhoop.in/#organization`,
+      name: 'Zhoop InfoTech',
+      url: 'https://zhoop.in',
+      brand: {
+        '@type': 'Brand',
+        name: 'Gamesato',
+        url: siteUrl,
+      },
       logo: {
         '@type': 'ImageObject',
         url: `${siteUrl}/logo.png`,
       },
-      contactPoint: {
-        '@type': 'ContactPoint',
-        email: 'support@gamesato.com',
-        contactType: 'customer support',
-      },
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          email: 'support@gamesato.com',
+          contactType: 'customer support',
+        },
+        {
+          '@type': 'ContactPoint',
+          email: 'hello@gamesato.com',
+          contactType: 'general inquiries',
+        },
+      ],
     },
     {
       '@type': 'WebSite',

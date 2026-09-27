@@ -103,9 +103,19 @@ export default function NewFooter() {
         </div>
       </div>
 
-      {/* SUB-FOOTER BOTTOM BAR */}
       <div className={styles.subFooter}>
-        <div className={styles.copyright}>© 2026 Gamesato. All rights reserved.</div>
+        <div className={styles.copyright}>
+          © 2026 Gamesato. A property of{' '}
+          <a
+            href="https://zhoop.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+          >
+            Zhoop InfoTech
+          </a>
+          . All rights reserved.
+        </div>
 
         <div className={styles.mottoText}>
           <Sparkles size={14} className={styles.sparkle} />

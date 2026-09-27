@@ -188,7 +188,7 @@ export default async function PrivacyPage() {
     >
       <div>
         <p>
-          At <strong>Gamesato</strong>, accessible from <a href="https://gamesato.com">https://gamesato.com</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document describes the types of information that is collected and recorded by Gamesato and how we use it.
+          At <strong>Gamesato</strong> (accessible from <a href="https://gamesato.com">https://gamesato.com</a>, operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>), one of our main priorities is the privacy of our visitors. This Privacy Policy document describes the types of information that is collected and recorded by Gamesato and how we use it.
         </p>
         <p>
           By using our website, you hereby consent to our Privacy Policy and agree to its terms.

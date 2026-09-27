@@ -8,14 +8,14 @@ const pool = new Pool({
 });
 
 async function run() {
-  console.log('Updating static_pages with AdSense compliance content...');
+  console.log('Updating static_pages and site_settings with Zhoop InfoTech & active mailboxes...');
 
   const pages = [
     {
       slug: 'terms',
       title: 'Terms of Service',
       content: `<div>
-  <p>Welcome to <strong>Gamesato</strong>. By accessing, browsing, or playing games on <a href="https://gamesato.com">https://gamesato.com</a>, you agree to be bound by these Terms of Service, together with our Privacy Policy.</p>
+  <p>Welcome to <strong>Gamesato</strong>, a free web gaming platform owned and operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>. By accessing, browsing, or playing games on <a href="https://gamesato.com">https://gamesato.com</a>, you agree to be bound by these Terms of Service, together with our Privacy Policy.</p>
   <h2>1. Eligibility & Age Requirements</h2>
   <p>You warrant that you are at least 18 years of age or accessing under the supervision of a parent/guardian. Children under 13 may not create accounts.</p>
   <h2>2. Permitted Use & Fair Play License</h2>
@@ -23,9 +23,9 @@ async function run() {
   <h2>3. Prohibited Conduct & Google Publisher Policy Compliance</h2>
   <p>We enforce strict adherence to Google AdSense Publisher Policies: Zero tolerance for Illegal Content, Dangerous/Derogatory content, Hacking/Cheat-tools, Phishing/Deceptive practices, Malware/Adware, and Sexually Explicit or Child Harm materials.</p>
   <h2>4. Intellectual Property Rights & DMCA</h2>
-  <p>All platform code and designs are Gamesato intellectual property. Featured games belong to their respective developers. DMCA inquiries: support@gamesato.com.</p>
+  <p>All platform code and designs are Gamesato intellectual property under Zhoop InfoTech. Featured games belong to their respective developers. DMCA inquiries: support@gamesato.com.</p>
   <h2>5. Third-Party Advertisements & Cookie Guidelines</h2>
-  <p>Certified ad vendors (including Google AdSense) may serve relevant ads. Refer to Google Publisher Policies at https://support.google.com/adsense/answer/48182 and https://support.google.com/adsense/answer/10502938.</p>
+  <p>Certified ad vendors (including Google AdSense) may serve relevant ads. Refer to Google Publisher Policies at https://support.google.com/adsense/answer/48182 and https://support.google.com/adsense/answer/10502938. Report broken ads to support@gamesato.com.</p>
   <h2>6. Governing Law & Jurisdiction</h2>
   <p>Governed by laws applicable in New Delhi, India. Exclusive jurisdiction in New Delhi, India.</p>
 </div>`
@@ -34,7 +34,7 @@ async function run() {
       slug: 'privacy',
       title: 'Privacy Policy',
       content: `<div>
-  <p>At <strong>Gamesato</strong>, we take your privacy seriously. Guest gameplay requires zero personal details.</p>
+  <p>At <strong>Gamesato</strong> (accessible from <a href="https://gamesato.com">https://gamesato.com</a>, operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>), we take your privacy seriously. Guest gameplay requires zero personal details.</p>
   <h2>1. Information We Collect</h2>
   <p>Guest favorites stored in LocalStorage. Optional account registration uses salted bcrypt hashing. Non-identifying server logs record browser/OS for diagnostics.</p>
   <h2>2. Cookies, Log Files & Advertising Technologies</h2>
@@ -49,7 +49,7 @@ async function run() {
       slug: 'about',
       title: 'About Us',
       content: `<div>
-  <p>Welcome to <strong>Gamesato</strong>, your premier destination for instant-play HTML5 browser games with zero downloads or hardware barriers.</p>
+  <p>Welcome to <strong>Gamesato</strong>, your premier destination for instant-play HTML5 browser games with zero downloads or hardware barriers, proudly owned and operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>.</p>
   <h2>Your Ultimate Web Gaming Destination</h2>
   <p>60 FPS web gaming across mobile, tablet, and desktop powered by HTML5, WebGL 2.0, and WebAssembly.</p>
   <h2>Our Diverse Game Library</h2>
@@ -57,7 +57,21 @@ async function run() {
   <h2>Key Platform Features</h2>
   <p>Instant Browser Play, Universal Cross-Device Responsiveness, Cloud Saved Favorites, Family-Friendly Environment, and Continuous Releases.</p>
   <h2>For Game Developers & Studios</h2>
-  <p>High-traffic publishing network with transparent telemetry and monetization. Submit via our Developer Portal or support@gamesato.com.</p>
+  <p>High-traffic publishing network with transparent telemetry and monetization. Submit via our Developer Portal or email hello@gamesato.com.</p>
+</div>`
+    },
+    {
+      slug: 'contact',
+      title: 'Contact Us',
+      content: `<div>
+  <p>We are always happy to hear from players, creators, and business partners. Gamesato is owned and operated by <strong><a href="https://zhoop.in/" target="_blank" rel="noopener noreferrer">Zhoop InfoTech</a></strong>.</p>
+  <h2>Contact Departments</h2>
+  <ul>
+    <li><strong>Player Support & Bug Reports:</strong> support@gamesato.com</li>
+    <li><strong>General Inquiries & Partnerships:</strong> hello@gamesato.com</li>
+    <li><strong>Developer Relations & Game Submissions:</strong> hello@gamesato.com</li>
+    <li><strong>Privacy & DMCA Notices:</strong> support@gamesato.com</li>
+  </ul>
 </div>`
     }
   ];
@@ -72,8 +86,14 @@ async function run() {
     console.log(`Updated ${p.slug}: ${res.rowCount} row(s)`);
   }
 
+  // Update site_settings support_email
+  await pool.query(
+    `UPDATE site_settings SET value = 'support@gamesato.com', updated_at = NOW() WHERE key = 'support_email'`
+  );
+  console.log('Updated site_settings support_email to support@gamesato.com');
+
   await pool.end();
-  console.log('All static_pages updated in database!');
+  console.log('Database synchronization completed successfully!');
 }
 
 run().catch(err => {
