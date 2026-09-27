@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminStore } from '@/store/useAdminStore';
 import { Shield, Eye, EyeOff } from 'lucide-react';
+import { getBackendUrl } from '@/lib/utils';
 import styles from './page.module.css';
 
 export default function AdminLoginPage() {
@@ -16,7 +17,7 @@ export default function AdminLoginPage() {
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   useEffect(() => {
     setMounted(true);

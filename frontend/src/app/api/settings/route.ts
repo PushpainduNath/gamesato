@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+    const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3102';
     const res = await fetch(`${backendUrl}/api/admin/settings`, {
       cache: 'no-store'
     });

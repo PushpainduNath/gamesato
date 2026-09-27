@@ -8,6 +8,7 @@ import { useGamePlayTracker, toggleLocalReaction, getLocalReactions } from '@/li
 import OrientationRotateOverlay from './OrientationRotateOverlay';
 import GameLoadingOverlay from './GameLoadingOverlay';
 import styles from './GamePlayerCard.module.css';
+import { getBackendUrl } from '@/lib/utils';
 
 interface GamePlayerCardProps {
   gameId: string;
@@ -75,7 +76,7 @@ export default function GamePlayerCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
   const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
   const iframeSrc = isExternalEmbed ? gameUrl : `${backendUrl}${gameUrl}`;
 

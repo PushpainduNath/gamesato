@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Ban, ShieldAlert, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { useAdminStore } from '@/store/useAdminStore';
+import { getBackendUrl } from '@/lib/utils';
 import styles from '../app/admin/page.module.css';
 
 interface UserAccount {
@@ -186,7 +187,7 @@ export default function AdminUsersManager() {
   const limit = 20;
 
   const isSuperAdmin = admin?.role === 'SUPER_ADMIN';
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   // Fetch users with pagination and search query parameters
   const fetchUsers = async (page: number, search: string, status: string, provider: string, sort: string) => {

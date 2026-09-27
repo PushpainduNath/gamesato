@@ -13,6 +13,7 @@ import {
 import styles from '../app/admin/page.module.css';
 import DragAndDropUpload from './DragAndDropUpload';
 import CustomDialogModal, { DialogState } from './CustomDialogModal';
+import { getBackendUrl } from '@/lib/utils';
 
 interface Game {
   id: string;
@@ -591,7 +592,7 @@ export default function AdminGamesManager() {
     { value: '100', label: '100 / page' },
   ];
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
   const [dbCategories, setDbCategories] = useState<string[]>([]);
   
   // Inline category creation modal states

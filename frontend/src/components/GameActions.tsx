@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Heart, ThumbsUp, Play, Info } from 'lucide-react';
 import { useTranslation } from '@/store/useLanguageStore';
 import styles from './GameActions.module.css';
+import { getBackendUrl } from '@/lib/utils';
 
 interface GameActionsProps {
   gameId: string;
@@ -22,7 +23,7 @@ export default function GameActions({ gameId, gameSlug, initialLikes }: GameActi
   const [isLiked, setIsLiked] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   // Fetch interactive states (Like) on mount if session exists
   useEffect(() => {

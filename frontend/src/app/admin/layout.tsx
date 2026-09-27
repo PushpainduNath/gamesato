@@ -10,8 +10,8 @@ import {
   Sun, Moon, X, Mic, ImageIcon, Server
 } from 'lucide-react';
 import styles from './layout.module.css';
-
 import CustomDialogModal, { DialogState } from '@/components/CustomDialogModal';
+import { getBackendUrl } from '@/lib/utils';
 
 const THEME_OPTIONS: { id: AdminTheme; label: string; bg: string; accent: string; dotColor: string }[] = [
   { id: 'default', label: 'Dark', bg: '#0c0d14', accent: '#14b8a6', dotColor: '#0f172a' },
@@ -31,7 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const themeRef = useRef<HTMLDivElement>(null);
   const [dialogState, setDialogState] = useState<DialogState>({ isOpen: false });
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
   const [isListening, setIsListening] = useState(false);
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const [recognition, setRecognition] = useState<any>(null);

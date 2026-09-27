@@ -16,7 +16,12 @@ export function formatCompactNumber(num: number): string {
 
 export function getBackendUrl(): string {
   if (typeof window !== 'undefined') {
-    return process.env.NEXT_PUBLIC_BACKEND_URL || '';
+    if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+      return process.env.NEXT_PUBLIC_BACKEND_URL;
+    }
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:3102'
+      : 'https://api.gamesato.com';
   }
   return process.env.BACKEND_URL || 'http://127.0.0.1:3102';
 }

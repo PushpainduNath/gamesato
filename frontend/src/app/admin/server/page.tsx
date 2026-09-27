@@ -8,6 +8,7 @@ import {
   Maximize2, Minimize2
 } from 'lucide-react';
 import styles from '../layout.module.css';
+import { getBackendUrl } from '@/lib/utils';
 
 interface SystemOS {
   platform: string;
@@ -123,7 +124,7 @@ export default function AdminServerDetailsPage() {
   const [localSearch, setLocalSearch] = useState<string>('');
   const [compactMetrics, setCompactMetrics] = useState<boolean>(false); // Expanded by default
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3102';
+  const backendUrl = getBackendUrl();
 
   const fetchServerDetails = async (subPath = currentSubPath, isBackground = false) => {
     if (!token) return;

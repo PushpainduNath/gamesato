@@ -26,6 +26,7 @@ import {
   Server as ServerIcon
 } from 'lucide-react';
 import { useAdminStore } from '@/store/useAdminStore';
+import { getBackendUrl } from '@/lib/utils';
 import styles from '../app/admin/page.module.css';
 
 export interface UserAccount {
@@ -228,7 +229,7 @@ export default function AdminsManager() {
 
   const currentUserRole = admin?.role || 'USER';
   const isSuperAdmin = currentUserRole === 'SUPER_ADMIN';
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   // Save updated permissions
   const handleSavePermissions = async () => {

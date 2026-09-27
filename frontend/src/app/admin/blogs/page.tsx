@@ -9,6 +9,7 @@ import {
   RotateCcw, Sparkles
 } from 'lucide-react';
 import CustomDialogModal, { DialogState } from '@/components/CustomDialogModal';
+import { getBackendUrl } from '@/lib/utils';
 import styles from '../page.module.css';
 
 interface Blog {
@@ -127,7 +128,7 @@ export default function AdminBlogsPage() {
   const [metaDescription, setMetaDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3102';
+  const backendUrl = getBackendUrl();
 
   const fetchBlogs = async () => {
     try {

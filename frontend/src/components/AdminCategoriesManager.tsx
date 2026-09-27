@@ -6,6 +6,7 @@ import { useAdminStore } from '@/store/useAdminStore';
 import styles from '../app/admin/page.module.css';
 import DragAndDropUpload from './DragAndDropUpload';
 import CustomDialogModal, { DialogState } from './CustomDialogModal';
+import { getBackendUrl } from '@/lib/utils';
 
 interface Category {
   id: string;
@@ -139,7 +140,7 @@ export default function AdminCategoriesManager() {
     ? filteredCategories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     : filteredCategories;
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   useEffect(() => {
     fetchData();

@@ -8,6 +8,7 @@ import { useGamePlayTracker } from '@/lib/usePlayHistory';
 import OrientationRotateOverlay from './OrientationRotateOverlay';
 import GameLoadingOverlay from './GameLoadingOverlay';
 import styles from './GamePlayer.module.css';
+import { getBackendUrl } from '@/lib/utils';
 
 interface GamePlayerProps {
   gameId: string;
@@ -50,7 +51,7 @@ export default function GamePlayer({
   const [isForceRotated, setIsForceRotated] = useState(false);
   const { t } = useTranslation();
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
   const isExternalEmbed = gameUrl.startsWith('http://') || gameUrl.startsWith('https://') || gameUrl.startsWith('//');
   const iframeSrc = isExternalEmbed ? gameUrl : `${backendUrl}${gameUrl}`;
 

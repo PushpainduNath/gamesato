@@ -127,8 +127,6 @@ export default function MobileGameDetails({
   const [shareCopied, setShareCopied] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
   const [isPlayingFullscreen, setIsPlayingFullscreen] = useState(false);
-
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
   const categorySlug = (gameCategory || 'all').toLowerCase().replace(/\s+/g, '-');
 
   const exploreItems = useMemo(() => {
@@ -170,7 +168,7 @@ export default function MobileGameDetails({
       }
     }
     fetchLikeStatus();
-  }, [gameId, gameSlug, session, backendUrl, initialLikes]);
+  }, [gameId, gameSlug, session, initialLikes]);
 
   const handleLike = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();

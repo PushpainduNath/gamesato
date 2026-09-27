@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import styles from '../app/admin/page.module.css';
 import CustomDialogModal, { DialogState } from './CustomDialogModal';
+import { getBackendUrl } from '@/lib/utils';
 
 interface DashboardData {
   summary: {
@@ -49,7 +50,7 @@ export default function AdminDashboard() {
   const [customEnd, setCustomEnd] = useState('');
   const [dialogState, setDialogState] = useState<DialogState>({ isOpen: false });
   
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   const fetchDashboardData = async (range: string, start?: string, end?: string) => {
     setLoading(true);

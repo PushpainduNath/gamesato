@@ -6,7 +6,7 @@ import {
   ImageIcon, UploadCloud, Copy, Check, Trash2, Search, RefreshCw, Eye, ExternalLink
 } from 'lucide-react';
 import CustomDialogModal, { DialogState } from '@/components/CustomDialogModal';
-import { getImageUrl } from '@/lib/utils';
+import { getImageUrl, getBackendUrl } from '@/lib/utils';
 
 interface MediaFile {
   name: string;
@@ -34,7 +34,7 @@ export default function AdminMediaPage() {
   const [dialogState, setDialogState] = useState<DialogState>({ isOpen: false });
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3102';
+  const backendUrl = getBackendUrl();
 
   const fetchMedia = async () => {
     try {

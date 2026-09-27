@@ -7,6 +7,7 @@ import {
   ChevronLeft, ChevronRight, Plus, Trash2, Code, Eye, X
 } from 'lucide-react';
 import { useAdminStore } from '@/store/useAdminStore';
+import { getBackendUrl } from '@/lib/utils';
 import styles from '../app/admin/page.module.css';
 
 interface ContentItem {
@@ -95,7 +96,7 @@ export default function AdminContentManager() {
   const [paginationEnabled, setPaginationEnabled] = useState(true);
   const itemsPerPage = 10;
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022';
+  const backendUrl = getBackendUrl();
 
   // Fetch settings from API
   const fetchSettings = async () => {
