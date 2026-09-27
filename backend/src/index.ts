@@ -38,10 +38,15 @@ app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
 // Serve game H5 builds statically
-app.use('/games', express.static(GAMES_DIR));
+app.use('/games', express.static(GAMES_DIR, {
+  maxAge: '7d',
+}));
 
 // Serve thumbnails and uploads statically
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
+  maxAge: '30d',
+  immutable: true,
+}));
 
 // Routes mapping
 app.use('/api/games', gamesRouter);
