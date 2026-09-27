@@ -49,7 +49,10 @@ export async function generateMetadata(props: {
 
   const title = blog.meta_title || `${blog.title} | Gamesato Blog`;
   const description = blog.meta_description || blog.excerpt;
-  const image = getImageUrl(blog.cover_image) || '/logo.png';
+  const ogImageRaw = getImageUrl(blog.cover_image) || '/logo.png';
+  const image = ogImageRaw.startsWith('http')
+    ? ogImageRaw
+    : `https://gamesato.com${ogImageRaw.startsWith('/') ? '' : '/'}${ogImageRaw}`;
 
   return {
     title,
@@ -192,13 +195,17 @@ export default async function BlogPostPage(props: {
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gamesato.com';
+  const blogImgRaw = getImageUrl(blog.cover_image) || '/logo.png';
+  const blogImage = blogImgRaw.startsWith('http')
+    ? blogImgRaw
+    : `${siteUrl}${blogImgRaw.startsWith('/') ? '' : '/'}${blogImgRaw}`;
 
   const blogPostingSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: blog.title,
     description: blog.excerpt,
-    image: getImageUrl(blog.cover_image) || `${siteUrl}/logo.png`,
+    image: blogImage,
     url: `${siteUrl}/blog/${blog.slug}`,
     datePublished: blog.published_at,
     dateModified: blog.published_at,

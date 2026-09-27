@@ -30,6 +30,7 @@ import {
 import { useTranslation } from '@/store/useLanguageStore';
 import Translate from '@/components/Translate';
 import { useUiStore } from '@/store/useUiStore';
+import { getImageUrl } from '@/lib/utils';
 import styles from './ProfileDrawer.module.css';
 
 const AVATAR_PRESETS = Array.from({ length: 20 }, (_, i) => `/avatars/memo_${i + 1}.png`);
@@ -591,7 +592,7 @@ export default function ProfileDrawer() {
                       >
                         <div className={styles.favoriteThumbnailWrapper}>
                           <img 
-                            src={game.thumbnail_url.startsWith('http') ? game.thumbnail_url : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022'}${game.thumbnail_url}`} 
+                            src={getImageUrl(game.thumbnail_url)} 
                             alt={game.title} 
                             className={styles.favoriteThumbnail} 
                           />

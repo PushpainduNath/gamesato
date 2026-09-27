@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Upload, File, X } from 'lucide-react';
+import { getImageUrl } from '@/lib/utils';
 import styles from './DragAndDropUpload.module.css';
 
 interface DragAndDropUploadProps {
@@ -119,7 +120,7 @@ export default function DragAndDropUpload({
           <div className={styles.fileSelectedInfo}>
             {isImage ? (
               <img
-                src={currentPreviewUrl.startsWith('http') ? currentPreviewUrl : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022'}${currentPreviewUrl}`}
+                src={getImageUrl(currentPreviewUrl)}
                 alt="Current file"
                 className={styles.imagePreview}
               />

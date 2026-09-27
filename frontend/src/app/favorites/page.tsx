@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../api/auth/[...nextauth]/route';
 import { query } from '@/lib/db';
 import { Play, Heart } from 'lucide-react';
-import { formatCompactNumber } from '@/lib/utils';
+import { formatCompactNumber, getImageUrl } from '@/lib/utils';
 import Translate from '@/components/Translate';
 import styles from './page.module.css';
 
@@ -74,7 +74,7 @@ export default async function FavoritesPage() {
               className={`${styles.card} glass glass-interactive`}
             >
               <div className={styles.thumbnailWrapper}>
-                <img src={game.thumbnail_url.startsWith('http') ? game.thumbnail_url : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3022'}${game.thumbnail_url}`} alt={game.title} className={styles.thumbnail} />
+                <img src={getImageUrl(game.thumbnail_url)} alt={game.title} className={styles.thumbnail} />
               </div>
               <div className={styles.cardContent}>
                 <span className={styles.category}>{game.category}</span>

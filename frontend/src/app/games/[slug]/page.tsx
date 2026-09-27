@@ -65,7 +65,10 @@ export async function generateMetadata(props: {
           'HTML5 browser games',
           'Gamesato',
         ];
-    const ogImage = getImageUrl(game.thumbnail_url) || `${siteUrl}/logo.png`;
+    const ogImageRaw = getImageUrl(game.thumbnail_url) || '/logo.png';
+    const ogImage = ogImageRaw.startsWith('http')
+      ? ogImageRaw
+      : `${siteUrl}${ogImageRaw.startsWith('/') ? '' : '/'}${ogImageRaw}`;
 
     return {
       title: seoTitle,

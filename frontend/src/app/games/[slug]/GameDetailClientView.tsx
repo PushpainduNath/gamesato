@@ -453,7 +453,7 @@ export default function GameDetailClientView({
     description:
       game.description ||
       `Play ${game.title} online for free on Gamesato! Instant HTML5 browser game with no download required.`,
-    image: getImageUrl(game.thumbnail_url),
+    image: gameImageUrl.startsWith('http') ? gameImageUrl : `${siteUrl}${gameImageUrl.startsWith('/') ? '' : '/'}${gameImageUrl}`,
     url: `${siteUrl}/games/${game.slug}`,
     genre: game.category || 'Arcade',
     playMode: 'SinglePlayer',
