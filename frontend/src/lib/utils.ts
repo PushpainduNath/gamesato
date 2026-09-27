@@ -38,7 +38,7 @@ export function getImageUrl(url: string | null | undefined): string {
     return cleanUrl;
   }
 
-  // Return clean relative path starting with '/' for seamless browser delivery
+  // Return clean relative path starting with '/' for seamless browser & server delivery
   return cleanUrl.startsWith('/') ? cleanUrl : `/${cleanUrl}`;
 }
 

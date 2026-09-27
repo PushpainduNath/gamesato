@@ -1,10 +1,7 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
 import CookieConsent from './CookieConsent';
 
 import { useUiStore } from '@/store/useUiStore';
@@ -66,62 +63,22 @@ export default function PortalLayoutWrapper({ children }: { children: React.Reac
     return <>{children}</>;
   }
 
-  // Dedicated modern theme pages layout handling (uses modern NewHeader, NewSidebar, NewFooter)
-  if (
-    pathname === '/' ||
-    pathname?.startsWith('/category') ||
-    pathname?.startsWith('/games') ||
-    pathname?.startsWith('/about') ||
-    pathname?.startsWith('/privacy') ||
-    pathname?.startsWith('/terms') ||
-    pathname?.startsWith('/contact') ||
-    pathname?.startsWith('/blog') ||
-    pathname?.startsWith('/profile')
-  ) {
-    return (
-      <>
-        <div
-          style={{
-            filter: shouldBlur ? 'blur(6px)' : 'none',
-            transition: 'filter 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-            pointerEvents: shouldBlur ? 'none' : 'auto',
-            width: '100%',
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {children}
-        </div>
-        <ProfileDrawer />
-        <CookieConsent />
-      </>
-    );
-  }
-
+  // All public routes (including home, games, categories, static pages, and 404 not-found)
+  // use the unified modern theme with NewHeader, NewSidebar, NewFooter in their respective views.
   return (
     <>
-      <Header />
-      <div 
-        style={{ 
-          display: 'flex', 
-          flex: 1, 
-          minHeight: isDesktop ? 'calc(100vh - 70px)' : 'auto', 
-          width: '100%',
+      <div
+        style={{
           filter: shouldBlur ? 'blur(6px)' : 'none',
           transition: 'filter 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-          pointerEvents: shouldBlur ? 'none' : 'auto'
+          pointerEvents: shouldBlur ? 'none' : 'auto',
+          width: '100%',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
-          <div style={{ flex: 1 }}>
-            {children}
-          </div>
-          <Footer />
-        </main>
-        <Suspense fallback={null}>
-          <Sidebar />
-        </Suspense>
+        {children}
       </div>
       <ProfileDrawer />
       <CookieConsent />
