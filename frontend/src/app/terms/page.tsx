@@ -188,76 +188,128 @@ export default async function TermsPage() {
     >
       <div>
         <p>
-          Welcome to <strong>Gamesato</strong>. By accessing, browsing, or playing games on <a href="https://gamesato.com">https://gamesato.com</a> (the &quot;Website&quot; or &quot;Platform&quot;), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service (the &quot;Terms&quot;), together with our <a href="/privacy">Privacy Policy</a>.
+          Welcome to <strong>Gamesato</strong>. By accessing, browsing, or playing games on{' '}
+          <a href="https://gamesato.com">https://gamesato.com</a> (the &quot;Website&quot;, &quot;Platform&quot;, &quot;Service&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service (the &quot;Terms&quot;), together with our <a href="/privacy">Privacy Policy</a>.
         </p>
         <p>
-          If you do not agree with any part of these Terms, you must discontinue use of the Website immediately.
+          Gamesato reserves the right to update and modify these Terms at any time without prior notice. Continued use of the Service following any modifications signifies your binding acceptance of the updated terms. If you do not agree with any part of these Terms, you must immediately discontinue use of the Website.
         </p>
       </div>
 
       <div>
-        <h2>1. Eligibility & Age Requirements</h2>
+        <h2>1. Eligibility &amp; Age Requirements</h2>
         <p>
-          The Platform is intended for general audiences. By using Gamesato, you represent and warrant that you are at least 13 years of age (or the minimum legal age of digital consent in your jurisdiction), or that you are accessing the Platform under the direct supervision of a parent or legal guardian who agrees to be bound by these Terms.
+          You warrant that you are at least 18 years of age or legally capable of entering into binding contracts. If you are under 18 years of age (and at least 13 years old), you warrant that you have obtained verifiable consent from a parent or legal guardian who agrees to be bound by these Terms on your behalf. Children under the age of 13 may not create registered user accounts.
         </p>
       </div>
 
       <div>
-        <h2>2. Permitted Use of the Platform</h2>
+        <h2>2. Permitted Use &amp; Fair Play License</h2>
         <p>
-          Gamesato grants you a limited, revocable, non-exclusive, non-transferable license to access and play web games solely for your personal, non-commercial entertainment purposes.
-        </p>
-        <p>
-          You agree not to reproduce, duplicate, distribute, sell, or exploit any portion of the Website, its underlying codebase, game packages, or branding without prior express written permission from Gamesato.
+          Gamesato grants you a limited, non-exclusive, revocable, and non-transferable license to access, view, and play free online games strictly for personal, non-commercial entertainment purposes. You may not duplicate, copy, reverse engineer, redistribute, resell, or exploit any portion of the Website, game packages, assets, or software code.
         </p>
       </div>
 
       <div>
-        <h2>3. Prohibited Activities</h2>
-        <p>When using Gamesato, you strictly agree NOT to:</p>
+        <h2>3. Prohibited Conduct &amp; Google Publisher Policy Compliance</h2>
+        <p>
+          To maintain a safe, legal, and family-friendly gaming ecosystem aligned with Google AdSense Publisher Policies and international digital standards, all users and content contributors must strictly adhere to the following prohibitions:
+        </p>
+
+        <h3>A. Illegal Content Violation</h3>
+        <p>
+          We strictly prohibit content or actions that are unlawful, promote illegal conduct, or infringe on the legal rights of others. This includes selling or distributing counterfeit goods, using infringing trademarks or logos, or attempting to pass off unauthorized materials as genuine brand products.
+        </p>
+
+        <h3>B. Dangerous or Derogatory Content Violation</h3>
+        <p>
+          We strictly forbid any content that incites hatred against, promotes discrimination of, or disparages individuals or groups based on race, ethnic origin, religion, disability, age, nationality, sexual orientation, gender, or gender identity. Furthermore, harassment, intimidation, bullying, extortion, threats of physical or mental harm, or circulating medical and health misinformation are strictly banned.
+        </p>
+
+        <h3>C. Enabling Dishonest Behaviour Violation</h3>
+        <p>
+          Users may not promote or engage in hacking, cracking, reverse-engineering, game tampering, exploiting cheat engines, or unauthorized access to servers, accounts, or databases. The use of spyware, surreptitious surveillance tools, scrapers, automated click-bots, or illegal tracking utilities is strictly prohibited.
+        </p>
+
+        <h3>D. Misrepresentative &amp; Deceptive Content Violation</h3>
+        <p>
+          The Platform prohibits content that misrepresents, conceals, or misleads users regarding its primary nature or purpose. Phishing, deceptive claims, manipulated media, spoofing affiliations, or falsely implying partnerships or endorsements by Gamesato or third-party entities is strictly forbidden.
+        </p>
+
+        <h3>E. Malicious or Unwanted Software Violation</h3>
+        <p>
+          Uploading, embedding, or transmitting any malicious software, viruses, trojans, worms, keyloggers, adware, or destructive scripts designed to compromise devices, networks, or user data will lead to immediate permanent ban and potential legal prosecution.
+        </p>
+
+        <h3>F. Sexually Explicit &amp; Child Safety Violation</h3>
+        <p>
+          Gamesato enforces a strict ZERO-TOLERANCE policy against sexually explicit text, images, video, audio, adult themes, or sexual compensation schemes. Content that endangers, sexually exploits, or abuses children in any form will be immediately reported to law enforcement agencies and national authorities.
+        </p>
+      </div>
+
+      <div>
+        <h2>4. Intellectual Property Rights &amp; DMCA Takedown Notice</h2>
+        <p>
+          All proprietary source code, algorithms, visual design elements, trademarks, logos, illustrations, audio, and graphics comprising Gamesato are the exclusive intellectual property of Gamesato and protected under copyright laws.
+        </p>
+        <p>
+          Individual games showcased on Gamesato remain the intellectual property of their respective creators, indie developers, or licensed gaming syndication partners. Gamesato distributes these titles under valid developer agreements or authorized open distribution syndication.
+        </p>
+        <p>
+          <strong>Copyright Infringement &amp; DMCA:</strong> If you are a copyright owner or authorized agent and believe that any content hosted on Gamesato infringes your rights, please submit a formal DMCA notification to <a href="mailto:support@gamesato.com">support@gamesato.com</a> including:
+        </p>
         <ul>
-          <li>Use automated scripts, bots, spiders, or scrapers to extract games, assets, or data from the Platform.</li>
-          <li>Circumvent, disable, or tamper with security features, anti-cheat mechanisms, or content distribution networks.</li>
-          <li>Attempt to gain unauthorized access to our database, user accounts, servers, or networks.</li>
-          <li>Engage in denial-of-service (DoS) attacks or any activity that imposes an unreasonable burden on our infrastructure.</li>
-          <li>Upload or transmit malicious code, viruses, or disruptive malware.</li>
+          <li>Identification of the copyrighted work claimed to have been infringed.</li>
+          <li>The exact URL of the allegedly infringing game or asset on Gamesato.</li>
+          <li>Your contact information (name, address, email, and telephone number).</li>
+          <li>A statement of good faith belief and statement made under penalty of perjury that the information is accurate.</li>
         </ul>
+        <p>We investigate and process all verified copyright claims within 24 to 48 hours.</p>
       </div>
 
       <div>
-        <h2>4. Intellectual Property Rights</h2>
+        <h2>5. Third-Party Advertisements &amp; Cookie Guidelines</h2>
         <p>
-          All trademarks, logos, UI designs, icons, graphics, animations, and proprietary software comprising Gamesato are the exclusive property of Gamesato.
+          Gamesato permits certified third-party advertising partners, including Google AdSense, to display advertisements across our pages. These advertising vendors may use cookies, web beacons, and device identifiers to measure ad campaign effectiveness and serve contextually relevant ads.
         </p>
         <p>
-          Individual HTML5 and WebGL games featured on the Platform are protected by copyright and intellectual property laws and belong to their respective developers, publishers, or licensors. Gamesato distributes these games under valid publishing, syndication, or open-distribution licenses.
+          Please refer to the following official Google guidelines for complete policy transparency:
         </p>
-      </div>
-
-      <div>
-        <h2>5. User Accounts & Passwords</h2>
+        <ul>
+          <li>
+            <a href="https://support.google.com/adsense/answer/48182" target="_blank" rel="noopener noreferrer">
+              Google AdSense Program &amp; Publisher Policies
+            </a>
+          </li>
+          <li>
+            <a href="https://support.google.com/adsense/answer/10502938" target="_blank" rel="noopener noreferrer">
+              Google Webmaster Quality Guidelines &amp; Policies
+            </a>
+          </li>
+        </ul>
         <p>
-          If you register an account on Gamesato, you are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account. You agree to notify us immediately at <a href="mailto:support@gamesato.com">support@gamesato.com</a> if you suspect any unauthorized access to your account.
-        </p>
-        <p>
-          Gamesato reserves the right to suspend or terminate accounts that violate these Terms or engage in abusive behavior.
-        </p>
-      </div>
-
-      <div>
-        <h2>6. Disclaimer of Warranties & Limitation of Liability</h2>
-        <p>
-          Gamesato and all games, features, and content are provided on an <strong>&quot;AS IS&quot;</strong> and <strong>&quot;AS AVAILABLE&quot;</strong> basis without warranties of any kind, either express or implied.
-        </p>
-        <p>
-          To the fullest extent permitted by applicable law, Gamesato and its affiliates shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from your use or inability to use the Platform, including loss of gameplay progress, data loss, or service interruptions.
+          If you encounter an inappropriate or broken advertisement on Gamesato, please notify our team at <a href="mailto:support@gamesato.com">support@gamesato.com</a>.
         </p>
       </div>
 
       <div>
-        <h2>7. Changes to These Terms</h2>
+        <h2>6. Limitation of Liability</h2>
         <p>
-          We may update or modify these Terms from time to time to reflect changes in our legal obligations, platform features, or operational practices. The &quot;Last updated&quot; date at the top of this page reflects the most recent revision. Your continued use of the Platform after changes are posted constitutes your acceptance of the updated Terms.
+          To the maximum extent permitted by applicable law, Gamesato excludes all warranties, whether statutory, express, or implied. Gamesato and its operators shall not be liable for any indirect, incidental, punitive, or consequential damages resulting from your use of or inability to access the Platform, loss of data, unauthorized server intrusion, or third-party service interruptions.
+        </p>
+      </div>
+
+      <div>
+        <h2>7. Indemnification</h2>
+        <p>
+          You agree to defend, indemnify, and hold harmless Gamesato, its directors, officers, employees, and licensors against any claims, liabilities, damages, losses, or legal costs arising out of your access to the Service, breach of these Terms, or violation of any third-party rights.
+        </p>
+      </div>
+
+      <div>
+        <h2>8. Governing Law &amp; Jurisdiction</h2>
+        <p>
+          These Terms and Conditions shall be governed by and construed in accordance with the laws of New Delhi, India. You agree that any legal dispute or proceeding arising out of or related to Gamesato shall be subject to the exclusive jurisdiction of the competent courts located in New Delhi, India.
         </p>
       </div>
     </StaticPageClientView>

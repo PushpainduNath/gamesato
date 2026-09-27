@@ -188,48 +188,64 @@ export default async function AboutPage() {
     >
       <div>
         <p>
-          Welcome to <strong>Gamesato</strong>, your premier destination for high-performance, instant-play web games. Founded by passionate gamers and web engineers, our goal is to eliminate all barriers between discovering a game and actually playing it.
+          Welcome to <strong>Gamesato</strong> (<a href="https://gamesato.com">https://gamesato.com</a>), your premier global destination for high-quality, instant-play browser games. Founded by passionate gamers and web engineers, our mission is to deliver fast, responsive, and captivating gaming experiences right inside your web browser — completely free, with no downloads, installations, or hardware barriers.
         </p>
       </div>
 
       <div>
-        <h2>Our Core Vision & Mission</h2>
+        <h2>Your Ultimate Web Gaming Destination</h2>
         <p>
-          We believe that great games shouldn't be locked behind heavy app stores, lengthy downloads, or proprietary hardware. By leveraging cutting-edge HTML5, WebGL 2.0, and WebAssembly technologies, Gamesato delivers responsive 60 FPS gaming experiences right in your browser with zero friction.
-        </p>
-        <p>
-          Whether you have five minutes to spare on a subway commute with your smartphone or want to immerse yourself in an adventure game on a desktop computer, Gamesato provides immediate entertainment without storage footprint.
+          We believe that gaming should be universally accessible to everyone, everywhere. Whether you have five minutes to unwind on your daily commute or want to dive into deep multiplayer sessions on a desktop computer, Gamesato delivers seamless 60 FPS gameplay powered by modern HTML5, WebGL 2.0, and WebAssembly technologies.
         </p>
       </div>
 
       <div>
-        <h2>What Makes Gamesato Different?</h2>
+        <h2>Our Diverse Game Library</h2>
+        <p>
+          Gamesato curates thousands of handpicked games spanning every popular genre and play style:
+        </p>
         <ul>
-          <li>
-            <strong>100% Free & Instant:</strong> No subscriptions, no hidden paywalls, and no download requirements. Simply click any title and play immediately.
-          </li>
-          <li>
-            <strong>Universal Cross-Platform Play:</strong> Our game engine and interface automatically optimize for touch controls on mobile devices (iOS & Android) and keyboard/mouse precision on desktop PCs.
-          </li>
-          <li>
-            <strong>Curated Quality:</strong> We review and test games across dozens of categories—Action, Racing, Sports, Puzzle, Arcade, and Logic—to ensure smooth performance and engaging gameplay.
-          </li>
-          <li>
-            <strong>Safe & Family-Friendly:</strong> All games run within isolated, secure browser sandboxes with no invasive software installations.
-          </li>
-          <li>
-            <strong>Cloud Progress & Favorites:</strong> Save your favorite titles, track your play history, and pick up right where you left off across sessions.
-          </li>
+          <li><strong>Action &amp; Adventure:</strong> Fast-paced hero shooters, dungeon crawlers, obstacle runs, and epic survival adventures.</li>
+          <li><strong>Puzzle &amp; Strategy:</strong> Physics-based puzzles, Match-3 classics, 2048 variations, block matching, and tactical challenges.</li>
+          <li><strong>Arcade &amp; Classics:</strong> Retro pixel action, bubble shooters, pinball mechanics, and nostalgic arcade remakes.</li>
+          <li><strong>Sports &amp; Racing:</strong> High-octane highway drifting, off-road rallying, football shootout tournaments, and basketball duels.</li>
+          <li><strong>2-Player &amp; Co-op:</strong> Head-to-head split-screen battles and collaborative puzzles to enjoy with friends on the same device.</li>
+          <li><strong>Casual &amp; Brain Games:</strong> Relaxing solitaire, tower-stacking, word puzzles, and cognitive brain teasers.</li>
+        </ul>
+        <p>
+          Our editorial team rigorously tests every title to ensure clean graphics, intuitive controls, and balanced difficulty before publishing.
+        </p>
+      </div>
+
+      <div>
+        <h2>Key Platform Features</h2>
+        <ul>
+          <li>✓ <strong>Instant Browser Play:</strong> No app store downloads, APK installations, or storage bloat. Click and play in milliseconds.</li>
+          <li>✓ <strong>Universal Cross-Device Compatibility:</strong> Seamlessly optimized for touchscreens on iOS and Android phones/tablets, and keyboard/mouse precision on desktop PCs.</li>
+          <li>✓ <strong>Cloud Favorites &amp; Play History:</strong> Bookmark favorite games, track recent play sessions, and pick up right where you left off.</li>
+          <li>✓ <strong>Guest Mode by Default:</strong> Enjoy instant access to the entire game catalog without mandatory account registration.</li>
+          <li>✓ <strong>Safe &amp; Family-Friendly:</strong> All games execute in isolated browser sandboxes with zero invasive software requirements and strict ad standards.</li>
+          <li>✓ <strong>Continuous Updates:</strong> Fresh trending games and indie releases added on a regular weekly basis.</li>
         </ul>
       </div>
 
       <div>
-        <h2>For Game Developers & Publishers</h2>
+        <h2>Our Story &amp; Vision</h2>
         <p>
-          Gamesato is also a thriving launchpad for independent creators and international game studios. We offer game developers a high-traffic distribution network, seamless game integration pipelines, real-time telemetry metrics, and transparent monetization models.
+          Gamesato was born from a simple belief: the web is the ultimate open gaming platform. High-speed fiber and mobile 5G have transformed browsers into powerful gaming environments capable of rendering console-grade 3D graphics without heavy client downloads.
         </p>
         <p>
-          If you are interested in publishing your HTML5 or WebGL game on Gamesato, please reach out to our developer relations team through our <a href="/contact">Contact Portal</a>.
+          Our engineering team focuses on extreme performance optimization, ultra-low latency assets, and lightweight user interfaces. We are dedicated to providing a joyful, safe, and engaging sanctuary for players of all ages across the globe.
+        </p>
+      </div>
+
+      <div>
+        <h2>For Game Developers &amp; Studios</h2>
+        <p>
+          Gamesato is also a vibrant launchpad for independent developers and game development studios worldwide. We provide creators with developer-centric tools to upload ZIP game packages, monitor analytics, evaluate real-time play counts, and monetize games transparently.
+        </p>
+        <p>
+          If you are an indie game developer or studio looking to reach millions of active players, please submit your game through our <a href="/contact">Developer Portal</a> or email us at <a href="mailto:support@gamesato.com">support@gamesato.com</a>.
         </p>
       </div>
     </StaticPageClientView>

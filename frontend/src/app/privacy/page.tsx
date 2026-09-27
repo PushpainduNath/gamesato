@@ -226,19 +226,29 @@ export default async function PrivacyPage() {
       </div>
 
       <div>
-        <h2>3. Cookies and Advertising Technologies</h2>
+        <h2>3. Cookies, Log Files &amp; Advertising Technologies</h2>
         <p>
-          Gamesato uses lightweight browser <strong>LocalStorage</strong> and cookies to ensure smooth, secure website operation:
+          Gamesato uses standard browser cookies, web beacons, and lightweight LocalStorage to optimize platform security, remember your gameplay preferences, and provide personalized services.
         </p>
+
+        <h3>Types of Cookies We Use</h3>
         <ul>
-          <li>Keep you logged in securely between browser sessions.</li>
-          <li>Save your display theme preferences (Dark / Light mode).</li>
-          <li>Store your game favorites and recently played titles locally so they load instantaneously.</li>
+          <li>
+            <strong>Session Cookies:</strong> Temporary cookies that remain active only while your browser tab is open. Once you close your browser or navigate away, session cookies are automatically destroyed. These help track session state, transient UI interactions, and security tokens.
+          </li>
+          <li>
+            <strong>Permanent / Persistent Cookies:</strong> Stored on your device with an expiration timestamp. These cookies recognize your browser when you return, automatically preserving your Dark/Light theme, audio preferences, and saved game progress.
+          </li>
         </ul>
 
-        <h3>Google AdSense & DoubleClick DART Cookies</h3>
+        <h3>Server Log Files &amp; IP Addresses</h3>
         <p>
-          Google is a third-party advertising vendor on Gamesato. Google uses cookies, including the <strong>DoubleClick DART cookie</strong>, to serve advertisements to users based on their prior visits to Gamesato and other websites across the Internet.
+          Like all standard web servers, Gamesato maintains non-identifying server log files. These record browser types, operating systems (Windows, macOS, Android, iOS), Internet Service Providers (ISPs), date/time stamps, referring/exit pages, and click paths. This diagnostic data is utilized strictly for system administration, threat mitigation, DDOS prevention, and bandwidth optimization. IP addresses are never linked to personally identifiable information.
+        </p>
+
+        <h3>Google AdSense &amp; DoubleClick DART Cookies</h3>
+        <p>
+          Google is a certified third-party advertising vendor on Gamesato. Google uses cookies, including the <strong>DoubleClick DART cookie</strong>, to serve advertisements to users based on their prior visits to Gamesato and other websites across the Internet.
         </p>
         <ul>
           <li>
@@ -256,14 +266,21 @@ export default async function PrivacyPage() {
               www.aboutads.info
             </a>.
           </li>
+          <li>
+            For more details on cookie management across different browsers, you can visit{' '}
+            <a href="https://www.allaboutcookies.org" target="_blank" rel="noopener noreferrer">
+              www.allaboutcookies.org
+            </a>.
+          </li>
         </ul>
 
-        <h3>Third-Party Advertising Partners</h3>
+        <h3>Third-Party Advertising Standards &amp; Inappropriate Ad Reporting</h3>
         <p>
-          Some of our advertising partners (including Google AdSense and certified ad exchanges) may use cookies, web beacons, and JavaScript in their respective advertisements and links that appear on Gamesato. These technologies automatically receive your IP address when ad impressions occur to measure the effectiveness of advertising campaigns and personalize advertising content. Gamesato has no access to or control over cookies that are used by third-party advertisers.
+          Gamesato strictly complies with digital advertising guidelines. All third-party advertising networks are programmatically instructed NOT to serve violent, sexually explicit, fraudulent, gambling, or malicious ads on our platform.
         </p>
         <p>
-          You can also choose to disable or block cookies through your individual browser settings. For detailed information on cookie management in specific web browsers, please consult your browser&apos;s official help documentation.
+          If you encounter an intrusive, misleading, or inappropriate advertisement on Gamesato, please report it immediately to{' '}
+          <a href="mailto:support@gamesato.com">support@gamesato.com</a> with a screenshot or destination URL, and our ad operations team will review and block it within 24 hours.
         </p>
       </div>
 
