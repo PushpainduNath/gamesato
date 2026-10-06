@@ -1001,11 +1001,6 @@ export default function CategoryClientView({
                   </section>
                 )}
               </div>
-
-              {/* Right Skyscraper Ad Column */}
-              <aside className={styles.categoryAdCol}>
-                <AdBanner type="skyscraper" />
-              </aside>
             </div>
           </div>
           </div>

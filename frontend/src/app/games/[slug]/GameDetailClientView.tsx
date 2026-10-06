@@ -638,11 +638,6 @@ export default function GameDetailClientView({
             {/* ----------------- DESKTOP LAYOUT ----------------- */}
             <div className={styles.desktopLayout}>
               <div className={styles.gameHeroLayout}>
-                {/* Left Skyscraper Ad */}
-                <aside className={styles.heroAdSide}>
-                  <AdBanner type="skyscraper" />
-                </aside>
-
                 {/* Center: 16:9 Game Player */}
                 <div className={styles.centerPlayerColumn}>
                   <GamePlayerCard
@@ -656,11 +651,6 @@ export default function GameDetailClientView({
                     category={game.category}
                   />
                 </div>
-
-                {/* Right Skyscraper Ad */}
-                <aside className={styles.heroAdSide}>
-                  <AdBanner type="skyscraper" />
-                </aside>
               </div>
 
               {/* Game Info Details Card */}

@@ -107,14 +107,7 @@
 }
 
 .heroAdSide {
-  display: flex;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 160px;
-  min-width: 160px;
-  max-width: 160px;
-  position: relative;
-  z-index: 5;
+  display: none !important;
 }
 
 .centerPlayerColumn {
